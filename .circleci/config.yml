@@ -1,0 +1,113 @@
+---
+executors:
+  unity:
+    working_directory: /tmp/workspace
+    docker:
+      - image: "${AWS_ID}.dkr.ecr.us-east-2.amazonaws.com/circleci-build-unity:2019.3.9f1"
+        aws_auth:
+           aws_access_key_id: $CIRCLECI_AWS_ACCESS_KEY_ID
+           aws_secret_access_key: $CIRCLECI_AWS_SECRET_ACCESS_KEY
+  npm:
+    working_directory: /tmp/workspace
+    docker:
+      - image: "${AWS_ID}.dkr.ecr.us-east-2.amazonaws.com/circleci-build-ubuntu-18-node-10:latest"
+        aws_auth:
+           aws_access_key_id: $CIRCLECI_AWS_ACCESS_KEY_ID
+           aws_secret_access_key: $CIRCLECI_AWS_SECRET_ACCESS_KEY
+
+version: 2.1
+jobs:
+  artifactory:
+    executor: npm
+    steps:
+      - checkout
+      - run:
+          name: 'Upload Unity packages to artifactory'
+          command: |
+            curl -H "Authorization: token $GITHUB_TOKEN" \
+                    'https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/unitypackages/unitypackage_to_artifactory.sh' | bash
+  homabelly:
+    executor: unity
+    steps:
+      - run:
+          name: 'Inject package variables'
+          command: |
+            curl -H "Authorization: token $GITHUB_TOKEN" \
+                    'https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/unitypackages/inject_package_variables.sh' | bash
+      - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
+      - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$PACKAGE_DISPLAY_NAME"
+      - run:
+          name: 'Build Homa Belly Packages'
+          command: |
+            echo "Building Packages..."
+            /opt/Unity/Editor/Unity -batchmode -nographics -quit -projectpath . -executeMethod Build.CreateAllEmbeddedUnityPackages -buildTarget Android
+      - run: apt-get update
+      - run: apt-get -y install awscli
+      - run:
+          name: 'Upload Unity Packages to S3'
+          command: |
+            UNITY_PACKAGES_LIST=$(find Build -name '*.unitypackage')
+            for filename in $UNITY_PACKAGES_LIST; do
+                # Replace "Build" for "packages" in file path to match S3 structure
+                FILEPATH=$(echo $filename | sed 's/Build/packages/g')
+                # Determine if file already exists in S3
+                if [[ $(aws s3 ls s3://$S3_BUCKET_NAME/$FILEPATH) ]] && [[ -z "${FORCE_AWS_UPLOAD}" ]]; then
+                  echo "File $FILEPATH already present. Skipping..."
+                else
+                  echo "Uploading $FILEPATH"
+                  aws s3 cp $filename s3://$S3_BUCKET_NAME/$FILEPATH
+                fi
+            done
+  merge_into_master:
+    executor: npm
+    steps:
+      - checkout
+      - run:
+          name: 'Merging develop into master'
+          command: |
+            git checkout master
+            git pull
+            git merge develop
+            git config --global user.name "$GITHUB_USER"
+            git config --global user.email "admin@homagames.com"
+            git push origin master 
+
+orbs:
+  slack: circleci/slack@1.0.0
+
+workflows:
+  version: 2
+  build-to-release:
+    jobs:
+      - artifactory:
+          context:
+          - hg-common
+          - hg-mobile
+          - hg-unity
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - homabelly:
+          context:
+          - hg-common
+          - hg-mobile
+          - hg-damysus
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - merge_into_master:
+          context:
+          - hg-common
+          - hg-mobile
+          - hg-unity
+          requires:
+            - artifactory
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
