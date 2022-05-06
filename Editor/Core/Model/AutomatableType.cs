@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HomaGames.GameDoctor
+namespace HomaGames.GameDoctor.Core
 {
+    /// <summary>
+    /// Define the type of issue, Automatic = No user intervention needed
+    /// </summary>
     public enum AutomatableType
     {
         Automatic,
-        Interactive,
-        Manual
+        Interactive
     }
 }
