@@ -32,7 +32,7 @@ namespace HomaGames.GameDoctor.Core
 
         public static List<ICheck> GetAllChecksWithTag(string tag)
         {
-            return _registeredChecks.TryGetValue(tag,out var list) ? list : new List<ICheck>();
+            return _registeredChecks.TryGetValue(tag, out var list) ? list : new List<ICheck>();
         }
     }
 }
