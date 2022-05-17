@@ -7,7 +7,7 @@ namespace HomaGames.GameDoctor.Core
     /// <summary>
     /// Define the type of issue, Automatic = No user intervention needed
     /// </summary>
-    public enum AutomatableType
+    public enum AutomationType
     {
         Automatic,
         Interactive

@@ -1,13 +1,20 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace HomaGames.GameDoctor.Core
 {
     public interface ICheck
     {
         /// <summary>
+        /// Triggered when an issue is actually fixed.
+        /// </summary>
+        [PublicAPI]
+        event System.Action<IIssue> OnIssueFixed;
+        /// <summary>
         /// Called whenever the CheckResult is generated again.
         /// </summary>
+        [PublicAPI]
         event System.Action<ICheck> OnExecuted;
         /// <summary>
         /// Unique name for the check.

@@ -3,7 +3,7 @@ executors:
   unity:
     working_directory: /tmp/workspace
     docker:
-      - image: "${AWS_ID}.dkr.ecr.us-east-2.amazonaws.com/circleci-build-unity:2019.3.9f1"
+      - image: "${AWS_ID}.dkr.ecr.us-east-2.amazonaws.com/circleci-build-unity:2020.3.33f1"
         aws_auth:
            aws_access_key_id: $CIRCLECI_AWS_ACCESS_KEY_ID
            aws_secret_access_key: $CIRCLECI_AWS_SECRET_ACCESS_KEY
@@ -17,6 +17,16 @@ executors:
 
 version: 2.1
 jobs:
+  run_tests:
+    executor: unity
+    steps:
+      - checkout
+      - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
+      - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$PACKAGE_DISPLAY_NAME"
+      - run:
+          name: 'Run Tests'
+          command: |
+            bash .circleci/run_tests.sh
   artifactory:
     executor: npm
     steps:
@@ -79,11 +89,23 @@ workflows:
   version: 2
   build-to-release:
     jobs:
+      - run_tests:
+          context:
+          - hg-common
+          - hg-mobile
+          - hg-unity
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - artifactory:
           context:
           - hg-common
           - hg-mobile
           - hg-unity
+          requires:
+            - run_tests
           filters:
             tags:
               only: /^v.*/
@@ -94,6 +116,8 @@ workflows:
           - hg-common
           - hg-mobile
           - hg-damysus
+          requires:
+            - run_tests
           filters:
             tags:
               only: /^v.*/
@@ -106,6 +130,7 @@ workflows:
           - hg-unity
           requires:
             - artifactory
+            - homabelly
           filters:
             tags:
               only: /^v.*/

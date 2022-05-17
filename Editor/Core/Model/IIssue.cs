@@ -8,7 +8,7 @@ namespace HomaGames.GameDoctor.Core
         /// <summary>
         /// When the fix is executed.
         /// </summary>
-        event System.Action<IIssue> OnExecuted;
+        event System.Action<IIssue> OnFixExecuted;
         /// <summary>
         /// Unique name for the issue.
         /// </summary>
@@ -21,11 +21,7 @@ namespace HomaGames.GameDoctor.Core
         /// The inspector drawing function.
         /// </summary>
         void Draw();
-        /// <summary>
-        /// The originated check for this issue.
-        /// </summary>
-        ICheck Check { get; }
-        AutomatableType AutomatableType { get; }
+        AutomationType AutomationType { get; }
         Priority Priority { get; }
         /// <summary>
         /// Launches the fixing process, either automatic or interactive.

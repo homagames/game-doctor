@@ -7,19 +7,18 @@ namespace HomaGames.GameDoctor.Core
 {
     public abstract class BaseIssue : IIssue
     {
-        public BaseIssue(string name, ICheck check, AutomatableType automatableType, Priority priority,
-            string description)
+        protected BaseIssue(string name, string description, AutomationType automationType = default,
+            Priority priority = default)
         {
             Name = name;
-            Check = check;
-            AutomatableType = automatableType;
+            AutomationType = automationType;
             Priority = priority;
             Description = description;
         }
 
-        public event Action<IIssue> OnExecuted;
+        public event Action<IIssue> OnFixExecuted;
         public string Name { get; }
-        public virtual string Description { get; }
+        public string Description { get; }
 
         public virtual void Draw()
         {
@@ -27,20 +26,15 @@ namespace HomaGames.GameDoctor.Core
         }
 
         public ICheck Check { get; }
-        public AutomatableType AutomatableType { get; }
+        public AutomationType AutomationType { get; }
         public Priority Priority { get; }
 
         public async Task Fix()
         {
             await InternalFix();
-            OnExecuted?.Invoke(this);
+            OnFixExecuted?.Invoke(this);
         }
 
         protected abstract Task InternalFix();
-
-        public override int GetHashCode()
-        {
-            return (GetType().FullName + Name).GetHashCode();
-        }
     }
 }

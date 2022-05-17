@@ -7,17 +7,21 @@ namespace HomaGames.GameDoctor.Core
 {
     public interface IValidationProfile
     {
-        [PublicAPI]
-        event System.Action OnBeforeCheck;
-        [PublicAPI]
-        event System.Action OnAfterCheck;
-        [PublicAPI]
-        event System.Action<ICheck> OnCheckExecuted;
-        [PublicAPI]
-        event System.Action<IIssue> OnFixExecuted;
+        /// <summary>
+        /// The name of the Validation Profile
+        /// </summary>
         string Name { get; }
+        /// <summary>
+        /// The description for this validation profile.
+        /// </summary>
         string Description { get; }
+        /// <summary>
+        /// The list of checks this profile contains.
+        /// </summary>
         List<ICheck> CheckList { get; }
+        /// <summary>
+        /// Populates CheckResults for all Checks in the CheckList.
+        /// </summary>
         Task Check();
     }
 }

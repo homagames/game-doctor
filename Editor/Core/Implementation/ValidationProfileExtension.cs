@@ -7,11 +7,10 @@ namespace HomaGames.GameDoctor.Core
         public static async Task Fix(this IValidationProfile validationProfile)
         {
             foreach (var check in validationProfile.CheckList)
-                for (int j = check.CheckResult.Issues.Count - 1; j >= 0; j--)
-                {
-                    var issue = check.CheckResult.Issues[j];
-                    await issue.Fix();
-                }
+            foreach (var issue in check.CheckResult.Issues)
+            {
+                await issue.Fix();
+            }
 
             await validationProfile.Check();
         }
@@ -21,6 +20,15 @@ namespace HomaGames.GameDoctor.Core
             foreach (var tag in checksTags)
             {
                 validationProfile.CheckList.AddRange(AvailableChecks.GetAllChecksWithTag(tag));
+            }
+        }
+
+        public static void OnAnyIssueFixed(this IValidationProfile validationProfile, System.Action<IIssue> func)
+        {
+            foreach (var check in validationProfile.CheckList)
+            {
+                check.OnIssueFixed -= func;
+                check.OnIssueFixed += func;
             }
         }
     }
