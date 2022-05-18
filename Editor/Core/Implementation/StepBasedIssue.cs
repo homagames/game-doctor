@@ -11,12 +11,12 @@ namespace HomaGames.GameDoctor.Core
         {
             public readonly string Name;
             public bool Done;
-            public readonly Func<Task> Code;
+            public readonly Func<Task> Action;
             public readonly Action<StepBasedIssue, Step> Draw;
 
-            public Step(Func<Task> code, string name, Action<StepBasedIssue, Step> draw = null)
+            public Step(Func<Task> action, string name, Action<StepBasedIssue, Step> draw = null)
             {
-                Code = code;
+                Action = action;
                 Name = name;
                 Draw = draw;
             }
@@ -53,7 +53,7 @@ namespace HomaGames.GameDoctor.Core
 
             foreach (var step in stepsList)
             {
-                await step.Code();
+                await step.Action();
                 step.Done = true;
             }
         }

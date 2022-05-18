@@ -22,7 +22,7 @@ namespace HomaGames.GameDoctor.Tests
         {
             var profile = new BaseValidationProfile("Homa Profile", "The default Homa Validation Profile");
             AvailableChecks.RegisterCheck(new DummyCheck());
-            profile.Populate("performance");
+            profile.PopulateChecks("performance");
             yield return AllTestPass(profile);
         }
 
@@ -46,7 +46,7 @@ namespace HomaGames.GameDoctor.Tests
                 return ci;
             }, "Dummy Check", "", new List<string>() {"inline"});
             AvailableChecks.RegisterCheck(check);
-            profile.Populate("inline");
+            profile.PopulateChecks("inline");
             yield return AllTestPass(profile);
         }
 
@@ -70,7 +70,7 @@ namespace HomaGames.GameDoctor.Tests
                 return ci;
             }, "Dummy Check", "", new List<string>() {"failing"});
             AvailableChecks.RegisterCheck(check);
-            profile.Populate("failing");
+            profile.PopulateChecks("failing");
             yield return AllTestPass(profile, false);
         }
 

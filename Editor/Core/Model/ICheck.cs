@@ -4,6 +4,10 @@ using JetBrains.Annotations;
 
 namespace HomaGames.GameDoctor.Core
 {
+    /// <summary>
+    /// Defines a way to validate a specific part of your Unity Project.
+    /// An ICheck can generate a CheckResult containing (or not) a list of issues.
+    /// </summary>
     public interface ICheck
     {
         /// <summary>
@@ -15,7 +19,7 @@ namespace HomaGames.GameDoctor.Core
         /// Called whenever the CheckResult is generated again.
         /// </summary>
         [PublicAPI]
-        event System.Action<ICheck> OnExecuted;
+        event System.Action<ICheck> OnResultGenerated;
         /// <summary>
         /// Unique name for the check.
         /// </summary>

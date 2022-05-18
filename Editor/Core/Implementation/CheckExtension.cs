@@ -14,6 +14,11 @@ namespace HomaGames.GameDoctor.Core
                    check.GetType() == otherCheck.GetType();
         }
 
+        /// <summary>
+        /// Execute all fixes for generated issues inside a Check.
+        /// </summary>
+        /// <param name="check"></param>
+        /// <param name="automationType">Filter by Automation Type</param>
         public static async Task FixAllIssues(this ICheck check,
             AutomationType automationType = AutomationType.Automatic)
         {

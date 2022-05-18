@@ -19,7 +19,7 @@ namespace HomaGames.GameDoctor.Core
         }
 
         public event Action<IIssue> OnIssueFixed;
-        public event Action<ICheck> OnExecuted;
+        public event Action<ICheck> OnResultGenerated;
         public string Name { get; }
         public string Description { get; }
         public List<string> Tags { get; }
@@ -40,7 +40,7 @@ namespace HomaGames.GameDoctor.Core
                 }
             }
 
-            OnExecuted?.Invoke(this);
+            OnResultGenerated?.Invoke(this);
         }
 
         public CheckResult CheckResult { get; private set; }

@@ -5,6 +5,10 @@ using UnityEngine;
 
 namespace HomaGames.GameDoctor.Core
 {
+    /// <summary>
+    /// Defines a collection of ICheck.
+    /// This is convenient to groups checks together and validate them all together.
+    /// </summary>
     public interface IValidationProfile
     {
         /// <summary>
