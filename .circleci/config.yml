@@ -98,7 +98,8 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              ignore: /.*/
+              only:
+                - develop
       - artifactory:
           context:
           - hg-common
