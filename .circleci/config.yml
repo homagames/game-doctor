@@ -20,6 +20,11 @@ jobs:
   run_tests:
     executor: unity
     steps:
+    - run:
+          name: 'Inject package varaibles'
+          command: |
+            curl -H "Authorization: token $GITHUB_TOKEN" \
+                    'https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/unitypackages/inject_package_variables.sh' | bash
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
       - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$PACKAGE_DISPLAY_NAME"
       - run:
