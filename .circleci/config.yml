@@ -20,7 +20,6 @@ jobs:
   run_tests:
     executor: unity
     steps:
-      - checkout
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
       - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$PACKAGE_DISPLAY_NAME"
       - run:
