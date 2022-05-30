@@ -20,7 +20,7 @@ jobs:
   run_tests:
     executor: unity
     steps:
-    - run:
+      - run:
           name: 'Inject package varaibles'
           command: |
             curl -H "Authorization: token $GITHUB_TOKEN" \
