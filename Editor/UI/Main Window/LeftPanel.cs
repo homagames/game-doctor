@@ -18,7 +18,7 @@ namespace HomaGames.GameDoctor.Ui
         private Texture2D HighPriorityTexture;
         private Texture2D MediumPriorityTexture;
         private Texture2D LowPriorityTexture;
-        
+
         private void DrawLeftPanel()
         {
             EditorGUILayoutExtension.BeginToolBar();
@@ -58,6 +58,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             CheckUiData uiData = GetUiData(check);
 
+            var containsIssues = check.CheckResult != null && !check.CheckResult.Passed;
             DrawFoldoutTreeElement(uiData, check.Name, check.GetPriorityCount(), () =>
             {
 
@@ -68,17 +69,24 @@ namespace HomaGames.GameDoctor.Ui
                         DrawNode(issue);
                     }
                 }
-            }, check.CheckResult != null && !check.CheckResult.Passed);
+            }, containsIssues, containsIssues && check.Importance == ImportanceType.Mandatory);
         }
 
         private void DrawFoldoutTreeElement(BaseFoldoutUiData uiData, string nodeName, PriorityCount priorityCount,
-            Action drawInside, bool drawAsFoldout = true)
+            Action drawInside, bool drawAsFoldout = true, bool drawMandatory = false)
         {
             DrawNodeBefore(uiData);
             if (drawAsFoldout)
                 uiData.Expanded.target = EditorGUILayout.Foldout(uiData.Expanded.target, nodeName);
             else
                 EditorGUILayout.LabelField(nodeName);
+            
+            if (drawMandatory)
+            {
+                var lastRect = GUILayoutUtility.GetLastRect();
+                Rect mandatoryIconRect = new Rect(lastRect) {width = 20, x = lastRect.x + 2};
+                GUI.DrawTexture(mandatoryIconRect, MandatoryTexture);
+            }
 
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
@@ -138,6 +146,14 @@ namespace HomaGames.GameDoctor.Ui
             {
                 DrawNodeBefore(uiData);
                 EditorGUILayout.LabelField(issue.Name);
+
+                var priorityIconGUIStyle = new GUIStyle(GUIStyle.none) { margin = new RectOffset(0, 7, 0, 0)};
+                GUI.DrawTexture(
+                    EditorGUILayout.GetControlRect(
+                        false, EditorGUIUtility.singleLineHeight, 
+                        priorityIconGUIStyle, GUILayout.Width(16)), 
+                    HighPriorityTexture);
+                
                 DrawNodeAfter(uiData);
             }
         }

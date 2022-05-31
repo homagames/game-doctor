@@ -137,7 +137,7 @@ namespace HomaGames.GameDoctor.Ui
                             new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", ""),
                         }
                     };
-                }, "Check 1", "description", new List<string>()
+                }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
             ));
 
             MandatoryTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
