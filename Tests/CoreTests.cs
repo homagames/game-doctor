@@ -97,8 +97,18 @@ namespace HomaGames.GameDoctor.Tests
 
             yield return TestUtils.AsIEnumerator(profile.Check());
             Assert.True(profile.CheckList.Count == 1);
-            if(fixWorks)
+            if (fixWorks)
                 Assert.True(profile.CheckList[0].CheckResult.Issues.Count == 0);
+        }
+
+        [Test]
+        public void DefaultValidationProfile()
+        {
+            Assert.True(AvailableProfiles.GetDefaultValidationProfile() != null);
+            Assert.True(AvailableProfiles.GetDefaultValidationProfile().GetType() == typeof(DefaultValidationProfile));
+            AvailableChecks.RegisterCheck(new DummyCheck());
+            AvailableProfiles.GetDefaultValidationProfile().PopulateChecks("performance");
+            Assert.True(AvailableProfiles.GetDefaultValidationProfile().CheckList.Count != 0);
         }
     }
 
