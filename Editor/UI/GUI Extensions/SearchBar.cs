@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
@@ -30,13 +31,16 @@ namespace HomaGames.GameDoctor.Ui
                 GUILayout.BeginHorizontal(SearchBarToolbarGUIStyle, options);
 
             var textFieldOptions = inToolBar ? options : new [] { GUILayout.ExpandWidth(true) };
-            searchString = GUILayout.TextField(searchString, SearchBarTextGUIStyle, textFieldOptions);
+            searchString = EditorGUILayout.TextField(searchString, SearchBarTextGUIStyle, textFieldOptions);
         
-            if (GUILayout.Button("", SearchBarCancelGUIStyle))
+            if (! string.IsNullOrEmpty(searchString))
             {
-                // Remove focus if cleared
-                searchString = "";
-                GUI.FocusControl(null);
+                if (GUILayout.Button("", SearchBarCancelGUIStyle))
+                {
+                    // Remove focus if cleared
+                    searchString = "";
+                    GUI.FocusControl(null);
+                }
             }
         
             if (! inToolBar)
