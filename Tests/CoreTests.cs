@@ -44,7 +44,7 @@ namespace HomaGames.GameDoctor.Tests
                 }
 
                 return ci;
-            }, "Dummy Check", "", new List<string>() {"inline"});
+            }, "Dummy Check", "", new HashSet<string>() {"inline"});
             AvailableChecks.RegisterCheck(check);
             profile.PopulateChecks("inline");
             yield return AllTestPass(profile);
@@ -68,7 +68,7 @@ namespace HomaGames.GameDoctor.Tests
                 }
 
                 return ci;
-            }, "Dummy Check", "", new List<string>() {"failing"});
+            }, "Dummy Check", "", new HashSet<string>() {"failing"});
             AvailableChecks.RegisterCheck(check);
             profile.PopulateChecks("failing");
             yield return AllTestPass(profile, false);
@@ -132,7 +132,7 @@ namespace HomaGames.GameDoctor.Tests
 
         public DummyCheck(ImportanceType importance = ImportanceType.Advised, Priority priority = Priority.Medium) :
             base("Dummy Check",
-                "Test check", new List<string>() {"performance"}, importance, priority)
+                "Test check", new HashSet<string>() {"performance"}, importance, priority)
         {
         }
     }

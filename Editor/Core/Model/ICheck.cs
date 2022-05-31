@@ -31,7 +31,7 @@ namespace HomaGames.GameDoctor.Core
         /// <summary>
         /// Tags identifying the check. Checks can be found project-wide using the tag system.
         /// </summary>
-        List<string> Tags { get; }
+        HashSet<string> Tags { get; }
         ImportanceType Importance { get; }
         Priority Priority { get; }
         /// <summary>

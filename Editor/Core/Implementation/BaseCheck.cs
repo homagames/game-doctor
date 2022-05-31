@@ -9,7 +9,7 @@ namespace HomaGames.GameDoctor.Core
     public abstract class BaseCheck : ICheck
     {
         protected BaseCheck(string name, string description,
-            List<string> tags, ImportanceType importance = ImportanceType.Advised, Priority priority = Priority.Medium)
+            HashSet<string> tags, ImportanceType importance = ImportanceType.Advised, Priority priority = Priority.Medium)
         {
             Importance = importance;
             Priority = priority;
@@ -22,7 +22,7 @@ namespace HomaGames.GameDoctor.Core
         public event Action<ICheck> OnResultGenerated;
         public string Name { get; }
         public string Description { get; }
-        public List<string> Tags { get; }
+        public HashSet<string> Tags { get; }
         public ImportanceType Importance { get; }
         public Priority Priority { get; }
         protected abstract Task<CheckResult> GenerateCheckResult();
