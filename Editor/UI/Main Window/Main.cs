@@ -32,6 +32,9 @@ namespace HomaGames.GameDoctor.Ui
         private Texture2D MediumPriorityWhiteTexture;
         private Texture2D LowPriorityWhiteTexture;
         
+        private Texture2D ProfileTexture;
+        private Texture2D CheckTexture;
+        
         private Texture2D AutomaticTexture;
         private Texture2D InteractiveTexture;
         
@@ -186,6 +189,18 @@ namespace HomaGames.GameDoctor.Ui
                     return new GUIContent(" " /* NBSP */ + "Interactive", InteractiveTexture);
                 case AutomationType.Automatic:
                     return new GUIContent(" " /* NBSP */ + "Automatic", AutomaticTexture);
+            }
+        }
+
+        private Texture2D GetTextureFor(AutomationType automationType)
+        {
+            switch (automationType)
+            {
+                default:
+                case AutomationType.Interactive:
+                    return InteractiveTexture;
+                case AutomationType.Automatic:
+                    return AutomaticTexture;
             }
         }
     }

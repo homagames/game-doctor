@@ -39,7 +39,8 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawNode(IValidationProfile profile)
         {
             ProfileUiData uiData = GetUiData(profile);
-            DrawFoldoutTreeElement(uiData, profile.Name, profile.GetPriorityCount(), () =>
+            GUIContent nodeContent = new GUIContent(" " /* NBSP */ + profile.Name, ProfileTexture);
+            DrawFoldoutTreeElement(uiData, nodeContent, profile.GetPriorityCount(), () =>
             {
                 foreach (var check in profile.CheckList)
                 {
@@ -53,7 +54,10 @@ namespace HomaGames.GameDoctor.Ui
             CheckUiData uiData = GetUiData(check);
 
             var containsIssues = check.CheckResult != null && !check.CheckResult.Passed;
-            DrawFoldoutTreeElement(uiData, check.Name, check.GetPriorityCount(), () =>
+            GUIContent nodeContent = new GUIContent(
+                " " /* NBSP */ + check.Name, 
+                check.CheckResult?.Passed == true ? FixedColoredTexture : CheckTexture);
+            DrawFoldoutTreeElement(uiData, nodeContent, check.GetPriorityCount(), () =>
             {
 
                 if (check.CheckResult != null)
@@ -66,14 +70,14 @@ namespace HomaGames.GameDoctor.Ui
             }, containsIssues, containsIssues && check.Importance == ImportanceType.Mandatory);
         }
 
-        private void DrawFoldoutTreeElement(BaseFoldoutUiData uiData, string nodeName, PriorityCount priorityCount,
+        private void DrawFoldoutTreeElement(BaseFoldoutUiData uiData, GUIContent nodeContent, PriorityCount priorityCount,
             Action drawInside, bool drawAsFoldout = true, bool drawMandatory = false)
         {
             DrawNodeBefore(uiData);
             if (drawAsFoldout)
-                uiData.Expanded.target = EditorGUILayout.Foldout(uiData.Expanded.target, nodeName);
+                uiData.Expanded.target = EditorGUILayout.Foldout(uiData.Expanded.target, nodeContent);
             else
-                EditorGUILayout.LabelField(nodeName);
+                EditorGUILayout.LabelField(nodeContent);
             
             if (drawMandatory)
             {
@@ -140,9 +144,10 @@ namespace HomaGames.GameDoctor.Ui
             {
                 DrawNodeBefore(uiData);
                 
-                GUIContent issueContent = new GUIContent(" " /* NBSP */ + issue.Name);
-                if (uiData.Fixed) issueContent.image = FixedColoredTexture;
-                
+                GUIContent issueContent = new GUIContent(
+                    " " /* NBSP */ + issue.Name, 
+                    uiData.Fixed ? FixedColoredTexture : GetTextureFor(issue.AutomationType));
+
                 EditorGUILayout.LabelField(issueContent);
 
                 var priorityIconGUIStyle = new GUIStyle(GUIStyle.none) { margin = new RectOffset(0, 7, 0, 0)};

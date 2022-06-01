@@ -95,6 +95,16 @@ namespace HomaGames.GameDoctor.Ui
                     Name = "LowPriorityIconWhite",
                     Setter = (window, texture) => window.LowPriorityWhiteTexture = texture
                 },
+                new TextureToLoad
+                {
+                    Name = "ProfileIcon",
+                    Setter = (window, texture) => window.ProfileTexture = texture
+                },
+                new TextureToLoad
+                {
+                    Name = "CheckIcon",
+                    Setter = (window, texture) => window.CheckTexture = texture
+                },
             };
             
             var window = GetWindow<SplitViewWindow>();
