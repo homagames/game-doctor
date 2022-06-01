@@ -45,6 +45,8 @@ namespace HomaGames.GameDoctor.Ui
         // TODO: have a proper initialization method
         private void OnEnable()
         {
+            this.titleContent = new GUIContent("Game Doctor");
+            
             Profile.CheckList.AddRange(new []{new SimpleCheck(
                 async () =>
                 {
