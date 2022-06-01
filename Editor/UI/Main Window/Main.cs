@@ -141,11 +141,11 @@ namespace HomaGames.GameDoctor.Ui
             {
                 default:
                 case Priority.Low:
-                    return new GUIContent("Low", LowPriorityWhiteTexture);
+                    return new GUIContent(" " /* NBSP */ + "Low", LowPriorityWhiteTexture);
                 case Priority.Medium:
-                    return new GUIContent("Medium", MediumPriorityWhiteTexture);
+                    return new GUIContent(" " /* NBSP */ + "Medium", MediumPriorityWhiteTexture);
                 case Priority.High:
-                    return new GUIContent("High", HighPriorityWhiteTexture);
+                    return new GUIContent(" " /* NBSP */ + "High", HighPriorityWhiteTexture);
             }
         }
         
@@ -183,9 +183,9 @@ namespace HomaGames.GameDoctor.Ui
             {
                 default:
                 case AutomationType.Interactive:
-                    return new GUIContent("Interactive", InteractiveTexture);
+                    return new GUIContent(" " /* NBSP */ + "Interactive", InteractiveTexture);
                 case AutomationType.Automatic:
-                    return new GUIContent("Automatic", AutomaticTexture);
+                    return new GUIContent(" " /* NBSP */ + "Automatic", AutomaticTexture);
             }
         }
     }
