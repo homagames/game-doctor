@@ -17,6 +17,20 @@ namespace HomaGames.GameDoctor.Ui
             };
         }
     }
+    
+    public struct AutomationCount
+    {
+        public int Automatic, Interactive;
+
+        public static AutomationCount operator+(AutomationCount p1, AutomationCount p2)
+        {
+            return new AutomationCount
+            {
+                Automatic = p1.Automatic + p2.Automatic,
+                Interactive = p1.Interactive + p2.Interactive
+            };
+        }
+    }
 
     public static class ModelUiExtension
     {
@@ -44,6 +58,35 @@ namespace HomaGames.GameDoctor.Ui
                             break;
                         case Priority.High:
                             output.High += 1;
+                            break;
+                    }
+                }
+            }
+
+            return output;
+        }
+
+        public static AutomationCount GetAutomationCount(this IValidationProfile profile)
+        {
+            return profile.CheckList.Select(GetAutomationCount).Aggregate((count1, count2) => count1 + count2);
+        }
+
+        public static AutomationCount GetAutomationCount(this ICheck check)
+        {
+            AutomationCount output = new AutomationCount();
+        
+            if (check.CheckResult != null)
+            {
+                foreach (var issue in check.CheckResult.Issues)
+                {
+                    switch (issue.AutomationType)
+                    {
+                        default:
+                        case AutomationType.Automatic:
+                            output.Automatic += 1;
+                            break;
+                        case AutomationType.Interactive:
+                            output.Interactive += 1;
                             break;
                     }
                 }

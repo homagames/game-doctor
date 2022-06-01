@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
+using JetBrains.Annotations;
 using UnityEditor;
-using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
@@ -22,98 +21,17 @@ namespace HomaGames.GameDoctor.Ui
         private IValidationProfile Profile = new ValidationProfile();
 
         private SeparatedViewData SeparatedViewData;
-        private Vector2 SecondViewScroll;
-
-        #region UI Data
-        private abstract class BaseUiData
-        {
-            protected readonly SplitViewWindow Window;
         
-            private bool _selected;
-            public bool Selected
-            {
-                get => _selected;
-                set
-                {
-                    if (value)
-                    {
-                        foreach (var otherData in Window.GetAllUiData().Where(data => data != this))
-                        {
-                            otherData.Selected = false;
-                        }
-                    }
-
-                    _selected = value;
-                }
-            }
-
-            protected BaseUiData(SplitViewWindow window)
-            {
-                Window = window;
-            }
-        }
-    
-        private abstract class BaseFoldoutUiData : BaseUiData
-        {
-            public readonly AnimBool Expanded = new AnimBool(true);
+        private Texture2D MandatoryTexture;
         
-            protected BaseFoldoutUiData(SplitViewWindow window) : base(window)
-            {
-                Expanded.valueChanged.AddListener(window.Repaint);
-            }
-        }
-    
-        private class ProfileUiData : BaseFoldoutUiData
-        {
-            public ProfileUiData(SplitViewWindow window) : base(window)
-            {
-            }
-        }
-    
-        private class CheckUiData : BaseFoldoutUiData
-        {
-            public CheckUiData(SplitViewWindow window) : base(window)
-            {
-            }
-        }
-
-        private class IssueUiData : BaseUiData
-        {
-            public bool Hidden;
+        private Texture2D HighPriorityTexture;
+        private Texture2D MediumPriorityTexture;
+        private Texture2D LowPriorityTexture;
         
-            public IssueUiData(SplitViewWindow window) : base(window)
-            {
-            }
-        }
-
-        private readonly Dictionary<IValidationProfile, ProfileUiData> ProfileUiDataBank = new Dictionary<IValidationProfile, ProfileUiData>();
-        private readonly Dictionary<ICheck, CheckUiData> CheckUiDataBank = new Dictionary<ICheck, CheckUiData>();
-        private readonly Dictionary<IIssue, IssueUiData> IssueUiDataBank = new Dictionary<IIssue, IssueUiData>();
-
-        private TValue TryGetOrCreate<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key, Func<TValue> creator)
-        {
-            if (dictionary.TryGetValue(key, out var output))
-                return output;
-
-            output = creator.Invoke();
-            dictionary[key] = output;
-            return output;
-        }
-
-        private ProfileUiData GetUiData(IValidationProfile profile)
-            => TryGetOrCreate(ProfileUiDataBank, profile, () => new ProfileUiData(this));
-
-        private CheckUiData GetUiData(ICheck check)
-            => TryGetOrCreate(CheckUiDataBank, check, () => new CheckUiData(this));
-
-        private IssueUiData GetUiData(IIssue issue)
-            => TryGetOrCreate(IssueUiDataBank, issue, () => new IssueUiData(this));
-
-        private IEnumerable<BaseUiData> GetAllUiData()
-        {
-            return ProfileUiDataBank.Values.Union<BaseUiData>(CheckUiDataBank.Values).Union(IssueUiDataBank.Values);
-        }
-        #endregion
+        private Texture2D AutomaticTexture;
+        private Texture2D InteractiveTexture;
+        
+        private Texture2D FixedTexture;
 
         [MenuItem("Test/Split View")]
         public static void Init()
@@ -132,9 +50,9 @@ namespace HomaGames.GameDoctor.Ui
                     {
                         Issues = new List<IIssue>
                         {
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 1", "description 1"),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 2", ""),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", ""),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 1", "description 1", AutomationType.Automatic, Priority.High),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 2", "", AutomationType.Automatic, Priority.Medium),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", "", AutomationType.Automatic, Priority.Low),
                         }
                     };
                 }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
@@ -149,6 +67,13 @@ namespace HomaGames.GameDoctor.Ui
                 "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/MediumPriorityIconPro.png");
             LowPriorityTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
                 "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/LowPriorityIconPro.png");
+            InteractiveTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
+                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/InteractiveIconPro.png");
+            AutomaticTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
+                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/AutomaticIconPro.png");
+            
+            FixedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
+                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/FixedIcon.png");
         }
 
         void OnGUI()
@@ -173,5 +98,89 @@ namespace HomaGames.GameDoctor.Ui
 
         // This method returns a valid value only on EventType.Repaint events
         private float GetCurrentLayoutWidth() => EditorGUILayout.GetControlRect(false, 0, GUIStyle.none).width;
+        
+        private IEnumerable<IIssue> GetAllIssues()
+        {
+            return Profile.CheckList.SelectMany(check => check.CheckResult?.Issues ?? Enumerable.Empty<IIssue>());
+        }
+
+        [CanBeNull]
+        private object GetSelectedElement()
+        {
+            foreach (var profileUiDataPair in ProfileUiDataBank)
+            {
+                if (profileUiDataPair.Value.Selected)
+                    return profileUiDataPair.Key;
+            }
+            
+            foreach (var checkUiDataPair in CheckUiDataBank)
+            {
+                if (checkUiDataPair.Value.Selected)
+                    return checkUiDataPair.Key;
+            }
+            
+            foreach (var issueUiDataPair in IssueUiDataBank)
+            {
+                if (issueUiDataPair.Value.Selected)
+                    return issueUiDataPair.Key;
+            }
+
+            return null;
+        }
+        
+        
+        private GUIContent GetGuiContentFor(Priority priority)
+        {
+            switch (priority)
+            {
+                default:
+                case Priority.Low:
+                    return new GUIContent("Low", LowPriorityTexture);
+                case Priority.Medium:
+                    return new GUIContent("Medium", MediumPriorityTexture);
+                case Priority.High:
+                    return new GUIContent("High", HighPriorityTexture);
+            }
+        }
+        
+        private Texture2D GetTextureFor(Priority priority)
+        {
+            switch (priority)
+            {
+                default:
+                case Priority.Low:
+                    return LowPriorityTexture;
+                case Priority.Medium:
+                    return MediumPriorityTexture;
+                case Priority.High:
+                    return HighPriorityTexture;
+            }
+        }
+        
+        private Color GetColorFor(Priority priority)
+        {
+            switch (priority)
+            {
+                default:
+                case Priority.Low:
+                    return LowPriorityColor;
+                case Priority.Medium:
+                    return MediumPriorityColor;
+                case Priority.High:
+                    return HighPriorityColor;
+            }
+        }
+
+        private GUIContent GetGuiContentFor(AutomationType automationType)
+        {
+            switch (automationType)
+            {
+                default:
+                case AutomationType.Interactive:
+                    return new GUIContent("Interactive", InteractiveTexture);
+                case AutomationType.Automatic:
+                    return new GUIContent("Automatic", AutomaticTexture);
+            }
+        }
     }
 }

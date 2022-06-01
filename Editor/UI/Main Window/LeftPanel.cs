@@ -10,20 +10,14 @@ namespace HomaGames.GameDoctor.Ui
         private Vector2 FirstViewScroll;
         private float ScrollbarSize;
         
-        private bool ShowHiddenIssues;
+        private bool HideFixedIssues;
         private string SearchString;
-
-        private Texture2D MandatoryTexture;
-        
-        private Texture2D HighPriorityTexture;
-        private Texture2D MediumPriorityTexture;
-        private Texture2D LowPriorityTexture;
 
         private void DrawLeftPanel()
         {
             EditorGUILayoutExtension.BeginToolBar();
             SearchString = EditorGUILayoutExtension.ToolBarSearchBar(SearchString, GUILayout.ExpandWidth(true));
-            ShowHiddenIssues = EditorGUILayoutExtension.ToolBarToggle(ShowHiddenIssues, "Show hidden");
+            HideFixedIssues = EditorGUILayoutExtension.ToolBarToggle(HideFixedIssues, "Hide fixed");
             EditorGUILayoutExtension.EndToolBar();
 
             EditorGUILayoutExtension.BeginToolBar();
@@ -142,17 +136,21 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawNode(IIssue issue)
         {
             IssueUiData uiData = GetUiData(issue);
-            if (ShowHiddenIssues || !uiData.Hidden)
+            if (!HideFixedIssues || !uiData.Fixed)
             {
                 DrawNodeBefore(uiData);
-                EditorGUILayout.LabelField(issue.Name);
+                
+                GUIContent issueContent = new GUIContent(" " /* NBSP */ + issue.Name);
+                if (uiData.Fixed) issueContent.image = FixedTexture;
+                
+                EditorGUILayout.LabelField(issueContent);
 
                 var priorityIconGUIStyle = new GUIStyle(GUIStyle.none) { margin = new RectOffset(0, 7, 0, 0)};
                 GUI.DrawTexture(
                     EditorGUILayout.GetControlRect(
                         false, EditorGUIUtility.singleLineHeight, 
                         priorityIconGUIStyle, GUILayout.Width(16)), 
-                    HighPriorityTexture);
+                    GetTextureFor(issue.Priority));
                 
                 DrawNodeAfter(uiData);
             }

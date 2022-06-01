@@ -5,7 +5,7 @@ using HomaGames.GameDoctor.Core;
 public class ValidationProfile : IValidationProfile
 {
     public string Name => "Profile";
-    public string Description => "Desc";
+    public string Description => "Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc Desc ";
     public List<ICheck> CheckList { get; set; } = new List<ICheck>();
     public async Task Check()
     {

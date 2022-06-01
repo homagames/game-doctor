@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
 using UnityEditor;
@@ -35,14 +36,20 @@ namespace HomaGames.GameDoctor.Ui
             };
 
             AutoFixToggle = GUILayout.Toggle(AutoFixToggle, "Auto-Fix", new GUIStyle(controlStyle) {margin = {right = 0}});
-            if (GUILayout.Button("Scan", new GUIStyle(controlStyle) {margin = {left = 0}}))
+            if (GUILayout.Button("Run all Checks", new GUIStyle(controlStyle) {margin = {left = 0}}))
             {
-                Scan();
+                if (AutoFixToggle)
+                    RunAllChecksAndFix();
+                else
+                    RunAllChecks();
             }
             GUILayout.Space(15);
         
-            GUI.enabled = false;
-            GUILayout.Button("Fix Auto. issues", new GUIStyle(controlStyle));
+            GUI.enabled = GetAllIssues().Any(issue => issue.AutomationType == AutomationType.Automatic && !GetUiData(issue).Fixed);
+            if (GUILayout.Button("Fix Auto. issues", new GUIStyle(controlStyle)))
+            {
+                FixAllAutoIssues();
+            }
             GUI.enabled = true;
         
             GUILayout.EndHorizontal();
@@ -50,36 +57,6 @@ namespace HomaGames.GameDoctor.Ui
 
             if (Event.current.type == EventType.Repaint) 
                 HeaderSize = Mathf.CeilToInt(labelRect.height) + 2 * padding + titleGuiStyle.margin.top + titleGuiStyle.margin.bottom;
-        }
-
-        private async Task Scan()
-        {
-            List<ICheck> checks = Profile.CheckList;
-
-            float maxI = checks.Count;
-            string scanWindowTitle = "Executing all checks";
-            string scanWindowContent = "Looking for issues in the project";
-
-            try
-            {
-                EditorUtility.DisplayProgressBar(scanWindowTitle, scanWindowContent, 0);
-                for (int i = 0; i < maxI; i++)
-                {
-                    try
-                    {
-                        await checks[i].Execute();
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError($"Exception when running \"{checks[i].Name}\" check:\n{e}");
-                    }
-                    EditorUtility.DisplayProgressBar(scanWindowTitle, scanWindowContent, i / maxI);
-                }
-            }
-            finally
-            {
-                EditorUtility.ClearProgressBar();
-            }
         }
     }
 }
