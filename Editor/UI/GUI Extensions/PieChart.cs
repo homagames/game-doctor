@@ -141,7 +141,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             const float spacingBetweenArcs = 5;
             float totalValue = values.Select(v => v.Value).Sum();
-            Vector3 currentPieVector = Vector3.up;
+            Vector3 currentPieVector = Vector3.down; // Vector3.down is up in window space
             var drawRadius = (chartSize - thickness) / 2;
 
             foreach (var value in values)
@@ -151,9 +151,9 @@ namespace HomaGames.GameDoctor.Ui
                 Handles.color = value.Color;
 
                 float drawAngle = angle - spacingBetweenArcs;
-                HandlesDrawWireArc(pieCenter, Vector3.back, currentPieVector, drawAngle, drawRadius, thickness);
+                HandlesDrawWireArc(pieCenter, Vector3.forward, currentPieVector, drawAngle, drawRadius, thickness);
 
-                currentPieVector = Quaternion.AngleAxis(angle, Vector3.back) * currentPieVector;
+                currentPieVector = Quaternion.AngleAxis(angle, Vector3.forward) * currentPieVector;
             }
         }
 
