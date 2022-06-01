@@ -89,25 +89,32 @@ namespace HomaGames.GameDoctor.Ui
                     Label = "Failed checks"
                 });
         
-            EditorGUIExtension.DrawPieChart(secondPieChartRect, 
-                new EditorGUIExtension.PieChartValue
-                {
-                    Value = highPriorityIssueCount,
-                    Color = HighPriorityColor,
-                    Label = "High priority"
-                },
-                new EditorGUIExtension.PieChartValue
-                {
-                    Value = mediumPriorityIssueCount,
-                    Color = MediumPriorityColor,
-                    Label = "Medium priority"
-                },
-                new EditorGUIExtension.PieChartValue
-                {
-                    Value = lowPriorityIssueCount,
-                    Color = LowPriorityColor,
-                    Label = "Low priority"
-                });
+            if (highPriorityIssueCount + mediumPriorityIssueCount + lowPriorityIssueCount > 0)
+            {
+                EditorGUIExtension.DrawPieChart(secondPieChartRect,
+                    new EditorGUIExtension.PieChartValue
+                    {
+                        Value = highPriorityIssueCount,
+                        Color = HighPriorityColor,
+                        Label = "High priority"
+                    },
+                    new EditorGUIExtension.PieChartValue
+                    {
+                        Value = mediumPriorityIssueCount,
+                        Color = MediumPriorityColor,
+                        Label = "Medium priority"
+                    },
+                    new EditorGUIExtension.PieChartValue
+                    {
+                        Value = lowPriorityIssueCount,
+                        Color = LowPriorityColor,
+                        Label = "Low priority"
+                    });
+            }
+            else
+            {
+                GUI.Label(secondPieChartRect, "No issue found, well done!");
+            }
         }
     }
 }
