@@ -14,9 +14,9 @@ namespace HomaGames.GameDoctor.Ui
         private const int LowerNodeMargin = 7;
         private static readonly float TotalNodeSize = UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
         
-        private static readonly Color HighPriorityColor = new Color(0f, 0f, 0.49f);
-        private static readonly Color MediumPriorityColor = Color.red;
-        private static readonly Color LowPriorityColor = Color.yellow;
+        private static Color HighPriorityColor => EditorGUIUtility.isProSkin ? new Color(0.25f, 0.23f, 0.8f) : new Color(0f, 0f, 0.49f);
+        private static Color MediumPriorityColor => Color.red;
+        private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(0.87f, 1f, 0.31f);
 
         private IValidationProfile Profile = new ValidationProfile();
 
@@ -28,16 +28,16 @@ namespace HomaGames.GameDoctor.Ui
         private Texture2D MediumPriorityTexture;
         private Texture2D LowPriorityTexture;
         
+        private Texture2D HighPriorityWhiteTexture;
+        private Texture2D MediumPriorityWhiteTexture;
+        private Texture2D LowPriorityWhiteTexture;
+        
         private Texture2D AutomaticTexture;
         private Texture2D InteractiveTexture;
         
         private Texture2D FixedTexture;
-
-        [MenuItem("Test/Split View")]
-        public static void Init()
-        {
-            GetWindow<SplitViewWindow>().Show();
-        }
+        private Texture2D FixedColoredTexture;
+        private Texture2D FixedWhiteTexture;
 
         // TODO: have a proper initialization method
         private void OnEnable()
@@ -58,22 +58,7 @@ namespace HomaGames.GameDoctor.Ui
                 }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
             ));
 
-            MandatoryTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/MandatoryIcon.png");
             
-            HighPriorityTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/HighPriorityIconPro.png");
-            MediumPriorityTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/MediumPriorityIconPro.png");
-            LowPriorityTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/LowPriorityIconPro.png");
-            InteractiveTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/InteractiveIconPro.png");
-            AutomaticTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/AutomaticIconPro.png");
-            
-            FixedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                "Assets/Doctor/hg-mobile-unitypackage-game-doctor/Editor/UI/Main Window/Icons/FixedIcon.png");
         }
 
         void OnGUI()
@@ -127,19 +112,18 @@ namespace HomaGames.GameDoctor.Ui
 
             return null;
         }
-        
-        
-        private GUIContent GetGuiContentFor(Priority priority)
+         
+        private GUIContent GetColorableGuiContentFor(Priority priority)
         {
             switch (priority)
             {
                 default:
                 case Priority.Low:
-                    return new GUIContent("Low", LowPriorityTexture);
+                    return new GUIContent("Low", LowPriorityWhiteTexture);
                 case Priority.Medium:
-                    return new GUIContent("Medium", MediumPriorityTexture);
+                    return new GUIContent("Medium", MediumPriorityWhiteTexture);
                 case Priority.High:
-                    return new GUIContent("High", HighPriorityTexture);
+                    return new GUIContent("High", HighPriorityWhiteTexture);
             }
         }
         

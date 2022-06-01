@@ -141,7 +141,7 @@ namespace HomaGames.GameDoctor.Ui
                 DrawNodeBefore(uiData);
                 
                 GUIContent issueContent = new GUIContent(" " /* NBSP */ + issue.Name);
-                if (uiData.Fixed) issueContent.image = FixedTexture;
+                if (uiData.Fixed) issueContent.image = FixedColoredTexture;
                 
                 EditorGUILayout.LabelField(issueContent);
 

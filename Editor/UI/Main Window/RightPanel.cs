@@ -145,7 +145,7 @@ namespace HomaGames.GameDoctor.Ui
 
             if (issueUiData.Fixed)
             {
-                EditorGUILayoutExtension.ColorLabel(new GUIContent(" " /* NBSP */ + "Fixed", FixedTexture), new Color(0.1f, 0.7f, 0.1f));
+                EditorGUILayoutExtension.ColorLabel(new GUIContent(" " /* NBSP */ + "Fixed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
             }
             
             EditorGUILayout.Space(20);
@@ -153,7 +153,7 @@ namespace HomaGames.GameDoctor.Ui
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Priority:", GUILayout.Width(45));
             Color priorityColorLabel = GetColorFor(issue.Priority) * 0.5f + GUI.color * 0.5f;
-            EditorGUILayoutExtension.ColorLabel(GetGuiContentFor(issue.Priority), priorityColorLabel, GUILayout.ExpandWidth(false));
+            EditorGUILayoutExtension.ColorLabel(GetColorableGuiContentFor(issue.Priority), priorityColorLabel, GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
             
             GUILayout.BeginHorizontal();

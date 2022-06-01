@@ -73,19 +73,19 @@ namespace HomaGames.GameDoctor.Ui
                 new EditorGUIExtension.PieChartValue
                 {
                     Value = passedCheckCount,
-                    Color = new Color(0.18f, 0.88f, 0.85f),
+                    Color = new Color(0.1f, 0.38f, 0.88f),
                     Label = "Passed Checks"
                 },
                 new EditorGUIExtension.PieChartValue
                 {
                     Value = autoFixableCheckCount,
-                    Color = Color.yellow,
+                    Color = new Color(0.16f, 0.77f, 0.15f),
                     Label = "Auto-fixable checks"
                 },
                 new EditorGUIExtension.PieChartValue
                 {
                     Value = failedCheckCount,
-                    Color = Color.magenta,
+                    Color = new Color(1f, 0.29f, 0.25f),
                     Label = "Failed checks"
                 });
         
