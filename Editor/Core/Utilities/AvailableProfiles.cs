@@ -49,7 +49,7 @@ namespace HomaGames.GameDoctor.Core
         [PublicAPI]
         public static IValidationProfile GetDefaultValidationProfile()
         {
-            if (TryGetValidationProfileByName("Default Validation Profile", out IValidationProfile validationProfile))
+            if (TryGetValidationProfileByName(DefaultValidationProfile.DefaultValidationProfileName, out IValidationProfile validationProfile))
                 return validationProfile;
             DefaultValidationProfile defaultValidationProfile = new DefaultValidationProfile();
             RegisterValidationProfile(defaultValidationProfile);

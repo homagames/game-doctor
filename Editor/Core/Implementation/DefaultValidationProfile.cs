@@ -7,7 +7,8 @@ namespace HomaGames.GameDoctor.Core
     /// </summary>
     public class DefaultValidationProfile : BaseValidationProfile
     {
-        public DefaultValidationProfile() : base("Default Validation Profile",
+        public const string DefaultValidationProfileName = "Default Validation Profile";
+        public DefaultValidationProfile() : base(DefaultValidationProfileName,
             "Default Validation Profile with selectable tags.")
         {
             
