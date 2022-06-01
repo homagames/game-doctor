@@ -42,7 +42,7 @@ namespace HomaGames.GameDoctor.Ui
         // TODO: have a proper initialization method
         private void OnEnable()
         {
-            Profile.CheckList.Add(new SimpleCheck(
+            Profile.CheckList.AddRange(new []{new SimpleCheck(
                 async () =>
                 {
                     await Task.Delay(1000);
@@ -56,7 +56,29 @@ namespace HomaGames.GameDoctor.Ui
                         }
                     };
                 }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
-            ));
+            ),new SimpleCheck(
+                async () =>
+                {
+                    await Task.Delay(1000);
+                    return new CheckResult
+                    {
+                        Issues = new List<IIssue>
+                        {
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 1", "description 1", AutomationType.Interactive, Priority.High),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 2", "", AutomationType.Interactive, Priority.Medium),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", "", AutomationType.Interactive, Priority.Low),
+                        }
+                    };
+                }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
+            ),new SimpleCheck(
+                async () =>
+                {
+                    await Task.Delay(1000);
+                    return new CheckResult
+                    {
+                    };
+                }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
+            )});
 
             
         }
