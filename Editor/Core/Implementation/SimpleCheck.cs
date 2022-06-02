@@ -8,7 +8,7 @@ namespace HomaGames.GameDoctor.Core
     {
         private readonly Func<Task<CheckResult>> checkFunc;
 
-        public SimpleCheck(Func<Task<CheckResult>> check, string name, string description, List<string> tags,
+        public SimpleCheck(Func<Task<CheckResult>> check, string name, string description, HashSet<string> tags,
             ImportanceType importance = ImportanceType.Advised, Priority priority = Priority.Medium) : base(name,
             description, tags, importance, priority)
         {

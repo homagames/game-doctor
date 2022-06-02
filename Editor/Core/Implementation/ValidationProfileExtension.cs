@@ -30,6 +30,19 @@ namespace HomaGames.GameDoctor.Core
                 validationProfile.CheckList.AddRange(AvailableChecks.GetAllChecksWithTag(tag));
             }
         }
+        
+        /// <summary>
+        /// Removes from the ValidationProfile all registered checks in <see cref="AvailableChecks"/> with specific tags.
+        /// </summary>
+        /// <param name="validationProfile"></param>
+        /// <param name="checksTags">Checks tag filter</param>
+        public static void RemoveChecks(this IValidationProfile validationProfile, params string[] checksTags)
+        {
+            foreach (var tag in checksTags)
+            {
+                validationProfile.CheckList.RemoveAll(c => c.Tags.Contains(tag));
+            }
+        }
 
         /// <summary>
         /// Register to this event to get a callback whenever an issue is fixed in the ValidationProfile.
