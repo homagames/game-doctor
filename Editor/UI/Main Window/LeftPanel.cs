@@ -13,7 +13,18 @@ namespace HomaGames.GameDoctor.Ui
         private float ScrollbarSize;
         
         private bool HideFixedIssues;
-        private string SearchString;
+
+        private string _searchString = string.Empty;
+        private string[] SearchWords;
+        private string SearchString
+        {
+            get => _searchString;
+            set
+            {
+                _searchString = value ?? string.Empty;
+                SearchWords = _searchString?.Split(" ");
+            }
+        }
 
         private LeftPanelSortBy SortOrder = LeftPanelSortBy.Default;
         private enum LeftPanelSortBy
@@ -67,7 +78,7 @@ namespace HomaGames.GameDoctor.Ui
             GUIContent nodeContent = new GUIContent(" " /* NBSP */ + profile.Name, ProfileTexture);
             DrawFoldoutTreeElement(uiData, nodeContent, profile.GetPriorityCount(), () =>
             {
-                foreach (var check in SortForLeftPanel(profile.CheckList))
+                foreach (var check in Filter(SortForLeftPanel(profile.CheckList)))
                 {
                     DrawNode(check);
                 }
@@ -78,16 +89,16 @@ namespace HomaGames.GameDoctor.Ui
         {
             CheckUiData uiData = GetUiData(check);
 
-            var containsIssues = check.CheckResult != null && !check.CheckResult.Passed;
+            var containsIssues = check.CheckResult?.Passed != true;
             GUIContent nodeContent = new GUIContent(
                 " " /* NBSP */ + check.Name, 
-                check.CheckResult?.Passed == true ? FixedColoredTexture : CheckTexture);
+                !containsIssues ? FixedColoredTexture : CheckTexture);
             DrawFoldoutTreeElement(uiData, nodeContent, check.GetPriorityCount(), () =>
             {
 
                 if (check.CheckResult != null)
                 {
-                    foreach (var issue in SortForLeftPanel(check.CheckResult.Issues))
+                    foreach (var issue in Filter(SortForLeftPanel(check.CheckResult.Issues)))
                     {
                         DrawNode(issue);
                     }
@@ -224,6 +235,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
 
+        #region Sorting
         private IEnumerable<ICheck> SortForLeftPanel(IEnumerable<ICheck> checkList)
         {
             List<ICheck> output = new List<ICheck>(checkList);
@@ -333,5 +345,99 @@ namespace HomaGames.GameDoctor.Ui
 
             return output;
         }
+        #endregion
+
+        #region Filtering
+        private const float RELEVANCE_RATIO_MINIMUM = 0.7f;
+        
+        private IEnumerable<ICheck> Filter(IEnumerable<ICheck> checkList)
+        {
+            return checkList.Where(check =>
+            {
+                if (!string.IsNullOrWhiteSpace(SearchString))
+                {
+                    if (! MatchSearchString(check.Name))
+                    {
+                        if (check.CheckResult == null
+                            || !Filter(check.CheckResult.Issues).Any())
+                            return false;
+                    }
+                }
+                
+                return true;
+            });
+        }
+        
+        private IEnumerable<IIssue> Filter(IEnumerable<IIssue> issueList)
+        {
+            return issueList.Where(issue =>
+            {
+                if (!string.IsNullOrWhiteSpace(SearchString))
+                {
+                    if (! MatchSearchString(issue.Name))
+                    {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+        }
+
+        private bool MatchSearchString(string input)
+        {
+            int relevance = ComputeRelevance(SearchWords, input);
+            return relevance / (float) SearchString.Length >= RELEVANCE_RATIO_MINIMUM;
+        }
+        
+        private int ComputeRelevance(string[] searchWords, string input) 
+        {
+            string[] dishNameWords = input.ToLower().Split(" ");
+            int relevance = 0;
+
+            foreach (string searchWord in searchWords)
+                relevance += computeRelevanceForWord(searchWord, dishNameWords);
+
+            return relevance;
+        }
+
+        private int computeRelevanceForWord(string wordToSearch, IEnumerable<string> dishNameWords)
+        {
+            int finalScore = 0;
+
+            foreach (string dishNameWord in dishNameWords) {
+                int currentScore = maxOccurrence(wordToSearch, dishNameWord);
+
+                if (currentScore > finalScore)
+                    finalScore = currentScore;
+            }
+
+
+            return finalScore;
+        }
+
+        private int maxOccurrence(string contained, string container) 
+        {
+            int longestOccurrence = 0;
+
+            for (int i = 0; i < container.Length; i++) {
+
+                int currentOccurrence = 0;
+
+                for (int i2 = 0; i2 < contained.Length && i2 + i < container.Length; i2++) {
+
+                    if (contained[i2] == container[i + i2]) {
+                        currentOccurrence++;
+                    }
+                }
+
+                if (currentOccurrence > longestOccurrence) {
+                    longestOccurrence = currentOccurrence;
+                }
+            }
+
+            return longestOccurrence;
+        }
+        #endregion
     }
 }
