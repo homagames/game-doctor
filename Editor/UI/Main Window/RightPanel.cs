@@ -96,6 +96,11 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(20);
             
             EditorGUILayout.LabelField(check.Name, TitleGuiStyle, GUILayout.Height(TitleGuiStyle.fontSize));
+
+            if (check.CheckResult?.Passed == true)
+            {
+                EditorGUILayoutExtension.ColorLabel(new GUIContent(" " /* NBSP */ + "Passed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
+            }
             
             EditorGUILayout.Space(20);
 
