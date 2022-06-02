@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
 {
-    public partial class SplitViewWindow
+    public partial class GameDoctorWindow
     {
     
         private void DrawFooter(float footerSize)

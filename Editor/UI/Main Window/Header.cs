@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
 {
-    public partial class SplitViewWindow
+    public partial class GameDoctorWindow
     {
         private bool AutoFixToggle;
         private float HeaderSize;

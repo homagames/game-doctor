@@ -6,11 +6,11 @@ using UnityEditor.AnimatedValues;
 
 namespace HomaGames.GameDoctor.Ui
 {
-    public partial class SplitViewWindow
+    public partial class GameDoctorWindow
     {
         private abstract class BaseUiData
         {
-            protected readonly SplitViewWindow Window;
+            protected readonly GameDoctorWindow Window;
 
             private bool _selected;
 
@@ -31,7 +31,7 @@ namespace HomaGames.GameDoctor.Ui
                 }
             }
 
-            protected BaseUiData(SplitViewWindow window)
+            protected BaseUiData(GameDoctorWindow window)
             {
                 Window = window;
             }
@@ -41,7 +41,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             public readonly AnimBool Expanded = new AnimBool(true);
 
-            protected BaseFoldoutUiData(SplitViewWindow window) : base(window)
+            protected BaseFoldoutUiData(GameDoctorWindow window) : base(window)
             {
                 Expanded.valueChanged.AddListener(window.Repaint);
             }
@@ -49,14 +49,14 @@ namespace HomaGames.GameDoctor.Ui
 
         private class ProfileUiData : BaseFoldoutUiData
         {
-            public ProfileUiData(SplitViewWindow window) : base(window)
+            public ProfileUiData(GameDoctorWindow window) : base(window)
             {
             }
         }
 
         private class CheckUiData : BaseFoldoutUiData
         {
-            public CheckUiData(SplitViewWindow window) : base(window)
+            public CheckUiData(GameDoctorWindow window) : base(window)
             {
             }
         }
@@ -65,7 +65,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             public bool Fixed;
 
-            public IssueUiData(SplitViewWindow window) : base(window)
+            public IssueUiData(GameDoctorWindow window) : base(window)
             {
             }
         }

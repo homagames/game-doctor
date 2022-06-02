@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
 {
-    public partial class SplitViewWindow
+    public partial class GameDoctorWindow
     {
         private const string FIRST_FIXED_ISSUE_KEY = "game_doctor.first_issue_fixed";
         

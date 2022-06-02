@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using HomaGames.GameDoctor.Core;
 using UnityEditor;
 using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
 {
-    public partial class SplitViewWindow
+    public partial class GameDoctorWindow
     {
         private struct TextureToLoad
         {
             public string Name;
-            public Action<SplitViewWindow, Texture2D> Setter;
+            public Action<GameDoctorWindow, Texture2D> Setter;
 
-            public void Load(SplitViewWindow window, string textureFolderPath)
+            public void Load(GameDoctorWindow window, string textureFolderPath)
             {
                 Texture2D texture;
                 string regularPath = Path.Combine(textureFolderPath, Name + ".png");
@@ -28,8 +29,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
         
-        [MenuItem("Test/Split View")]
-        public static void Open()
+        public static void Open(IValidationProfile validationProfile)
         {
             string iconFolderPath = FolderLocator.GetFolder("GameDoctor.Icon");
 
@@ -107,12 +107,14 @@ namespace HomaGames.GameDoctor.Ui
                 },
             };
             
-            var window = GetWindow<SplitViewWindow>();
+            var window = GetWindow<GameDoctorWindow>();
 
             foreach (var icon in iconsToLoad)
             {
                 icon.Load(window, iconFolderPath);
             }
+
+            window.Profile = validationProfile;
             
             
             window.Show();

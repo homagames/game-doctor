@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
 {
-    public partial class SplitViewWindow
+    public partial class GameDoctorWindow
     {
         private Vector2 FirstViewScroll;
         private float ScrollbarSize;

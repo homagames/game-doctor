@@ -36,7 +36,7 @@ namespace HomaGames.GameDoctor.Ui
     {
         public static PriorityCount GetPriorityCount(this IValidationProfile profile)
         {
-            return profile.CheckList.Select(GetPriorityCount).Aggregate((count1, count2) => count1 + count2);
+            return profile.CheckList.Select(GetPriorityCount).Aggregate(new PriorityCount(), (count1, count2) => count1 + count2);
         }
     
         public static PriorityCount GetPriorityCount(this ICheck check)
@@ -68,7 +68,7 @@ namespace HomaGames.GameDoctor.Ui
 
         public static AutomationCount GetAutomationCount(this IValidationProfile profile)
         {
-            return profile.CheckList.Select(GetAutomationCount).Aggregate((count1, count2) => count1 + count2);
+            return profile.CheckList.Select(GetAutomationCount).Aggregate(new AutomationCount(), (count1, count2) => count1 + count2);
         }
 
         public static AutomationCount GetAutomationCount(this ICheck check)

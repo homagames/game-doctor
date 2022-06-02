@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
 {
-    public partial class SplitViewWindow : EditorWindow
+    public partial class GameDoctorWindow : EditorWindow
     {
         private const int UpperNodeMargin = 7;
         private const int LowerNodeMargin = 7;
@@ -18,7 +19,7 @@ namespace HomaGames.GameDoctor.Ui
         private static Color MediumPriorityColor => Color.red;
         private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(0.87f, 1f, 0.31f);
 
-        private IValidationProfile Profile = new ValidationProfile();
+        private IValidationProfile Profile;
 
         private SeparatedViewData SeparatedViewData;
         
@@ -45,51 +46,17 @@ namespace HomaGames.GameDoctor.Ui
         // TODO: have a proper initialization method
         private void OnEnable()
         {
-            this.titleContent = new GUIContent("Game Doctor");
-            
-            Profile.CheckList.AddRange(new []{new SimpleCheck(
-                async () =>
-                {
-                    await Task.Delay(1000);
-                    return new CheckResult
-                    {
-                        Issues = new List<IIssue>
-                        {
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 1", "description 1", AutomationType.Automatic, Priority.High),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 2", "", AutomationType.Automatic, Priority.Medium),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", "", AutomationType.Automatic, Priority.Low),
-                        }
-                    };
-                }, "Check 1", "description", new HashSet<string>(), ImportanceType.Advised
-            ),new SimpleCheck(
-                async () =>
-                {
-                    await Task.Delay(1000);
-                    return new CheckResult
-                    {
-                        Issues = new List<IIssue>
-                        {
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 2", "", AutomationType.Interactive, Priority.Low),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 1", "description 1", AutomationType.Interactive, Priority.Low),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", "", AutomationType.Interactive, Priority.High),
-                        }
-                    };
-                }, "Check 2", "description", new HashSet<string>(), ImportanceType.Mandatory
-            ),new SimpleCheck(
-                async () =>
-                {
-                    await Task.Delay(1000);
-                    return new CheckResult
-                    {
-                    };
-                }, "Check 1", "description", new HashSet<string>(), ImportanceType.Mandatory
-            )});
-
-            
+            titleContent = new GUIContent("Game Doctor");
         }
 
         void OnGUI()
         {
+            if (Profile == null)
+            {
+                Debug.LogError($"To open the Game Doctor window, use {nameof(GameDoctorWindow)}.{nameof(Open)}({nameof(IValidationProfile)})");
+                Close();
+            }
+            
             float footerSize = 150;
             DrawHeader();
 
