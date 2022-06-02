@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
 using NUnit.Framework;
@@ -81,10 +82,10 @@ namespace HomaGames.GameDoctor.Tests
 
             yield return TestUtils.AsIEnumerator(profile.Check());
             Assert.True(profile.CheckList.Count == 1);
-            Assert.True(profile.CheckList[0].CheckResult.Issues.Count == 1);
+            Assert.True(profile.CheckList.First().CheckResult.Issues.Count == 1);
             yield return TestUtils.AsIEnumerator(profile.Fix());
             Assert.True(profile.CheckList.Count == 1);
-            Assert.True(profile.CheckList[0].CheckResult.Issues.Count == (fixWorks ? 0 : 1));
+            Assert.True(profile.CheckList.First().CheckResult.Issues.Count == (fixWorks ? 0 : 1));
 
             if (fixWorks)
                 Assert.True(fixedIssues[0].Name == "Dummy Issue");
@@ -98,7 +99,7 @@ namespace HomaGames.GameDoctor.Tests
             yield return TestUtils.AsIEnumerator(profile.Check());
             Assert.True(profile.CheckList.Count == 1);
             if (fixWorks)
-                Assert.True(profile.CheckList[0].CheckResult.Issues.Count == 0);
+                Assert.True(profile.CheckList.First().CheckResult.Issues.Count == 0);
         }
 
         [Test]

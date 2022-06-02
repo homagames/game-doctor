@@ -27,7 +27,10 @@ namespace HomaGames.GameDoctor.Core
         {
             foreach (var tag in checksTags)
             {
-                validationProfile.CheckList.AddRange(AvailableChecks.GetAllChecksWithTag(tag));
+                foreach (var check in AvailableChecks.GetAllChecksWithTag(tag))
+                {
+                    validationProfile.CheckList.Add(check);
+                }
             }
         }
         
@@ -40,7 +43,7 @@ namespace HomaGames.GameDoctor.Core
         {
             foreach (var tag in checksTags)
             {
-                validationProfile.CheckList.RemoveAll(c => c.Tags.Contains(tag));
+                validationProfile.CheckList.RemoveWhere(c => c.Tags.Contains(tag));
             }
         }
 

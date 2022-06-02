@@ -22,7 +22,7 @@ namespace HomaGames.GameDoctor.Core
         /// <summary>
         /// The list of checks this profile contains.
         /// </summary>
-        List<ICheck> CheckList { get; }
+        HashSet<ICheck> CheckList { get; }
         /// <summary>
         /// Populates CheckResults for all Checks in the CheckList.
         /// </summary>
