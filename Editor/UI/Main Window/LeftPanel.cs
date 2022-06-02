@@ -12,7 +12,7 @@ namespace HomaGames.GameDoctor.Ui
         private Vector2 FirstViewScroll;
         private float ScrollbarSize;
         
-        private bool HideFixedIssues;
+        private bool HideFixed;
 
         private string _searchString = string.Empty;
         private string[] SearchWords;
@@ -36,7 +36,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             EditorGUILayoutExtension.BeginToolBar();
             SearchString = EditorGUILayoutExtension.ToolBarSearchBar(SearchString, GUILayout.ExpandWidth(true));
-            HideFixedIssues = EditorGUILayoutExtension.ToolBarToggle(HideFixedIssues, "Hide fixed");
+            HideFixed = EditorGUILayoutExtension.ToolBarToggle(HideFixed, "Hide fixed");
             EditorGUILayoutExtension.EndToolBar();
 
             EditorGUILayoutExtension.BeginToolBar();
@@ -176,7 +176,7 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawNode(IIssue issue)
         {
             IssueUiData uiData = GetUiData(issue);
-            if (!HideFixedIssues || !uiData.Fixed)
+            if (!HideFixed || !uiData.Fixed)
             {
                 DrawNodeBefore(uiData);
                 
@@ -354,6 +354,9 @@ namespace HomaGames.GameDoctor.Ui
         {
             return checkList.Where(check =>
             {
+                if (HideFixed && check.CheckResult?.Passed == true)
+                    return false;
+                    
                 if (!string.IsNullOrWhiteSpace(SearchString))
                 {
                     if (! MatchSearchString(check.Name))
