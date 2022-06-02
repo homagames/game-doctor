@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using HomaGames.GameDoctor.Core;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +15,12 @@ namespace HomaGames.GameDoctor.Ui
         private bool HideFixedIssues;
         private string SearchString;
 
+        private LeftPanelSortBy SortOrder = LeftPanelSortBy.Default;
+        private enum LeftPanelSortBy
+        {
+            Default, Mandatory, Name, HighPriority, MediumPriority, LowPriority
+        }
+
         private void DrawLeftPanel()
         {
             EditorGUILayoutExtension.BeginToolBar();
@@ -21,11 +29,28 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayoutExtension.EndToolBar();
 
             EditorGUILayoutExtension.BeginToolBar();
-            EditorGUILayoutExtension.ToolBarButton(new GUIContent(MandatoryTexture), GUILayout.MaxWidth(30));
-            EditorGUILayoutExtension.ToolBarButton("Name", GUILayout.ExpandWidth(true));
-            EditorGUILayoutExtension.ToolBarButton(new GUIContent(HighPriorityTexture), GUILayout.Width(TotalNodeSize));
-            EditorGUILayoutExtension.ToolBarButton(new GUIContent(MediumPriorityTexture), GUILayout.Width(TotalNodeSize));
-            EditorGUILayoutExtension.ToolBarButton(new GUIContent(LowPriorityTexture), GUILayout.Width(TotalNodeSize));
+            bool sortOrderSet = false;
+            
+            void SetSortOrder(LeftPanelSortBy newSortOrder)
+            {
+                SortOrder = newSortOrder;
+                sortOrderSet = true;
+            }
+            
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.Mandatory, new GUIContent(MandatoryTexture), GUILayout.MaxWidth(30)))
+                SetSortOrder(LeftPanelSortBy.Mandatory);
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.Name, "Name", GUILayout.ExpandWidth(true)))
+                SetSortOrder(LeftPanelSortBy.Name);
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.HighPriority, new GUIContent(HighPriorityTexture), GUILayout.Width(TotalNodeSize)))
+                SetSortOrder(LeftPanelSortBy.HighPriority);
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.MediumPriority, new GUIContent(MediumPriorityTexture), GUILayout.Width(TotalNodeSize)))
+                SetSortOrder(LeftPanelSortBy.MediumPriority);
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.LowPriority, new GUIContent(LowPriorityTexture), GUILayout.Width(TotalNodeSize)))
+                SetSortOrder(LeftPanelSortBy.LowPriority);
+
+            if (!sortOrderSet)
+                SortOrder = LeftPanelSortBy.Default;
+            
             EditorGUILayoutExtension.ToolBarSpace(ScrollbarSize);
             EditorGUILayoutExtension.EndToolBar();
 
@@ -35,14 +60,14 @@ namespace HomaGames.GameDoctor.Ui
             DrawNode(Profile);
             EditorGUILayout.EndScrollView();
         }
-        
+
         private void DrawNode(IValidationProfile profile)
         {
             ProfileUiData uiData = GetUiData(profile);
             GUIContent nodeContent = new GUIContent(" " /* NBSP */ + profile.Name, ProfileTexture);
             DrawFoldoutTreeElement(uiData, nodeContent, profile.GetPriorityCount(), () =>
             {
-                foreach (var check in profile.CheckList)
+                foreach (var check in SortForLeftPanel(profile.CheckList))
                 {
                     DrawNode(check);
                 }
@@ -62,7 +87,7 @@ namespace HomaGames.GameDoctor.Ui
 
                 if (check.CheckResult != null)
                 {
-                    foreach (var issue in check.CheckResult.Issues)
+                    foreach (var issue in SortForLeftPanel(check.CheckResult.Issues))
                     {
                         DrawNode(issue);
                     }
@@ -197,6 +222,116 @@ namespace HomaGames.GameDoctor.Ui
             {
                 ScrollbarSize = totalScrollViewWidth - scrollViewInsideWidth;
             }
+        }
+
+        private IEnumerable<ICheck> SortForLeftPanel(IEnumerable<ICheck> checkList)
+        {
+            List<ICheck> output = new List<ICheck>(checkList);
+
+            int CountPriority(ICheck check, Priority priority) =>
+                check.CheckResult?.Issues.Count(issue => issue.Priority == priority) ?? 0;
+
+            int ComparePriority(ICheck c1, ICheck c2, Priority priority) =>
+                CountPriority(c2, priority) - CountPriority(c1, priority);
+
+            int DefaultCompare(ICheck c1, ICheck c2)
+            {
+                if (c1.Importance != c2.Importance)
+                {
+                    if (c1.Importance == ImportanceType.Mandatory) return -1;
+                    if (c2.Importance == ImportanceType.Mandatory) return 1;
+                }
+                return string.Compare(c1.Name, c2.Name, StringComparison.Ordinal);
+            } 
+
+            switch (SortOrder)
+            {
+                default:
+                case LeftPanelSortBy.Name:
+                    output.Sort((c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.Ordinal));
+                    break;
+                case LeftPanelSortBy.Mandatory:
+                    output.Sort(DefaultCompare);
+                    break;
+                case LeftPanelSortBy.HighPriority:
+                    output.Sort((c1, c2) =>
+                    {
+                        int value = ComparePriority(c1, c2, Priority.High);
+                        if (value != 0) return value;
+                        return DefaultCompare(c1, c2);
+                    });
+                    break;
+                case LeftPanelSortBy.MediumPriority:
+                    output.Sort((c1, c2) =>
+                    {
+                        int value = ComparePriority(c1, c2, Priority.Medium);
+                        if (value != 0) return value;
+                        return DefaultCompare(c1, c2);
+                    });
+                    break;
+                case LeftPanelSortBy.LowPriority:
+                    output.Sort((c1, c2) =>
+                    {
+                        int value = ComparePriority(c1, c2, Priority.Low);
+                        if (value != 0) return value;
+                        return DefaultCompare(c1, c2);
+                    });
+                    break;
+            }
+            
+            output.Sort((c1, c2) =>
+            {
+                if ((c1.CheckResult?.Passed ?? false) == (c2.CheckResult?.Passed ?? false)) return 0;
+                if (c1.CheckResult?.Passed ?? false) return 1;
+                return -1;
+            });
+
+            return output;
+        }
+        
+        private IEnumerable<IIssue> SortForLeftPanel(IEnumerable<IIssue> issueList)
+        {
+            List<IIssue> output = new List<IIssue>(issueList);
+
+            int ComparePriority(IIssue i1, IIssue i2, Priority priority)
+            {
+                if (i1.Priority != i2.Priority)
+                {
+                    if (i1.Priority == priority) return -1;
+                    if (i2.Priority == priority) return 1;
+                }
+                return DefaultCompare(i1, i2);
+            }
+
+            int DefaultCompare(IIssue i1, IIssue i2)
+            {
+                if (i1.Priority == i2.Priority)
+                    return string.Compare(i1.Name, i2.Name, StringComparison.Ordinal);
+
+                return i1.Priority.CompareTo(i2.Priority);
+            }
+
+            switch (SortOrder)
+            {
+                case LeftPanelSortBy.Name:
+                    output.Sort((i1, i2) => string.Compare(i1.Name, i2.Name, StringComparison.Ordinal));
+                    break;
+                default:
+                case LeftPanelSortBy.Mandatory:
+                    output.Sort(DefaultCompare);
+                    break;
+                case LeftPanelSortBy.HighPriority:
+                    output.Sort((i1, i2) => ComparePriority(i1, i2, Priority.High));
+                    break;
+                case LeftPanelSortBy.MediumPriority:
+                    output.Sort((i1, i2) => ComparePriority(i1, i2, Priority.Medium));
+                    break;
+                case LeftPanelSortBy.LowPriority:
+                    output.Sort((i1, i2) => ComparePriority(i1, i2, Priority.Low));
+                    break;
+            }
+
+            return output;
         }
     }
 }

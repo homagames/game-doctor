@@ -60,7 +60,7 @@ namespace HomaGames.GameDoctor.Ui
                             new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", "", AutomationType.Automatic, Priority.Low),
                         }
                     };
-                }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
+                }, "Check 1", "description", new List<string>(), ImportanceType.Advised
             ),new SimpleCheck(
                 async () =>
                 {
@@ -69,12 +69,12 @@ namespace HomaGames.GameDoctor.Ui
                     {
                         Issues = new List<IIssue>
                         {
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 1", "description 1", AutomationType.Interactive, Priority.High),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 2", "", AutomationType.Interactive, Priority.Medium),
-                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", "", AutomationType.Interactive, Priority.Low),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 2", "", AutomationType.Interactive, Priority.Low),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 1", "description 1", AutomationType.Interactive, Priority.Low),
+                            new SimpleIssue(async () => { await Task.Delay(200); }, "issue 3", "", AutomationType.Interactive, Priority.High),
                         }
                     };
-                }, "Check 1", "description", new List<string>(), ImportanceType.Mandatory
+                }, "Check 2", "description", new List<string>(), ImportanceType.Mandatory
             ),new SimpleCheck(
                 async () =>
                 {
