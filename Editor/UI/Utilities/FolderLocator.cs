@@ -27,7 +27,7 @@ namespace HomaGames.GameDoctor.Ui
         [CanBeNull]
         public static string GetFolder(string id) {
 
-            FolderLocator[] locators = GetAll();
+            FolderLocator[] locators = AssetDatabaseUtilities.GetAll<FolderLocator>();
 
             foreach (var folderLocator in locators) {
                 if (folderLocator.FolderId == id) {
@@ -36,21 +36,6 @@ namespace HomaGames.GameDoctor.Ui
             }
 
             return null;
-        }
-        
-        private static FolderLocator[] GetAll(string[] searchInFolders = null) {
-            
-            List<FolderLocator> output = new List<FolderLocator>();
-            
-            string[] guids = AssetDatabase.FindAssets("t:" + nameof(FolderLocator), searchInFolders);
-            for (var i = 0; i < guids.Length; i++) {
-                var path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                var element = AssetDatabase.LoadAssetAtPath<FolderLocator>(path);
-                if (element) {
-                    output.Add(element);
-                }
-            }
-            return output.ToArray();
         }
     }
 }
