@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
 using NUnit.Framework;
@@ -44,7 +45,7 @@ namespace HomaGames.GameDoctor.Tests
                 }
 
                 return ci;
-            }, "Dummy Check", "", new List<string>() {"inline"});
+            }, "Dummy Check", "", new HashSet<string>() {"inline"});
             AvailableChecks.RegisterCheck(check);
             profile.PopulateChecks("inline");
             yield return AllTestPass(profile);
@@ -68,7 +69,7 @@ namespace HomaGames.GameDoctor.Tests
                 }
 
                 return ci;
-            }, "Dummy Check", "", new List<string>() {"failing"});
+            }, "Dummy Check", "", new HashSet<string>() {"failing"});
             AvailableChecks.RegisterCheck(check);
             profile.PopulateChecks("failing");
             yield return AllTestPass(profile, false);
@@ -81,10 +82,10 @@ namespace HomaGames.GameDoctor.Tests
 
             yield return TestUtils.AsIEnumerator(profile.Check());
             Assert.True(profile.CheckList.Count == 1);
-            Assert.True(profile.CheckList[0].CheckResult.Issues.Count == 1);
+            Assert.True(profile.CheckList.First().CheckResult.Issues.Count == 1);
             yield return TestUtils.AsIEnumerator(profile.Fix());
             Assert.True(profile.CheckList.Count == 1);
-            Assert.True(profile.CheckList[0].CheckResult.Issues.Count == (fixWorks ? 0 : 1));
+            Assert.True(profile.CheckList.First().CheckResult.Issues.Count == (fixWorks ? 0 : 1));
 
             if (fixWorks)
                 Assert.True(fixedIssues[0].Name == "Dummy Issue");
@@ -97,8 +98,18 @@ namespace HomaGames.GameDoctor.Tests
 
             yield return TestUtils.AsIEnumerator(profile.Check());
             Assert.True(profile.CheckList.Count == 1);
-            if(fixWorks)
-                Assert.True(profile.CheckList[0].CheckResult.Issues.Count == 0);
+            if (fixWorks)
+                Assert.True(profile.CheckList.First().CheckResult.Issues.Count == 0);
+        }
+
+        [Test]
+        public void DefaultValidationProfile()
+        {
+            Assert.True(AvailableProfiles.GetDefaultValidationProfile() != null);
+            Assert.True(AvailableProfiles.GetDefaultValidationProfile().GetType() == typeof(DefaultValidationProfile));
+            AvailableChecks.RegisterCheck(new DummyCheck());
+            AvailableProfiles.GetDefaultValidationProfile().PopulateChecks("performance");
+            Assert.True(AvailableProfiles.GetDefaultValidationProfile().CheckList.Count != 0);
         }
     }
 
@@ -132,7 +143,7 @@ namespace HomaGames.GameDoctor.Tests
 
         public DummyCheck(ImportanceType importance = ImportanceType.Advised, Priority priority = Priority.Medium) :
             base("Dummy Check",
-                "Test check", new List<string>() {"performance"}, importance, priority)
+                "Test check", new HashSet<string>() {"performance"}, importance, priority)
         {
         }
     }
