@@ -17,6 +17,15 @@ namespace HomaGames.GameDoctor.Core
 
             await validationProfile.Check();
         }
+        
+        /// <summary>
+        /// Populates CheckResults for all Checks in the CheckList.
+        /// </summary>
+        public static async Task Check(this IValidationProfile validationProfile)
+        {
+            foreach (var check in validationProfile.CheckList)
+                await check.Execute();
+        }
 
         /// <summary>
         /// Populates the ValidationProfile with all registered checks in <see cref="AvailableChecks"/> with specific tags.

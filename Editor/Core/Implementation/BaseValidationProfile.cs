@@ -16,11 +16,5 @@ namespace HomaGames.GameDoctor.Core
             Name = name;
             Description = description;
         }
-        
-        public virtual async Task Check()
-        {
-            foreach (var check in CheckList)
-                await check.Execute();
-        }
     }
 }
