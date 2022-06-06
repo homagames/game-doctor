@@ -8,7 +8,6 @@ namespace HomaGames.GameDoctor.Ui
 {
     public class ProfileSelectorPopup : EditorWindow
     {
-        [MenuItem("Window/Homa Games/Game Doctor/Open Profile...")]
         public static void Open()
         {
             GetWindow<ProfileSelectorPopup>().ShowModalUtility();

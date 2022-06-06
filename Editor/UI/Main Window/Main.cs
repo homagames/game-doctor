@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
@@ -19,6 +20,8 @@ namespace HomaGames.GameDoctor.Ui
         private static Color HighPriorityColor => EditorGUIUtility.isProSkin ? new Color(0.25f, 0.23f, 0.8f) : new Color(0f, 0f, 0.49f);
         private static Color MediumPriorityColor => Color.red;
         private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(0.87f, 1f, 0.31f);
+        
+        public static bool IsProfileOpened { get; private set; }
 
         private string _validationProfileName;
         private IValidationProfile _profile;
@@ -74,6 +77,7 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnEnable()
         {
+            IsProfileOpened = true;
             titleContent = new GUIContent("Game Doctor");
         }
 
@@ -101,6 +105,11 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayoutExtension.EndSeparatedView();
             EditorGUILayoutExtension.DrawHorizontalSeparator(1);
             DrawFooter(footerSize);
+        }
+
+        private void OnDestroy()
+        {
+            IsProfileOpened = false;
         }
 
         // This method returns a valid value only on EventType.Repaint events
