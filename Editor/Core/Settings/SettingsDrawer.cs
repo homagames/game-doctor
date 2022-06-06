@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
-using HomaGames.GameDoctor.Core;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace HomaGames.GameDoctor
+namespace HomaGames.GameDoctor.Core
 {
     public static class SettingsDrawer
     {
-        private static ReorderableList UiList;
-        private static Dictionary<TagBasedValidationProfile, ReorderableList> TagUiLists 
+        private static ReorderableList _uiList;
+        private static readonly Dictionary<TagBasedValidationProfile, ReorderableList> TagUiLists 
             = new Dictionary<TagBasedValidationProfile, ReorderableList>();
 
         private static ReorderableList GetTagUiList(TagBasedValidationProfile profile)
@@ -58,24 +57,21 @@ namespace HomaGames.GameDoctor
         public static void Draw()
         {
             EditorGUI.BeginChangeCheck();
-            if (UiList == null)
+            if (_uiList == null)
             {
-                UiList = new ReorderableList(SettingsAsset.Get.ProfileList,
+                _uiList = new ReorderableList(SettingsAsset.instance.ProfileList,
                     typeof(TagBasedValidationProfile))
                 {
                     elementHeightCallback = ElementHeightCallback,
                     drawElementCallback = DrawElementCallback,
                     drawElementBackgroundCallback = DrawElementBackground,
+                    drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Preset Profiles")
                 };
             }
             
             EditorGUILayout.Space(10);
-            
-            EditorGUILayout.LabelField("Preset Profiles Editor", EditorStyles.boldLabel);
 
-            EditorGUILayout.Space(10);
-            
-            UiList.DoLayoutList();
+            _uiList.DoLayoutList();
             
             EditorGUILayout.Space(10);
             
@@ -83,21 +79,20 @@ namespace HomaGames.GameDoctor
                                     $"implement you own custom profiles by implementing {nameof(IValidationProfile)}, and " +
                                     $"subscribing instances to {nameof(AvailableProfiles)}", MessageType.Info);
             if (!EditorGUI.EndChangeCheck()) return;
-            EditorUtility.SetDirty(SettingsAsset.Get);
-            AssetDatabase.SaveAssets();
+            SettingsAsset.instance.Save();
         }
 
         private static float ElementHeightCallback(int index)
         {
-            if(SettingsAsset.Get.ProfileList[index]!=null)
-                return GetTagUiList(SettingsAsset.Get.ProfileList[index]).GetHeight() + EditorGUIUtility.singleLineHeight * 6
+            if (SettingsAsset.instance.ProfileList[index] != null)
+                return GetTagUiList(SettingsAsset.instance.ProfileList[index]).GetHeight() + EditorGUIUtility.singleLineHeight * 6
                                                                 + EditorGUIUtility.standardVerticalSpacing * 5;
             return 0;
         }
 
         private static void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
-            TagBasedValidationProfile profile = SettingsAsset.Get.ProfileList[index];
+            TagBasedValidationProfile profile = SettingsAsset.instance.ProfileList[index];
 
             void MoveDown(ref Rect rectangle, float y)
             {
@@ -121,13 +116,13 @@ namespace HomaGames.GameDoctor
             rect.height -= EditorGUIUtility.standardVerticalSpacing;
             GetTagUiList(profile).DoList(rect);
         }
-        
-        public static Color BackgroundColor => 
+
+        private static Color BackgroundColor => 
             EditorGUIUtility.isProSkin ? 
                 new Color(0.22f, 0.22f, 0.22f) : 
                 new Color(0.73f, 0.73f, 0.73f);
 
-        public static Color AccentBackgroundColor => 
+        private static Color AccentBackgroundColor => 
             EditorGUIUtility.isProSkin ? 
                 new Color(0.25f, 0.25f, 0.25f) : 
                 new Color(0.78f, 0.78f, 0.78f);

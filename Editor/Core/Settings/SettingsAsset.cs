@@ -1,38 +1,42 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HomaGames.GameDoctor.Core;
 using UnityEditor;
-using UnityEngine;
 
-namespace HomaGames.GameDoctor
+namespace HomaGames.GameDoctor.Core
 {
-    public class SettingsAsset : ScriptableObject
+    [FilePath(SettingsAsset.SettingsPath, FilePathAttribute.Location.ProjectFolder)]
+    public class SettingsAsset : ScriptableSingleton<SettingsAsset>
     {
-        public const string SettingsPath = "Assets/GameDoctorSettings.asset";
-
-        public static SettingsAsset Get
-        {
-            get
-            {
-                var asset = AssetDatabase.LoadAssetAtPath<SettingsAsset>(SettingsPath);
-                if (asset) return asset;
-                var newInstance = CreateInstance<SettingsAsset>();
-                AssetDatabase.CreateAsset(newInstance, SettingsPath);
-                EditorApplication.delayCall += AssetDatabase.SaveAssets;
-
-                return newInstance;
-            }
-        }
+        public const string SettingsPath = "ProjectSettings/GameDoctorSettings.asset";
 
         [InitializeOnLoadMethod]
         private static void RegisterAllProfiles()
         {
-            foreach (var profile in Get.ProfileList)
+            foreach (var profile in instance.ProfileList)
                 AvailableProfiles.RegisterValidationProfile(profile);
         }
 
-        public List<TagBasedValidationProfile> ProfileList;
+        public List<TagBasedValidationProfile> ProfileList = new List<TagBasedValidationProfile>();
+        
+        public void Save()
+        {
+            Save(true);
+        }
+        
+        [SettingsProvider]
+        public static SettingsProvider CreateSettingsProvider()
+        {
+            var provider = new SettingsProvider("Project/Game Doctor", SettingsScope.Project)
+            {
+                label = "Game Doctor",
+                guiHandler = (searchContext) =>
+                {
+                    SettingsDrawer.Draw();
+                },
+
+                keywords = new HashSet<string>(new[] { "doctor", "game" , "tests"})
+            };
+
+            return provider;
+        }
     }
 }
