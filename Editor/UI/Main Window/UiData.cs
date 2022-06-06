@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
+using JetBrains.Annotations;
 using UnityEditor.AnimatedValues;
 
 namespace HomaGames.GameDoctor.Ui
@@ -10,6 +11,7 @@ namespace HomaGames.GameDoctor.Ui
     {
         private abstract class BaseUiData
         {
+            [NotNull]
             protected readonly GameDoctorWindow Window;
 
             private bool _selected;
@@ -31,7 +33,7 @@ namespace HomaGames.GameDoctor.Ui
                 }
             }
 
-            protected BaseUiData(GameDoctorWindow window)
+            protected BaseUiData([NotNull] GameDoctorWindow window)
             {
                 Window = window;
             }
@@ -39,9 +41,10 @@ namespace HomaGames.GameDoctor.Ui
 
         private abstract class BaseFoldoutUiData : BaseUiData
         {
+            [NotNull]
             public readonly AnimBool Expanded = new AnimBool(true);
 
-            protected BaseFoldoutUiData(GameDoctorWindow window) : base(window)
+            protected BaseFoldoutUiData([NotNull] GameDoctorWindow window) : base(window)
             {
                 Expanded.valueChanged.AddListener(window.Repaint);
             }
@@ -49,14 +52,14 @@ namespace HomaGames.GameDoctor.Ui
 
         private class ProfileUiData : BaseFoldoutUiData
         {
-            public ProfileUiData(GameDoctorWindow window) : base(window)
+            public ProfileUiData([NotNull] GameDoctorWindow window) : base(window)
             {
             }
         }
 
         private class CheckUiData : BaseFoldoutUiData
         {
-            public CheckUiData(GameDoctorWindow window) : base(window)
+            public CheckUiData([NotNull] GameDoctorWindow window) : base(window)
             {
             }
         }
@@ -65,17 +68,24 @@ namespace HomaGames.GameDoctor.Ui
         {
             public bool Fixed;
 
-            public IssueUiData(GameDoctorWindow window) : base(window)
+            public IssueUiData([NotNull] GameDoctorWindow window) : base(window)
             {
             }
         }
 
+        [NotNull]
         private readonly Dictionary<IValidationProfile, ProfileUiData> ProfileUiDataBank =
             new Dictionary<IValidationProfile, ProfileUiData>();
-        private readonly Dictionary<ICheck, CheckUiData> CheckUiDataBank = new Dictionary<ICheck, CheckUiData>();
-        private readonly Dictionary<IIssue, IssueUiData> IssueUiDataBank = new Dictionary<IIssue, IssueUiData>(new IssueEqualityComparer());
+        [NotNull]
+        private readonly Dictionary<ICheck, CheckUiData> CheckUiDataBank = 
+            new Dictionary<ICheck, CheckUiData>();
+        [NotNull]
+        private readonly Dictionary<IIssue, IssueUiData> IssueUiDataBank = 
+            new Dictionary<IIssue, IssueUiData>(new IssueEqualityComparer());
 
-        private TValue TryGetOrCreate<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key, Func<TValue> creator)
+        [NotNull]
+        [MustUseReturnValue]
+        private TValue TryGetOrCreate<TKey, TValue>([NotNull] IDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [NotNull, InstantHandle] Func<TValue> creator)
         {
             if (dictionary.TryGetValue(key, out var output))
                 return output;
@@ -84,16 +94,22 @@ namespace HomaGames.GameDoctor.Ui
             dictionary[key] = output;
             return output;
         }
-
-        private ProfileUiData GetUiData(IValidationProfile profile)
+        
+        [NotNull]
+        private ProfileUiData GetUiData([NotNull] IValidationProfile profile)
             => TryGetOrCreate(ProfileUiDataBank, profile, () => new ProfileUiData(this));
 
-        private CheckUiData GetUiData(ICheck check)
+        [NotNull]
+        private CheckUiData GetUiData([NotNull] ICheck check)
             => TryGetOrCreate(CheckUiDataBank, check, () => new CheckUiData(this));
-
-        private IssueUiData GetUiData(IIssue issue)
+        
+        [NotNull]
+        private IssueUiData GetUiData([NotNull] IIssue issue)
             => TryGetOrCreate(IssueUiDataBank, issue, () => new IssueUiData(this));
 
+        [NotNull]
+        [Pure]
+        [LinqTunnel]
         private IEnumerable<BaseUiData> GetAllUiData()
         {
             return ProfileUiDataBank.Values.Union<BaseUiData>(CheckUiDataBank.Values).Union(IssueUiDataBank.Values);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,15 +15,18 @@ namespace HomaGames.GameDoctor.Ui
         
         private bool HideFixed;
 
+        [NotNull]
         private string _searchString = string.Empty;
-        private string[] SearchWords;
+        [NotNull]
+        private string[] SearchWords = Array.Empty<string>();
+        
         private string SearchString
         {
             get => _searchString;
             set
             {
                 _searchString = value ?? string.Empty;
-                SearchWords = _searchString?.Split(" ");
+                SearchWords = _searchString.Split(" ");
             }
         }
 
@@ -39,6 +43,7 @@ namespace HomaGames.GameDoctor.Ui
             HideFixed = EditorGUILayoutExtension.ToolBarToggle(HideFixed, "Hide fixed");
             EditorGUILayoutExtension.EndToolBar();
 
+            
             EditorGUILayoutExtension.BeginToolBar();
             bool sortOrderSet = false;
             
@@ -65,6 +70,7 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayoutExtension.ToolBarSpace(ScrollbarSize);
             EditorGUILayoutExtension.EndToolBar();
 
+            
             float scrollViewWidth = GetCurrentLayoutWidth();
             FirstViewScroll = EditorGUILayout.BeginScrollView(FirstViewScroll);
             UpdateScrollViewWidth(scrollViewWidth);
@@ -72,10 +78,10 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.EndScrollView();
         }
 
-        private void DrawNode(IValidationProfile profile)
+        private void DrawNode([NotNull] IValidationProfile profile)
         {
             ProfileUiData uiData = GetUiData(profile);
-            GUIContent nodeContent = new GUIContent(" " /* NBSP */ + profile.Name, ProfileTexture);
+            GUIContent nodeContent = new GUIContent(NBSP + profile.Name, ProfileTexture);
             DrawFoldoutTreeElement(uiData, nodeContent, profile.GetPriorityCount(), () =>
             {
                 foreach (var check in Filter(SortForLeftPanel(profile.CheckList)))
@@ -85,13 +91,13 @@ namespace HomaGames.GameDoctor.Ui
             });
         }
 
-        private void DrawNode(ICheck check)
+        private void DrawNode([NotNull] ICheck check)
         {
             CheckUiData uiData = GetUiData(check);
 
             var containsIssues = check.CheckResult?.Passed != true;
             GUIContent nodeContent = new GUIContent(
-                " " /* NBSP */ + check.Name, 
+                NBSP + check.Name, 
                 !containsIssues ? FixedColoredTexture : CheckTexture);
             DrawFoldoutTreeElement(uiData, nodeContent, check.GetPriorityCount(), () =>
             {
@@ -106,10 +112,10 @@ namespace HomaGames.GameDoctor.Ui
             }, containsIssues, containsIssues && check.Importance == ImportanceType.Mandatory);
         }
 
-        private void DrawFoldoutTreeElement(BaseFoldoutUiData uiData, GUIContent nodeContent, PriorityCount priorityCount,
-            Action drawInside, bool drawAsFoldout = true, bool drawMandatory = false)
+        private void DrawFoldoutTreeElement([NotNull] BaseFoldoutUiData uiData, [CanBeNull] GUIContent nodeContent, PriorityCount priorityCount,
+            [NotNull, InstantHandle] Action drawInside, bool drawAsFoldout = true, bool drawMandatory = false)
         {
-            DrawNodeBefore(uiData);
+            BeginNode(uiData);
             if (drawAsFoldout)
                 uiData.Expanded.target = EditorGUILayout.Foldout(uiData.Expanded.target, nodeContent);
             else
@@ -122,19 +128,25 @@ namespace HomaGames.GameDoctor.Ui
                 GUI.DrawTexture(mandatoryIconRect, MandatoryTexture);
             }
 
-            int indent = EditorGUI.indentLevel;
-            EditorGUI.indentLevel = 0;
+            
             Rect priorityRect =
                 EditorGUILayout.GetControlRect(
                     GUILayout.Width(TotalNodeSize * 3 - EditorGUIUtility.standardVerticalSpacing));
             priorityRect.width += EditorGUIUtility.standardVerticalSpacing;
 
+            // Adjusting to full node rect height
             float heightDifference = TotalNodeSize - priorityRect.height;
             priorityRect.height += heightDifference;
             priorityRect.y -= heightDifference / 2;
+            
+            int indent = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+            
             DrawPriorities(priorityRect, priorityCount);
+            
             EditorGUI.indentLevel = indent;
-            DrawNodeAfter(uiData);
+            
+            EndNode(uiData);
 
             if (EditorGUILayout.BeginFadeGroup(uiData.Expanded.faded))
             {
@@ -173,15 +185,15 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUI.LabelField(rect3, priorityCount.Low.ToString(), labelStyle);
         }
 
-        private void DrawNode(IIssue issue)
+        private void DrawNode([NotNull] IIssue issue)
         {
             IssueUiData uiData = GetUiData(issue);
             if (!HideFixed || !uiData.Fixed)
             {
-                DrawNodeBefore(uiData);
+                BeginNode(uiData);
                 
                 GUIContent issueContent = new GUIContent(
-                    " " /* NBSP */ + issue.Name, 
+                    NBSP + issue.Name, 
                     uiData.Fixed ? FixedColoredTexture : GetTextureFor(issue.AutomationType));
 
                 EditorGUILayout.LabelField(issueContent);
@@ -193,24 +205,26 @@ namespace HomaGames.GameDoctor.Ui
                         priorityIconGUIStyle, GUILayout.Width(16)), 
                     GetTextureFor(issue.Priority));
                 
-                DrawNodeAfter(uiData);
+                EndNode(uiData);
             }
         }
 
+        [NotNull]
         private static GUIStyle SelectedNodeStyle => new GUIStyle("OL SelectedRow")
             {padding = new RectOffset(0, 0, UpperNodeMargin, LowerNodeMargin), margin = new RectOffset()};
 
+        [NotNull]
         private static GUIStyle RegularNodeStyle => new GUIStyle()
             {padding = new RectOffset(0, 0, UpperNodeMargin, LowerNodeMargin), margin = new RectOffset()};
 
-        private static void DrawNodeBefore(BaseUiData uiData)
+        private static void BeginNode([NotNull] BaseUiData uiData)
         {
             EditorGUILayout.BeginHorizontal(uiData.Selected ? SelectedNodeStyle : RegularNodeStyle,
                 GUILayout.ExpandWidth(true));
             EditorGUI.indentLevel += 1;
         }
 
-        private static void DrawNodeAfter(BaseUiData uiData)
+        private static void EndNode([NotNull] BaseUiData uiData)
         {
             EditorGUI.indentLevel -= 1;
             EditorGUILayout.EndHorizontal();
@@ -236,7 +250,10 @@ namespace HomaGames.GameDoctor.Ui
         }
 
         #region Sorting
-        private IEnumerable<ICheck> SortForLeftPanel(IEnumerable<ICheck> checkList)
+        [NotNull]
+        [LinqTunnel]
+        [Pure]
+        private IEnumerable<ICheck> SortForLeftPanel([NotNull] IEnumerable<ICheck> checkList)
         {
             List<ICheck> output = new List<ICheck>(checkList);
 
@@ -301,7 +318,10 @@ namespace HomaGames.GameDoctor.Ui
             return output;
         }
         
-        private IEnumerable<IIssue> SortForLeftPanel(IEnumerable<IIssue> issueList)
+        [NotNull]
+        [LinqTunnel]
+        [Pure]
+        private IEnumerable<IIssue> SortForLeftPanel([NotNull] IEnumerable<IIssue> issueList)
         {
             List<IIssue> output = new List<IIssue>(issueList);
 
@@ -350,7 +370,10 @@ namespace HomaGames.GameDoctor.Ui
         #region Filtering
         private const float RELEVANCE_RATIO_MINIMUM = 0.7f;
         
-        private IEnumerable<ICheck> Filter(IEnumerable<ICheck> checkList)
+        [NotNull]
+        [LinqTunnel]
+        [Pure]
+        private IEnumerable<ICheck> Filter([NotNull] IEnumerable<ICheck> checkList)
         {
             return checkList.Where(check =>
             {
@@ -371,7 +394,10 @@ namespace HomaGames.GameDoctor.Ui
             });
         }
         
-        private IEnumerable<IIssue> Filter(IEnumerable<IIssue> issueList)
+        [NotNull]
+        [LinqTunnel]
+        [Pure]
+        private IEnumerable<IIssue> Filter([NotNull] IEnumerable<IIssue> issueList)
         {
             return issueList.Where(issue =>
             {
@@ -387,13 +413,15 @@ namespace HomaGames.GameDoctor.Ui
             });
         }
 
-        private bool MatchSearchString(string input)
+        [Pure]
+        private bool MatchSearchString([NotNull] string input)
         {
             int relevance = ComputeRelevance(SearchWords, input);
             return relevance / (float) SearchString.Length >= RELEVANCE_RATIO_MINIMUM;
         }
         
-        private int ComputeRelevance(string[] searchWords, string input) 
+        [Pure]
+        private int ComputeRelevance([NotNull] string[] searchWords, [NotNull] string input) 
         {
             string[] dishNameWords = input.ToLower().Split(" ");
             int relevance = 0;
@@ -404,7 +432,8 @@ namespace HomaGames.GameDoctor.Ui
             return relevance;
         }
 
-        private int computeRelevanceForWord(string wordToSearch, IEnumerable<string> dishNameWords)
+        [Pure]
+        private int computeRelevanceForWord([NotNull] string wordToSearch, [NotNull] IEnumerable<string> dishNameWords)
         {
             int finalScore = 0;
 
@@ -419,7 +448,8 @@ namespace HomaGames.GameDoctor.Ui
             return finalScore;
         }
 
-        private int maxOccurrence(string contained, string container) 
+        [Pure]
+        private int maxOccurrence([NotNull] string contained, [NotNull] string container) 
         {
             int longestOccurrence = 0;
 

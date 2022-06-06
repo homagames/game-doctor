@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using HomaGames.GameDoctor.Core;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,12 +10,16 @@ namespace HomaGames.GameDoctor.Ui
 {
     public partial class GameDoctorWindow
     {
+        private const string IconFolderId = "GameDoctor.Icon";
+
         private struct TextureToLoad
         {
+            [NotNull]
             public string Name;
+            [NotNull]
             public Action<GameDoctorWindow, Texture2D> Setter;
 
-            public void Load(GameDoctorWindow window, string textureFolderPath)
+            public void Load([NotNull] GameDoctorWindow window, [NotNull] string textureFolderPath)
             {
                 Texture2D texture;
                 string regularPath = Path.Combine(textureFolderPath, Name + ".png");
@@ -29,9 +34,12 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
         
-        public static void Open(IValidationProfile validationProfile)
+        public static void Open([NotNull] IValidationProfile validationProfile)
         {
-            string iconFolderPath = FolderLocator.GetFolder("GameDoctor.Icon");
+            string iconFolderPath = FolderLocator.GetFolder(IconFolderId);
+            if (iconFolderPath == null)
+                throw new DirectoryNotFoundException("[Game Doctor] Icon Directory not found. Could not find folder" +
+                                                     $"locator with ID: {IconFolderId}");
 
             List<TextureToLoad> iconsToLoad = new List<TextureToLoad>
             {
@@ -44,11 +52,6 @@ namespace HomaGames.GameDoctor.Ui
                 {
                     Name = "InteractiveIcon",
                     Setter = (window, texture) => window.InteractiveTexture = texture
-                },
-                new TextureToLoad
-                {
-                    Name = "FixedIcon",
-                    Setter = (window, texture) => window.FixedTexture = texture
                 },
                 new TextureToLoad
                 {

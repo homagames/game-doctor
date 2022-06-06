@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace HomaGames.GameDoctor.Ui
 {
     public static partial class EditorGUILayoutExtension
     {
+        [NotNull] 
         private static readonly Stack<Rect> CurrentDrawRect = new Stack<Rect>();
 
         private const float SeparatedViewSeparatorWidth = 2;
@@ -23,9 +25,9 @@ namespace HomaGames.GameDoctor.Ui
         /// <param name="state">The current state of the view. The return value of this function should be assigned back to this parameter.</param>
         /// <param name="options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style.<br /> See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
         /// <returns>The new view state.</returns>
-        public static SeparatedViewData BeginSeparatedView(float height, SeparatedViewData state, params GUILayoutOption[] options)
+        public static SeparatedViewData BeginSeparatedView(float height, SeparatedViewData state, [NotNull] params GUILayoutOption[] options)
         {
-            state.SeparatorPosition = InitSeparatorPosition(state.SeparatorPosition);
+            InitSeparatorPosition(ref state);
         
             Rect guiRect = GUILayoutUtility.GetRect(EditorGUIUtility.fieldWidth, height, options);
             if (Event.current.type == EventType.Repaint)
@@ -35,7 +37,7 @@ namespace HomaGames.GameDoctor.Ui
             var drawRect = state.DrawRect;
             drawRect.height = height;
         
-            GUILayout.BeginArea(new Rect(drawRect) {width = state.SeparatorPosition.Value});
+            GUILayout.BeginArea(new Rect(drawRect) {width = state.SeparatorPosition});
             CurrentDrawRect.Push(drawRect);
         
             return state;
@@ -51,11 +53,11 @@ namespace HomaGames.GameDoctor.Ui
         /// <seealso cref="BeginSeparatedView"/>
         public static SeparatedViewData PutSeparatorInView(SeparatedViewData state, float minWidthLeft = 1, float minWidthRight = 1)
         {
-            state.SeparatorPosition = InitSeparatorPosition(state.SeparatorPosition);
+            InitSeparatorPosition(ref state);
         
             if (CurrentDrawRect.Count == 0)
             {
-                Debug.LogError("GUI Error: Invalid GUILayout state in  view. Verify that all layout Begin/End calls match");
+                Debug.LogError("GUI Error: Invalid GUILayout state in view. Verify that all layout Begin/PutSeparator/End calls match");
                 return state;
             }
             var drawRect = CurrentDrawRect.Pop();
@@ -68,8 +70,8 @@ namespace HomaGames.GameDoctor.Ui
         
             GUILayout.BeginArea(new Rect(drawRect)
             {
-                x = drawRect.x + state.SeparatorPosition.Value,
-                width = drawRect.width - state.SeparatorPosition.Value
+                x = drawRect.x + state.SeparatorPosition,
+                width = drawRect.width - state.SeparatorPosition
             });
             return state;
         }
@@ -84,9 +86,13 @@ namespace HomaGames.GameDoctor.Ui
         }
     
 
-        private static float InitSeparatorPosition(float? separatorPosition)
+        private static void InitSeparatorPosition(ref SeparatedViewData state)
         {
-            return separatorPosition ?? EditorGUIUtility.currentViewWidth / 2;
+            if (!state.IsInitialized && Event.current.type == EventType.Repaint)
+            {
+                state.IsInitialized = true;
+                state.SeparatorPosition = EditorGUIUtility.currentViewWidth / 2;
+            }
         }
     
         private static SeparatedViewData HandleSeparatorDragging(SeparatedViewData state, Rect drawRect, Rect separatorRect,
@@ -111,15 +117,19 @@ namespace HomaGames.GameDoctor.Ui
 
                 if (Event.current.type == EventType.Repaint || isUserResizing)
                 {
-                    float newSeparatorPosition = Mathf.Clamp(state.SeparatorPosition.Value, minWidthLeft,
+                    float newSeparatorPosition = Mathf.Clamp(state.SeparatorPosition, minWidthLeft,
                         drawRect.width - minWidthRight);
 
-                    if (Math.Abs(newSeparatorPosition - state.SeparatorPosition.Value) > 0.05f)
+                    if (Math.Abs(newSeparatorPosition - state.SeparatorPosition) > 0.05f)
                     {
                         state.SeparatorPosition = newSeparatorPosition;
                         GUI.changed = true;
                     }
                 }
+            }
+            else
+            {
+                state.SeparatorPosition = drawRect.width / 2;
             }
 
             return state;
@@ -129,7 +139,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             Rect separatorRect = EditorGUIExtension.DrawVerticalSeparator(
                 new Vector2(
-                    state.SeparatorPosition.Value + drawRect.x,
+                    state.SeparatorPosition + drawRect.x,
                     drawRect.y),
                 drawRect.height,
                 SeparatedViewSeparatorWidth);
@@ -143,6 +153,8 @@ namespace HomaGames.GameDoctor.Ui
 public struct SeparatedViewData
 {
     public Rect DrawRect;
-    public float? SeparatorPosition;
+    public float SeparatorPosition;
     public bool IsResizing;
+
+    public bool IsInitialized;
 }

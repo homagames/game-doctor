@@ -1,5 +1,6 @@
 using System.Linq;
 using HomaGames.GameDoctor.Core;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,21 +14,20 @@ namespace HomaGames.GameDoctor.Ui
         {
             object selectedObject = GetSelectedElement();
 
-            if (selectedObject == null)
+            switch (selectedObject)
             {
-                DrawPlaceHolder();
-            }
-            else if (selectedObject is IValidationProfile selectedProfile)
-            {
-                Draw(selectedProfile);
-            }
-            else if (selectedObject is ICheck selectedCheck)
-            {
-                Draw(selectedCheck);
-            }
-            else if (selectedObject is IIssue selectedIssue)
-            {
-                Draw(selectedIssue);
+                case null:
+                    DrawPlaceHolder();
+                    break;
+                case IValidationProfile selectedProfile:
+                    Draw(selectedProfile);
+                    break;
+                case ICheck selectedCheck:
+                    Draw(selectedCheck);
+                    break;
+                case IIssue selectedIssue:
+                    Draw(selectedIssue);
+                    break;
             }
         }
 
@@ -38,13 +38,14 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.EndScrollView();
         }
 
+        [NotNull]
         private static GUIStyle TitleGuiStyle => new GUIStyle(GUI.skin.label)
         {
             fontSize = 37,
             fontStyle = FontStyle.Bold
         };
 
-        private void Draw(IValidationProfile profile)
+        private void Draw([NotNull] IValidationProfile profile)
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
@@ -55,6 +56,7 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(20);
 
             DrawSummaryTable(profile.GetPriorityCount(), profile.GetAutomationCount());
+            
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField($"Number of checks: {profile.CheckList.Count}");
             
@@ -65,6 +67,7 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.EndScrollView();
         }
         
+        [NotNull]
         private static GUIStyle TableGuiStyle => new GUIStyle(GUI.skin.label)
         {
             imagePosition = ImagePosition.ImageLeft
@@ -72,7 +75,7 @@ namespace HomaGames.GameDoctor.Ui
 
         private void DrawSummaryTable(PriorityCount priorities, AutomationCount automations)
         {
-            void DrawCell(int value, Texture2D texture2D)
+            void DrawCell(int value, [NotNull] Texture texture2D)
             {
                 EditorGUILayout.LabelField(new GUIContent("   " + value, texture2D), TableGuiStyle,
                     GUILayout.Width(100));
@@ -82,26 +85,26 @@ namespace HomaGames.GameDoctor.Ui
             DrawCell(priorities.High, HighPriorityTexture);
             DrawCell(automations.Automatic, AutomaticTexture);
             GUILayout.EndHorizontal();
+            
             GUILayout.BeginHorizontal();
             DrawCell(priorities.Medium, MediumPriorityTexture);
             DrawCell(automations.Interactive, InteractiveTexture);
             GUILayout.EndHorizontal();
+            
             DrawCell(priorities.Low, LowPriorityTexture);
         }
 
-        private void Draw(ICheck check)
+        private void Draw([NotNull] ICheck check)
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
             EditorGUILayout.Space(20);
             
             EditorGUILayout.LabelField(check.Name, TitleGuiStyle, GUILayout.Height(TitleGuiStyle.fontSize));
-
             if (check.CheckResult?.Passed == true)
-            {
-                EditorGUILayoutExtension.ColorLabel(new GUIContent(" " /* NBSP */ + "Passed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
-            }
-            
+                EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Passed", FixedWhiteTexture),
+                    new Color(0.06f, 0.65f, 0.54f));
+
             EditorGUILayout.Space(20);
 
             DrawSummaryTable(check.GetPriorityCount(), check.GetAutomationCount());
@@ -139,7 +142,7 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.EndScrollView();
         }
 
-        private void Draw(IIssue issue)
+        private void Draw([NotNull] IIssue issue)
         {
             var issueUiData = GetUiData(issue);
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
@@ -150,7 +153,7 @@ namespace HomaGames.GameDoctor.Ui
 
             if (issueUiData.Fixed)
             {
-                EditorGUILayoutExtension.ColorLabel(new GUIContent(" " /* NBSP */ + "Fixed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
+                EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Fixed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
             }
             
             EditorGUILayout.Space(20);
@@ -174,12 +177,12 @@ namespace HomaGames.GameDoctor.Ui
             
             GUILayout.BeginHorizontal();
 
-            GUI.enabled = ! issueUiData.Fixed;
+            EditorGUI.BeginDisabledGroup(issueUiData.Fixed);
             if (GUILayout.Button("Fix", GUILayout.Width(130)))
             {
                 FixIssue(issue);
             }
-            GUI.enabled = true;
+            EditorGUI.EndDisabledGroup();
 
             if (GUILayout.Button("Re-run check", GUILayout.Width(130)))
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace HomaGames.GameDoctor.Ui
             ListenForErrors(RunAllChecksAsync());
         }
 
-        private void RunCheck(ICheck check)
+        private void RunCheck([NotNull] ICheck check)
         {
             ListenForErrors(RunCheckAsync(check));
         }
@@ -39,12 +40,12 @@ namespace HomaGames.GameDoctor.Ui
             await RunAsync(Profile.CheckList);
         }
         
-        private async Task RunCheckAsync(ICheck check)
+        private async Task RunCheckAsync([NotNull] ICheck check)
         {
             await RunAsync(new List<ICheck> { check });
         }
         
-        private async Task RunAsync(List<ICheck> checks)
+        private async Task RunAsync([NotNull] IReadOnlyList<ICheck> checks)
         {
             float maxI = checks.Count;
             string scanWindowTitle = "Executing all checks";
@@ -91,12 +92,12 @@ namespace HomaGames.GameDoctor.Ui
             await FixAutoIssuesAsync(GetAllIssues().Where(issue => issue.AutomationType == AutomationType.Automatic).ToList());
         }
         
-        private void FixIssue(IIssue issue)
+        private void FixIssue([NotNull] IIssue issue)
         {
             ListenForErrors(FixIssueAsync(issue));
         }
 
-        private async Task FixIssueAsync(IIssue issue)
+        private async Task FixIssueAsync([NotNull] IIssue issue)
         {
             if (issue.AutomationType == AutomationType.Automatic)
             {
@@ -110,7 +111,7 @@ namespace HomaGames.GameDoctor.Ui
             OnAfterIssueFixed();
         }
         
-        private async Task FixAutoIssuesAsync(List<IIssue> issues)
+        private async Task FixAutoIssuesAsync([NotNull] IReadOnlyList<IIssue> issues)
         {
             float maxI = issues.Count;
             string scanWindowTitle = "Fixing issues";
@@ -137,7 +138,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
 
-        private void OnIssueFixed(Task task, IIssue issue)
+        private void OnIssueFixed([NotNull] Task task, [NotNull] IIssue issue)
         {
             if (task.IsCompletedSuccessfully)
             {
@@ -160,7 +161,7 @@ namespace HomaGames.GameDoctor.Ui
         #endregion
 
 
-        private static void ListenForErrors(Task task)
+        private static void ListenForErrors([NotNull] Task task)
         {
             task.ContinueWith(resultTask =>
             {

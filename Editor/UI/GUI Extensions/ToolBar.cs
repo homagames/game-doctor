@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <returns>True when the button is being clicked on</returns>
         /// <seealso cref="BeginToolBar"/>
         /// <seealso cref="EndToolBar"/>
-        public static bool ToolBarButton(string label, params GUILayoutOption[] options) => ToolBarButton(new GUIContent(label), options);
+        public static bool ToolBarButton([NotNull] string label, [NotNull] params GUILayoutOption[] options) => ToolBarButton(new GUIContent(label), options);
     
         /// <summary>
         /// Draws a button in a toolbar.
@@ -35,7 +36,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <returns>True when the button is being clicked on</returns>
         /// <seealso cref="BeginToolBar"/>
         /// <seealso cref="EndToolBar"/>
-        public static bool ToolBarButton(GUIContent content, params GUILayoutOption[] options)
+        public static bool ToolBarButton([NotNull] GUIContent content, [NotNull] params GUILayoutOption[] options)
         {
             return GUILayout.Button(content, EditorStyles.toolbarButton, options.Length == 0 ? new []{GUILayout.ExpandWidth(false)} : options);
         }
@@ -49,7 +50,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <returns>True when the toggle is active</returns>
         /// <seealso cref="BeginToolBar"/>
         /// <seealso cref="EndToolBar"/>
-        public static bool ToolBarToggle(bool value, string label, params GUILayoutOption[] options) => ToolBarToggle(value, new GUIContent(label), options);
+        public static bool ToolBarToggle(bool value, [NotNull] string label, [NotNull] params GUILayoutOption[] options) => ToolBarToggle(value, new GUIContent(label), options);
         /// <summary>
         /// Draws a button that will toggle on each press in a toolbar.
         /// </summary>
@@ -59,7 +60,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <returns>True when the toggle is active</returns>
         /// <seealso cref="BeginToolBar"/>
         /// <seealso cref="EndToolBar"/>
-        public static bool ToolBarToggle(bool value, GUIContent content, params GUILayoutOption[] options)
+        public static bool ToolBarToggle(bool value, [NotNull] GUIContent content, [NotNull] params GUILayoutOption[] options)
         {
             return GUILayout.Toggle(value, content, EditorStyles.toolbarButton, options.Length == 0 ? new []{GUILayout.ExpandWidth(false)} : options);
         }
@@ -69,10 +70,10 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.GetControlRect(false, 2, GUIStyle.none, GUILayout.Width(size));
         }
     
-        public static void ToolBarLabel(string label, params GUILayoutOption[] options)
+        public static void ToolBarLabel([NotNull] string label, [NotNull] params GUILayoutOption[] options)
             => ToolBarLabel(new GUIContent(label), options);
 
-        public static void ToolBarLabel(GUIContent content, params GUILayoutOption[] options)
+        public static void ToolBarLabel([NotNull] GUIContent content, [NotNull] params GUILayoutOption[] options)
         {
             EditorGUILayout.LabelField(content, EditorStyles.toolbar, options.Length == 0 ? new []{GUILayout.ExpandWidth(false)} : options);
         }
@@ -85,7 +86,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <returns>The edited string.</returns>
         /// <seealso cref="BeginToolBar"/>
         /// <seealso cref="EndToolBar"/>
-        public static string ToolBarSearchBar(string searchString, params GUILayoutOption[] options)
+        public static string ToolBarSearchBar([NotNull] string searchString, [NotNull] params GUILayoutOption[] options)
             => SearchBar(searchString, true, options);
 
         /// <summary>

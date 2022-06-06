@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using HomaGames.GameDoctor.Core;
 using UnityEditor;
 using UnityEngine;
@@ -6,50 +8,18 @@ namespace HomaGames.GameDoctor.Ui
 {
     public partial class GameDoctorWindow
     {
-    
+        private const int FooterPadding = 10;
+
         private void DrawFooter(float footerSize)
         {
             int passedCheckCount = 0, autoFixableCheckCount = 0, failedCheckCount = 0;
-            int highPriorityIssueCount = 0, mediumPriorityIssueCount = 0, lowPriorityIssueCount = 0;
-        
             var checks = Profile.CheckList;
-            foreach (var check in checks)
-            {
-                if (check.CheckResult == null)
-                    continue;
-
-                if (check.CheckResult.Passed)
-                {
-                    passedCheckCount += 1;
-                    continue;
-                }
-
-                bool isAutoFixable = true;
-                foreach (var issue in check.CheckResult.Issues)
-                {
-                    if (issue.AutomationType != AutomationType.Automatic)
-                        isAutoFixable = false;
-
-                    switch (issue.Priority)
-                    {
-                        default:
-                        case Priority.Low:
-                            lowPriorityIssueCount += 1;
-                            break;
-                        case Priority.Medium:
-                            mediumPriorityIssueCount += 1;
-                            break;
-                        case Priority.High:
-                            highPriorityIssueCount += 1;
-                            break;
-                    }
-                }
-
-                if (isAutoFixable)
-                    autoFixableCheckCount += 1;
-                else
-                    failedCheckCount += 1;
-            }
+            passedCheckCount = ReadPassedCheckCount(checks, ref passedCheckCount, ref autoFixableCheckCount, ref failedCheckCount);
+            
+            var priorityCount = Profile.GetPriorityCount();
+            var highPriorityIssueCount = priorityCount.High;
+            var mediumPriorityIssueCount = priorityCount.Medium;
+            var lowPriorityIssueCount = priorityCount.Low;
 
             if (passedCheckCount + autoFixableCheckCount + failedCheckCount == 0)
             {
@@ -57,16 +27,24 @@ namespace HomaGames.GameDoctor.Ui
                 return;
             }
 
-        
-            int footerPadding = 10;
-            Rect footerRect = EditorGUILayout.GetControlRect(false, footerSize - footerPadding*2, new GUIStyle() {margin = new RectOffset(footerPadding, footerPadding, footerPadding, footerPadding)});
 
-            Rect firstPieChartRect = new Rect(
-                footerRect.x, footerRect.y,
-                footerRect.width / 2, footerRect.height);
-            Rect secondPieChartRect = new Rect(
-                footerRect.width / 2 + footerRect.x, footerRect.y,
-                footerRect.width / 2, footerRect.height);
+            Rect footerRect = EditorGUILayout.GetControlRect(
+                false, 
+                footerSize - FooterPadding*2, 
+                new GUIStyle
+                {
+                    margin = new RectOffset(FooterPadding, FooterPadding, FooterPadding, FooterPadding)
+                });
+
+            Rect firstPieChartRect = new Rect(footerRect)
+            {
+                width = footerRect.width / 2,
+            };
+            Rect secondPieChartRect = new Rect(footerRect)
+            {
+                x = footerRect.width / 2,
+                width = footerRect.width / 2,
+            };
         
             EditorGUIExtension.DrawPieChart(firstPieChartRect, 
             
@@ -115,6 +93,31 @@ namespace HomaGames.GameDoctor.Ui
             {
                 GUI.Label(secondPieChartRect, "No issue found, well done!");
             }
+        }
+
+        private static int ReadPassedCheckCount(IEnumerable<ICheck> checks, ref int passedCheckCount, ref int autoFixableCheckCount,
+            ref int failedCheckCount)
+        {
+            foreach (var check in checks)
+            {
+                if (check.CheckResult == null)
+                    continue;
+
+                if (check.CheckResult.Passed)
+                {
+                    passedCheckCount += 1;
+                    continue;
+                }
+
+                bool isAutoFixable = check.CheckResult.Issues.All(issue => issue.AutomationType == AutomationType.Automatic);
+
+                if (isAutoFixable)
+                    autoFixableCheckCount += 1;
+                else
+                    failedCheckCount += 1;
+            }
+
+            return passedCheckCount;
         }
     }
 }

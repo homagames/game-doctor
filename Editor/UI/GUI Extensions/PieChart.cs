@@ -13,7 +13,7 @@ namespace HomaGames.GameDoctor.Ui
         /// </summary>
         /// <param name="height">The height of the pie chart</param>
         /// <param name="values">The values to display in the chart</param>
-        public static void DrawPieChart(float height, params EditorGUIExtension.PieChartValue[] values)
+        public static void DrawPieChart(float height, [NotNull] params EditorGUIExtension.PieChartValue[] values)
             => DrawPieChart(height, true, values);
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace HomaGames.GameDoctor.Ui
         /// </summary>
         /// <param name="height">The height of the pie chart</param>
         /// <param name="values">The values to display in the chart</param>
-        public static void DrawPieChart(float height, IReadOnlyList<EditorGUIExtension.PieChartValue> values)
+        public static void DrawPieChart(float height, [NotNull] IReadOnlyList<EditorGUIExtension.PieChartValue> values)
             => DrawPieChart(height, true, values);
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <param name="height">The height of the pie chart</param>
         /// <param name="showLabels">Whether or not to draw the labels</param>
         /// <param name="values">The values to display in the chart</param>
-        public static void DrawPieChart(float height, bool showLabels, params EditorGUIExtension.PieChartValue[] values)
+        public static void DrawPieChart(float height, bool showLabels, [NotNull] params EditorGUIExtension.PieChartValue[] values)
             => DrawPieChart(height, showLabels, (IReadOnlyList<EditorGUIExtension.PieChartValue>) values);
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <param name="height">The height of the pie chart</param>
         /// <param name="showLabels">Whether or not to draw the labels</param>
         /// <param name="values">The values to display in the chart</param>
-        public static void DrawPieChart(float height, bool showLabels, IReadOnlyList<EditorGUIExtension.PieChartValue> values)
+        public static void DrawPieChart(float height, bool showLabels, [NotNull] IReadOnlyList<EditorGUIExtension.PieChartValue> values)
         {
             Rect rect = EditorGUILayout.GetControlRect(false, height);
             EditorGUIExtension.DrawPieChart(rect, showLabels, values);
@@ -83,7 +83,7 @@ namespace HomaGames.GameDoctor.Ui
         /// </summary>
         /// <param name="rect">The position of the pie chart</param>
         /// <param name="values">The values to display in the chart</param>
-        public static void DrawPieChart(Rect rect, IReadOnlyList<PieChartValue> values)
+        public static void DrawPieChart(Rect rect, [NotNull] IReadOnlyList<PieChartValue> values)
             => DrawPieChart(rect, true, values);
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <param name="rect">The position of the pie chart</param>
         /// <param name="showLabels">Whether or not to draw the labels</param>
         /// <param name="values">The values to display in the chart</param>
-        public static void DrawPieChart(Rect rect, bool showLabels, params PieChartValue[] values)
+        public static void DrawPieChart(Rect rect, bool showLabels, [NotNull] params PieChartValue[] values)
             => DrawPieChart(rect, showLabels, (IReadOnlyList<PieChartValue>) values);
     
         /// <summary>
@@ -101,7 +101,7 @@ namespace HomaGames.GameDoctor.Ui
         /// <param name="rect">The position of the pie chart</param>
         /// <param name="showLabels">Whether or not to draw the labels</param>
         /// <param name="values">The values to display in the chart</param>
-        public static void DrawPieChart(Rect rect, bool showLabels, IReadOnlyList<PieChartValue> values)
+        public static void DrawPieChart(Rect rect, bool showLabels, [NotNull] IReadOnlyList<PieChartValue> values)
         {
             float chartSize = rect.height;
             Vector3 pieCenter = new Vector3(chartSize / 2, chartSize / 2, 0) + (Vector3) rect.position;
@@ -137,7 +137,7 @@ namespace HomaGames.GameDoctor.Ui
             Handles.EndGUI();
         }
 
-        private static void DrawGraphicPieChart(Vector3 pieCenter, float chartSize, float thickness, IReadOnlyList<PieChartValue> values)
+        private static void DrawGraphicPieChart(Vector3 pieCenter, float chartSize, float thickness, [NotNull] IReadOnlyList<PieChartValue> values)
         {
             const float spacingBetweenArcs = 5;
             float totalValue = values.Select(v => v.Value).Sum();
@@ -199,7 +199,7 @@ namespace HomaGames.GameDoctor.Ui
             {
                 float nextAngle = (i == sampleCount - 1) ? angle : SamplePerDegree * i;
 
-                // We add margin so that there is no ugly lines due to AA with adjacent objects
+                // We increase the angles so that there is no ugly lines due to AA with adjacent objects
                 Vector3 currentVector = GetVectorFrom(currentAngle - (i == 1 ? 0 : 1));
                 Vector3 nextVector = GetVectorFrom(nextAngle + (i == sampleCount - 1 ? 0 : 1));
 

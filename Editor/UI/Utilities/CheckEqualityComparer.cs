@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using HomaGames.GameDoctor.Core;
+using JetBrains.Annotations;
 
 public class IssueEqualityComparer : IEqualityComparer<IIssue>
 { 
+    [Pure]
     public bool Equals(IIssue x, IIssue y)
     {
         if (ReferenceEquals(x, y)) return true;
@@ -13,6 +15,7 @@ public class IssueEqualityComparer : IEqualityComparer<IIssue>
         return x.Name == y.Name && x.Description == y.Description && x.AutomationType == y.AutomationType && x.Priority == y.Priority;
     }
 
+    [Pure]
     public int GetHashCode(IIssue obj)
     {
         return HashCode.Combine(obj.Name, obj.Description, (int) obj.AutomationType, (int) obj.Priority);

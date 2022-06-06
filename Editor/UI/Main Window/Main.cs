@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
 using UnityEditor;
@@ -11,6 +9,9 @@ namespace HomaGames.GameDoctor.Ui
 {
     public partial class GameDoctorWindow : EditorWindow
     {
+        // Non-Breakable SPace, to prevent trimming 
+        private const string NBSP = " ";
+        
         private const int UpperNodeMargin = 7;
         private const int LowerNodeMargin = 7;
         private static readonly float TotalNodeSize = UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
@@ -19,7 +20,36 @@ namespace HomaGames.GameDoctor.Ui
         private static Color MediumPriorityColor => Color.red;
         private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(0.87f, 1f, 0.31f);
 
-        private IValidationProfile Profile;
+        private string _validationProfileName;
+        private IValidationProfile _profile;
+
+        private IValidationProfile Profile
+        {
+            get
+            {
+                if (_profile == null)
+                {
+                    AvailableProfiles.GetDefaultValidationProfile();
+                    
+                    _profile = AvailableProfiles
+                        .GetAllValidationProfiles()
+                        .FirstOrDefault(p => p.Name == _validationProfileName);
+
+                    if (_profile == null)
+                    {
+                        Debug.LogError($"To open the Game Doctor window, use {nameof(GameDoctorWindow)}.{nameof(Open)}({nameof(IValidationProfile)})");
+                        Close();
+                    }
+                }
+
+                return _profile;
+            }
+            set
+            {
+                _profile = value;
+                _validationProfileName = _profile.Name;
+            }
+        }
 
         private SeparatedViewData SeparatedViewData;
         
@@ -39,17 +69,15 @@ namespace HomaGames.GameDoctor.Ui
         private Texture2D AutomaticTexture;
         private Texture2D InteractiveTexture;
         
-        private Texture2D FixedTexture;
         private Texture2D FixedColoredTexture;
         private Texture2D FixedWhiteTexture;
 
-        // TODO: have a proper initialization method
         private void OnEnable()
         {
             titleContent = new GUIContent("Game Doctor");
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             if (Profile == null)
             {
@@ -76,13 +104,17 @@ namespace HomaGames.GameDoctor.Ui
         }
 
         // This method returns a valid value only on EventType.Repaint events
+        [Pure]
         private float GetCurrentLayoutWidth() => EditorGUILayout.GetControlRect(false, 0, GUIStyle.none).width;
         
+        [Pure]
+        [NotNull]
         private IEnumerable<IIssue> GetAllIssues()
         {
             return Profile.CheckList.SelectMany(check => check.CheckResult?.Issues ?? Enumerable.Empty<IIssue>());
         }
 
+        [Pure]
         [CanBeNull]
         private object GetSelectedElement()
         {
@@ -107,20 +139,24 @@ namespace HomaGames.GameDoctor.Ui
             return null;
         }
          
+        [NotNull]
+        [Pure]
         private GUIContent GetColorableGuiContentFor(Priority priority)
         {
             switch (priority)
             {
                 default:
                 case Priority.Low:
-                    return new GUIContent(" " /* NBSP */ + "Low", LowPriorityWhiteTexture);
+                    return new GUIContent(NBSP + "Low", LowPriorityWhiteTexture);
                 case Priority.Medium:
-                    return new GUIContent(" " /* NBSP */ + "Medium", MediumPriorityWhiteTexture);
+                    return new GUIContent(NBSP + "Medium", MediumPriorityWhiteTexture);
                 case Priority.High:
-                    return new GUIContent(" " /* NBSP */ + "High", HighPriorityWhiteTexture);
+                    return new GUIContent(NBSP + "High", HighPriorityWhiteTexture);
             }
         }
         
+        [NotNull]
+        [Pure]
         private Texture2D GetTextureFor(Priority priority)
         {
             switch (priority)
@@ -135,6 +171,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
         
+        [Pure]
         private Color GetColorFor(Priority priority)
         {
             switch (priority)
@@ -149,18 +186,22 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
 
+        [NotNull]
+        [Pure]
         private GUIContent GetGuiContentFor(AutomationType automationType)
         {
             switch (automationType)
             {
                 default:
                 case AutomationType.Interactive:
-                    return new GUIContent(" " /* NBSP */ + "Interactive", InteractiveTexture);
+                    return new GUIContent(NBSP + "Interactive", InteractiveTexture);
                 case AutomationType.Automatic:
-                    return new GUIContent(" " /* NBSP */ + "Automatic", AutomaticTexture);
+                    return new GUIContent(NBSP + "Automatic", AutomaticTexture);
             }
         }
 
+        [NotNull]
+        [Pure]
         private Texture2D GetTextureFor(AutomationType automationType)
         {
             switch (automationType)
