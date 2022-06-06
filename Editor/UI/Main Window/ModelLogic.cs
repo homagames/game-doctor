@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
@@ -105,10 +106,12 @@ namespace HomaGames.GameDoctor.Ui
             }
             else
             {
-                await issue.Fix().ContinueWith(task => OnIssueFixed(task, issue));
+                Rect previousPosition = position;
+                position = new Rect(previousPosition) {width = 0, height = 0};
+                var synchronizationContext = SynchronizationContext.Current;
+                await issue.Fix().ContinueWith(task => OnInteractiveIssueFixed(task, issue, synchronizationContext, previousPosition));
+                OnAfterIssueFixed();
             }
-
-            OnAfterIssueFixed();
         }
         
         private async Task FixAutoIssuesAsync([NotNull] IReadOnlyList<IIssue> issues)
@@ -136,6 +139,19 @@ namespace HomaGames.GameDoctor.Ui
                 EditorUtility.ClearProgressBar();
                 OnAfterIssueFixed();
             }
+        }
+
+        private void OnInteractiveIssueFixed(
+            [NotNull] Task task, [NotNull] IIssue issue,
+            [NotNull] SynchronizationContext mainContext, Rect previousPosition)
+        {
+            mainContext.Post(rect =>
+            {
+                GetWindow<GameDoctorWindow>().Show();
+                position = (Rect) rect;
+            }, previousPosition);
+            
+            OnIssueFixed(task, issue);
         }
 
         private void OnIssueFixed([NotNull] Task task, [NotNull] IIssue issue)
