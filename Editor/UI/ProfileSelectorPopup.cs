@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using HomaGames.GameDoctor.Core;
 using UnityEditor;
