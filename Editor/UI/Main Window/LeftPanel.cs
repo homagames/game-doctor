@@ -95,10 +95,12 @@ namespace HomaGames.GameDoctor.Ui
         {
             CheckUiData uiData = GetUiData(check);
 
-            var containsIssues = check.CheckResult?.Passed != true;
+            var checkPassed = check.CheckResult != null && check.CheckResult.Passed;
+            var containsIssues = check.CheckResult != null && check.CheckResult.Issues.Count > 0;
+
             GUIContent nodeContent = new GUIContent(
                 NBSP + check.Name, 
-                !containsIssues ? FixedColoredTexture : CheckTexture);
+                checkPassed ? FixedColoredTexture : CheckTexture);
             DrawFoldoutTreeElement(uiData, nodeContent, check.GetPriorityCount(), () =>
             {
 
@@ -112,7 +114,7 @@ namespace HomaGames.GameDoctor.Ui
             }, containsIssues, containsIssues && check.Importance == ImportanceType.Mandatory);
         }
 
-        private void DrawFoldoutTreeElement([NotNull] BaseFoldoutUiData uiData, [CanBeNull] GUIContent nodeContent, PriorityCount priorityCount,
+        private void DrawFoldoutTreeElement([NotNull] BaseFoldoutUiData uiData, [NotNull] GUIContent nodeContent, PriorityCount priorityCount,
             [NotNull, InstantHandle] Action drawInside, bool drawAsFoldout = true, bool drawMandatory = false)
         {
             BeginNode(uiData);
