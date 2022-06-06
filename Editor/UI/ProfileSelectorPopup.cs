@@ -20,7 +20,6 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnEnable()
         {
-            AvailableProfiles.GetDefaultValidationProfile();
             ProfileList = AvailableProfiles.GetAllValidationProfiles();
             
             position = new Rect(position)
