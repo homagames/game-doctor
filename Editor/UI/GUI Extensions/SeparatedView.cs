@@ -148,13 +148,13 @@ namespace HomaGames.GameDoctor.Ui
             return separatorRect;
         }
     }
-}
 
-public struct SeparatedViewData
-{
-    public Rect DrawRect;
-    public float SeparatorPosition;
-    public bool IsResizing;
+    public struct SeparatedViewData
+    {
+        public Rect DrawRect;
+        public float SeparatorPosition;
+        public bool IsResizing;
 
-    public bool IsInitialized;
+        public bool IsInitialized;
+    }
 }

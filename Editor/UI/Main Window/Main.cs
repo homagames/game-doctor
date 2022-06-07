@@ -112,7 +112,7 @@ namespace HomaGames.GameDoctor.Ui
         }
 
         // This method returns a valid value only on EventType.Repaint events
-        [Pure]
+        [MustUseReturnValue]
         private float GetCurrentLayoutWidth() => EditorGUILayout.GetControlRect(false, 0, GUIStyle.none).width;
         
         [Pure]
