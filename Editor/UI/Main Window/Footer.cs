@@ -72,23 +72,28 @@ namespace HomaGames.GameDoctor.Ui
         
             if (highPriorityIssueCount + mediumPriorityIssueCount + lowPriorityIssueCount > 0)
             {
+                Color DimColor(Color color)
+                {
+                    return color * new Color(0.7f, 0.7f, 0.7f);
+                }
+                
                 EditorGUIExtension.DrawPieChart(secondPieChartRect,
                     new EditorGUIExtension.PieChartValue
                     {
                         Value = highPriorityIssueCount,
-                        Color = HighPriorityColor,
+                        Color = DimColor(HighPriorityColor),
                         Label = "High priority"
                     },
                     new EditorGUIExtension.PieChartValue
                     {
                         Value = mediumPriorityIssueCount,
-                        Color = MediumPriorityColor,
+                        Color = DimColor(MediumPriorityColor),
                         Label = "Medium priority"
                     },
                     new EditorGUIExtension.PieChartValue
                     {
                         Value = lowPriorityIssueCount,
-                        Color = LowPriorityColor,
+                        Color = DimColor(LowPriorityColor),
                         Label = "Low priority"
                     });
             }
