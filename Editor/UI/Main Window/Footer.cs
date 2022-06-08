@@ -74,7 +74,10 @@ namespace HomaGames.GameDoctor.Ui
             {
                 Color DimColor(Color color)
                 {
-                    return color * new Color(0.7f, 0.7f, 0.7f);
+                    return color * 
+                           (EditorGUIUtility.isProSkin ? 
+                               new Color(0.7f, 0.7f, 0.7f) : 
+                               new Color(0.85f, 0.85f, 0.85f));
                 }
                 
                 EditorGUIExtension.DrawPieChart(secondPieChartRect,

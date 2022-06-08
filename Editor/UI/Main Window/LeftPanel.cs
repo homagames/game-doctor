@@ -222,7 +222,7 @@ namespace HomaGames.GameDoctor.Ui
                     _tintedBackgroundTexture = new Texture2D(1, 1);
                     _tintedBackgroundTexture.SetPixel(0, 0, EditorGUIUtility.isProSkin ? 
                         new Color(0.25f, 0.25f, 0.25f) : 
-                        new Color(0.78f, 0.78f, 0.78f)); 
+                        new Color(0.75f, 0.75f, 0.75f)); 
                     _tintedBackgroundTexture.Apply(false);
                 }
                 return _tintedBackgroundTexture;
