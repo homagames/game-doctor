@@ -18,7 +18,7 @@ namespace HomaGames.GameDoctor.Ui
         
         private static Color HighPriorityColor => Color.red;
         private static Color MediumPriorityColor => new Color(0.87f, 0.49f, 0.16f);
-        private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(0.87f, 1f, 0.31f);
+        private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(1f, 1f, 0f);
         
         public static bool IsProfileOpened { get; private set; }
 
