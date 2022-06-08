@@ -90,7 +90,12 @@ namespace HomaGames.GameDoctor.Ui
 
         private async Task FixAllAutoIssuesAsync()
         {
-            await FixAutoIssuesAsync(GetAllIssues().Where(issue => issue.AutomationType == AutomationType.Automatic).ToList());
+            await FixAutoIssuesAsync(
+                GetAllIssues()
+                    .Where(issue => 
+                        issue.AutomationType == AutomationType.Automatic
+                        && ! GetUiData(issue).Fixed)
+                    .ToList());
         }
         
         private void FixIssue([NotNull] IIssue issue)
@@ -124,6 +129,7 @@ namespace HomaGames.GameDoctor.Ui
                 for (int i = 0; i < maxI; i++)
                 {
                     EditorUtility.DisplayProgressBar(scanWindowTitle, $"Fixing \"{issues[i].Name}", i / maxI);
+                    
                     try
                     {
                         await issues[i].Fix().ContinueWith(task => OnIssueFixed(task, issues[i]));
