@@ -53,7 +53,7 @@ namespace HomaGames.GameDoctor.Ui
         /// </summary>
         /// <seealso cref="EditorGUIExtension.DrawPieChart(Rect, bool, PieChartValue[])"/>
         /// <seealso cref="EditorGUILayoutExtension.DrawPieChart(float, bool, PieChartValue[])"/>
-        public struct PieChartValue
+        public class PieChartValue
         {
             /// <summary>
             /// The weight of the element in the chart
@@ -68,6 +68,10 @@ namespace HomaGames.GameDoctor.Ui
             /// </summary>
             [CanBeNull]
             public string Label;
+            /// <summary>
+            /// The thickness of the arc, between 0 and 10.
+            /// </summary>
+            public float Thickness = 1;
         }
     
         /// <summary>
@@ -137,12 +141,12 @@ namespace HomaGames.GameDoctor.Ui
             Handles.EndGUI();
         }
 
-        private static void DrawGraphicPieChart(Vector3 pieCenter, float chartSize, float thickness, [NotNull] IReadOnlyList<PieChartValue> values)
+        private static void DrawGraphicPieChart(Vector3 pieCenter, float chartSize, float maxThickness, [NotNull] IReadOnlyList<PieChartValue> values)
         {
             const float spacingBetweenArcs = 5;
             float totalValue = values.Select(v => v.Value).Sum();
             Vector3 currentPieVector = Vector3.down; // Vector3.down is up in window space
-            var drawRadius = (chartSize - thickness) / 2;
+            var drawRadius = (chartSize - maxThickness) / 2;
 
             foreach (var value in values)
             {
@@ -151,7 +155,8 @@ namespace HomaGames.GameDoctor.Ui
                 Handles.color = value.Color;
 
                 float drawAngle = angle - spacingBetweenArcs;
-                HandlesDrawWireArc(pieCenter, Vector3.forward, currentPieVector, drawAngle, drawRadius, thickness);
+                float arcThickness = maxThickness * Mathf.Clamp01(value.Thickness);
+                HandlesDrawWireArc(pieCenter, Vector3.forward, currentPieVector, drawAngle, drawRadius, Mathf.Max(arcThickness, 1));
 
                 currentPieVector = Quaternion.AngleAxis(angle, Vector3.forward) * currentPieVector;
             }
@@ -163,11 +168,12 @@ namespace HomaGames.GameDoctor.Ui
             const float colorSquareSize = 10;
             const float colorLegendSize = colorSquareSize + 2 * colorSquareMargin;
 
+            float colorSquareHeight = Mathf.Max(colorSquareSize * Mathf.Clamp01(value.Thickness), 3);
             Rect colorLegendRect = new Rect(
                 labelX + colorSquareMargin, 
-                labelY + colorSquareMargin, 
+                labelY + colorSquareMargin + (colorSquareSize - colorSquareHeight) / 2, 
                 colorSquareSize,
-                colorSquareSize
+                colorSquareHeight
             );
             EditorGUI.DrawRect(colorLegendRect, value.Color);
 

@@ -16,8 +16,8 @@ namespace HomaGames.GameDoctor.Ui
         private const int LowerNodeMargin = 7;
         private static readonly float TotalNodeSize = UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
         
-        private static Color HighPriorityColor => EditorGUIUtility.isProSkin ? new Color(0.25f, 0.23f, 0.8f) : new Color(0f, 0f, 0.49f);
-        private static Color MediumPriorityColor => Color.red;
+        private static Color HighPriorityColor => Color.red;
+        private static Color MediumPriorityColor => new Color(0.87f, 0.49f, 0.16f);
         private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(0.87f, 1f, 0.31f);
         
         public static bool IsProfileOpened { get; private set; }
