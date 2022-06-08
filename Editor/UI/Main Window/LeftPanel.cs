@@ -117,11 +117,11 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawFoldoutTreeElement([NotNull] BaseFoldoutUiData uiData, [NotNull] GUIContent nodeContent, PriorityCount priorityCount,
             [NotNull, InstantHandle] Action drawInside, bool drawAsFoldout = true, bool drawMandatory = false)
         {
-            BeginNode(uiData);
+            BeginNode(uiData, true);
             if (drawAsFoldout)
-                uiData.Expanded.target = EditorGUILayout.Foldout(uiData.Expanded.target, nodeContent);
+                uiData.Expanded.target = EditorGUILayout.Foldout(uiData.Expanded.target, nodeContent, new GUIStyle(EditorStyles.foldout) { fontStyle = FontStyle.Bold});
             else
-                EditorGUILayout.LabelField(nodeContent);
+                EditorGUILayout.LabelField(nodeContent, EditorStyles.boldLabel);
             
             if (drawMandatory)
             {
@@ -211,17 +211,49 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
 
+        private static Texture2D _tintedBackgroundTexture;
+
+        private static Texture2D TintedBackgroundTexture
+        {
+            get
+            {
+                if (_tintedBackgroundTexture == null)
+                {
+                    _tintedBackgroundTexture = new Texture2D(1, 1);
+                    _tintedBackgroundTexture.SetPixel(0, 0, EditorGUIUtility.isProSkin ? 
+                        new Color(0.25f, 0.25f, 0.25f) : 
+                        new Color(0.78f, 0.78f, 0.78f)); 
+                    _tintedBackgroundTexture.Apply(false);
+                }
+                return _tintedBackgroundTexture;
+            }
+        }
+        
         [NotNull]
         private static GUIStyle SelectedNodeStyle => new GUIStyle("OL SelectedRow")
             {padding = new RectOffset(0, 0, UpperNodeMargin, LowerNodeMargin), margin = new RectOffset()};
+        
+        [NotNull]
+        private static GUIStyle SelectedTintedNodeStyle => new GUIStyle(SelectedNodeStyle)
+            {normal = {background = TintedBackgroundTexture}};
 
         [NotNull]
         private static GUIStyle RegularNodeStyle => new GUIStyle()
             {padding = new RectOffset(0, 0, UpperNodeMargin, LowerNodeMargin), margin = new RectOffset()};
+        
+        [NotNull]
+        private static GUIStyle RegularTintedNodeStyle => new GUIStyle(RegularNodeStyle)
+            {normal = {background = TintedBackgroundTexture}};
 
-        private static void BeginNode([NotNull] BaseUiData uiData)
+        private static void BeginNode([NotNull] BaseUiData uiData, bool tinted = false)
         {
-            EditorGUILayout.BeginHorizontal(uiData.Selected ? SelectedNodeStyle : RegularNodeStyle,
+            GUIStyle horizontalGroupStyle;
+            if (tinted)
+                horizontalGroupStyle = uiData.Selected ? SelectedTintedNodeStyle : RegularTintedNodeStyle;
+            else
+                horizontalGroupStyle = uiData.Selected ? SelectedNodeStyle : RegularNodeStyle;
+
+            EditorGUILayout.BeginHorizontal(horizontalGroupStyle,
                 GUILayout.ExpandWidth(true));
             EditorGUI.indentLevel += 1;
         }
