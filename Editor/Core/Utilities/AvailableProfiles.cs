@@ -40,6 +40,8 @@ namespace HomaGames.GameDoctor.Core
         [PublicAPI]
         public static List<IValidationProfile> GetAllValidationProfiles()
         {
+            // Ensuring default profile is populated
+            GetDefaultValidationProfile();
             return new List<IValidationProfile>(_registeredValidationProfiles.Values);
         }
 

@@ -1,17 +1,20 @@
-using UnityEditor;
+using System.Collections.Generic;
 
 namespace HomaGames.GameDoctor.Core
 {
     /// <summary>
     /// Default Validation Profile when no other implementations are available.
     /// </summary>
-    public class DefaultValidationProfile : BaseValidationProfile
+    public sealed class DefaultValidationProfile : IValidationProfile
     {
         public const string DefaultValidationProfileName = "Default Validation Profile";
-        public DefaultValidationProfile() : base(DefaultValidationProfileName,
-            "Default Validation Profile with selectable tags.")
-        {
-            
-        }
+        public string Name => DefaultValidationProfileName;
+
+        public string Description =>
+            "Default Validation Profile with all available checks.\n\n" +
+            "Checkout Project Settings > Game Doctor and create new Profile from presets.\n" +
+            "Implement checks by inheriting ICheck and registering them with AvailableChecks.RegisterCheck.";
+
+        public HashSet<ICheck> CheckList => new HashSet<ICheck>(AvailableChecks.GetAllChecks());
     }
 }

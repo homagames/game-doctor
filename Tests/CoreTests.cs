@@ -21,16 +21,16 @@ namespace HomaGames.GameDoctor.Tests
         [UnityTest]
         public IEnumerator AllTestCustomImplementation()
         {
-            var profile = new BaseValidationProfile("Homa Profile", "The default Homa Validation Profile");
+            var profile = new TagBasedValidationProfile("Homa Profile", "The default Homa Validation Profile");
             AvailableChecks.RegisterCheck(new DummyCheck());
-            profile.PopulateChecks("performance");
+            profile.Tags.Add("performance");
             yield return AllTestPass(profile);
         }
 
         [UnityTest]
         public IEnumerator AllTestInlineImplementation()
         {
-            var profile = new BaseValidationProfile("Homa Profile", "The default Homa Validation Profile");
+            var profile = new TagBasedValidationProfile("Homa Profile", "The default Homa Validation Profile");
             var check = new SimpleCheck(async () =>
             {
                 var ci = new CheckResult();
@@ -47,14 +47,14 @@ namespace HomaGames.GameDoctor.Tests
                 return ci;
             }, "Dummy Check", "", new HashSet<string>() {"inline"});
             AvailableChecks.RegisterCheck(check);
-            profile.PopulateChecks("inline");
+            profile.Tags.Add("inline");
             yield return AllTestPass(profile);
         }
 
         [UnityTest]
         public IEnumerator FailingIssueFix()
         {
-            var profile = new BaseValidationProfile("Homa Profile", "The default Homa Validation Profile");
+            var profile = new TagBasedValidationProfile("Homa Profile", "The default Homa Validation Profile");
             var check = new SimpleCheck(async () =>
             {
                 var ci = new CheckResult();
@@ -71,7 +71,7 @@ namespace HomaGames.GameDoctor.Tests
                 return ci;
             }, "Dummy Check", "", new HashSet<string>() {"failing"});
             AvailableChecks.RegisterCheck(check);
-            profile.PopulateChecks("failing");
+            profile.Tags.Add("failing");
             yield return AllTestPass(profile, false);
         }
 
@@ -107,9 +107,6 @@ namespace HomaGames.GameDoctor.Tests
         {
             Assert.True(AvailableProfiles.GetDefaultValidationProfile() != null);
             Assert.True(AvailableProfiles.GetDefaultValidationProfile().GetType() == typeof(DefaultValidationProfile));
-            AvailableChecks.RegisterCheck(new DummyCheck());
-            AvailableProfiles.GetDefaultValidationProfile().PopulateChecks("performance");
-            Assert.True(AvailableProfiles.GetDefaultValidationProfile().CheckList.Count != 0);
         }
     }
 

@@ -23,9 +23,5 @@ namespace HomaGames.GameDoctor.Core
         /// The list of checks this profile contains.
         /// </summary>
         HashSet<ICheck> CheckList { get; }
-        /// <summary>
-        /// Populates CheckResults for all Checks in the CheckList.
-        /// </summary>
-        Task Check();
     }
 }
