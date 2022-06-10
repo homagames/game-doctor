@@ -1,12 +1,13 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace HomaGames.GameDoctor.Ui
+namespace HomaGames.GameDoctor
 {
     public static class AssetDatabaseUtilities
     {
-        public static T[] GetAll<T>(string[] searchInFolders = null) where T : Object {
+        public static List<T> GetAll<T>(string[] searchInFolders = null) where T : Object {
             
             List<T> output = new List<T>();
             
@@ -18,7 +19,8 @@ namespace HomaGames.GameDoctor.Ui
                     output.Add(element);
                 }
             }
-            return output.ToArray();
+          
+            return output;
         }
     }
 }
