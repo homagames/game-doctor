@@ -19,6 +19,7 @@ namespace HomaGames.GameDoctor
                     output.Add(element);
                 }
             }
+          
             return output;
         }
     }
