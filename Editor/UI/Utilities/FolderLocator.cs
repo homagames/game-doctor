@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using UnityEditor;
@@ -25,7 +26,7 @@ namespace HomaGames.GameDoctor.Ui
         [CanBeNull]
         public static string GetFolder(string id) {
 
-            FolderLocator[] locators = AssetDatabaseUtilities.GetAll<FolderLocator>();
+            List<FolderLocator> locators = AssetDatabaseUtilities.GetAll<FolderLocator>();
 
             foreach (var folderLocator in locators) {
                 if (folderLocator.FolderId == id) {

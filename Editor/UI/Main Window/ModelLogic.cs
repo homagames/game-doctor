@@ -38,7 +38,7 @@ namespace HomaGames.GameDoctor.Ui
         
         private async Task RunAllChecksAsync()
         {
-            await RunAsync(Profile.CheckList);
+            await RunAsync(Profile.CheckList.ToList());
         }
         
         private async Task RunCheckAsync([NotNull] ICheck check)
