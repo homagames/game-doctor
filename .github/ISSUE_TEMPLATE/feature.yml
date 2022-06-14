@@ -1,0 +1,23 @@
+name: 🩺 Request a feature
+description: Report a missing feature
+title: "[Feature Request]:"
+labels: ["feature-request", "triage"]
+assignees:
+  - homapf
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why?
+      description: Why should this feature exist? What are the use-cases?
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation
+      description: Do you have ideas regarding the implementation of this feature? Are you willing to implement this feature?
