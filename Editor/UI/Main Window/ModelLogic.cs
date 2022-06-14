@@ -162,7 +162,7 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnIssueFixed([NotNull] Task task, [NotNull] IIssue issue)
         {
-            if (task.IsCompletedSuccessfully)
+            if (task.IsCompleted && !task.IsFaulted)
             {
                 var issueUiData = GetUiData(issue);
                 issueUiData.Fixed = true;
@@ -187,7 +187,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             task.ContinueWith(resultTask =>
             {
-                if (!resultTask.IsCompletedSuccessfully)
+                if (!resultTask.IsCompleted || resultTask.IsFaulted)
                 {
                     Debug.LogError($"[Game Doctor] Exception in task:{resultTask.Exception}");
                 }

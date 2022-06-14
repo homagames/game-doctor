@@ -75,7 +75,7 @@ namespace HomaGames.GameDoctor.Ui
 
         private void DrawSummaryTable(PriorityCount priorities, AutomationCount automations)
         {
-            void DrawCell(int value, [NotNull] Texture texture2D)
+            void DrawCell(int value, Texture texture2D)
             {
                 EditorGUILayout.LabelField(new GUIContent("   " + value, texture2D), TableGuiStyle,
                     GUILayout.Width(100));
