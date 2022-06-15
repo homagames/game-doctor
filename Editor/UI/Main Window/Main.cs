@@ -112,7 +112,9 @@ namespace HomaGames.GameDoctor.Ui
         }
 
         // This method returns a valid value only on EventType.Repaint events
+#if UNITY_2020
         [MustUseReturnValue]
+#endif
         private float GetCurrentLayoutWidth() => EditorGUILayout.GetControlRect(false, 0, GUIStyle.none).width;
         
         [Pure]

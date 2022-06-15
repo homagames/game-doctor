@@ -18,6 +18,13 @@ public class IssueEqualityComparer : IEqualityComparer<IIssue>
     [Pure]
     public int GetHashCode(IIssue obj)
     {
-        return HashCode.Combine(obj.Name, obj.Description, (int) obj.AutomationType, (int) obj.Priority);
+        unchecked
+        {
+            var hashCode = (obj.Name != null ? obj.Name.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (obj.Description != null ? obj.Description.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (int) obj.AutomationType;
+            hashCode = (hashCode * 397) ^ (int) obj.Priority;
+            return hashCode;
+        }
     }
 }
