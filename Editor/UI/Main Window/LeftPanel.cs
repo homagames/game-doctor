@@ -26,7 +26,7 @@ namespace HomaGames.GameDoctor.Ui
             set
             {
                 _searchString = value ?? string.Empty;
-                SearchWords = _searchString.Split(" ");
+                SearchWords = _searchString.Split(' ');
             }
         }
 
@@ -457,7 +457,7 @@ namespace HomaGames.GameDoctor.Ui
         [Pure]
         private int ComputeRelevance([NotNull] string[] searchWords, [NotNull] string input) 
         {
-            string[] dishNameWords = input.ToLower().Split(" ");
+            string[] dishNameWords = input.ToLower().Split(' ');
             int relevance = 0;
 
             foreach (string searchWord in searchWords)
