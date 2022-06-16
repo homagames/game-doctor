@@ -172,8 +172,14 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(20);
             
             GUILayout.Label(issue.Description, new GUIStyle(GUI.skin.label) {wordWrap = true});
+            Rect labelRect = GUILayoutUtility.GetLastRect();
             
-            EditorGUILayout.Space(30);
+            EditorGUILayout.Space(10);
+            
+            issue.Draw();
+            
+            EditorGUILayout.Space(20);
+            
             
             GUILayout.BeginHorizontal();
 
