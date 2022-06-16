@@ -112,9 +112,10 @@ namespace HomaGames.GameDoctor.Ui
             else
             {
                 Rect previousPosition = position;
-                position = new Rect(previousPosition) {width = 0, height = 0};
+                if (!docked)
+                    position = new Rect(previousPosition) {width = 0, height = 0};
                 var synchronizationContext = SynchronizationContext.Current;
-                await issue.Fix().ContinueWith(task => OnInteractiveIssueFixed(task, issue, synchronizationContext, previousPosition));
+                await issue.Fix().ContinueWith(task => OnInteractiveIssueFixed(task, issue, synchronizationContext, docked, previousPosition));
                 OnAfterIssueFixed();
             }
         }
@@ -149,13 +150,16 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnInteractiveIssueFixed(
             [NotNull] Task task, [NotNull] IIssue issue,
-            [NotNull] SynchronizationContext mainContext, Rect previousPosition)
+            [NotNull] SynchronizationContext mainContext, bool wasDocked, Rect previousPosition)
         {
-            mainContext.Post(rect =>
+            if (! wasDocked)
             {
-                GetWindow<GameDoctorWindow>().Show();
-                position = (Rect) rect;
-            }, previousPosition);
+                mainContext.Post(rect =>
+                {
+                    GetWindow<GameDoctorWindow>().Show();
+                    position = (Rect) rect;
+                }, previousPosition);
+            }
             
             OnIssueFixed(task, issue);
         }
