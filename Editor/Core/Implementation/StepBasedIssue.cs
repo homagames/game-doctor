@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEngine;
 
 namespace HomaGames.GameDoctor.Core
 {
@@ -29,7 +30,7 @@ namespace HomaGames.GameDoctor.Core
             base.Draw();
             foreach (var step in stepsList)
             {
-                if (step.Done)
+                if (step.Predicate())
                     EditorGUILayout.LabelField(step.Name, EditorStyles.boldLabel);
                 else
                     EditorGUILayout.LabelField(step.Name);
@@ -39,10 +40,9 @@ namespace HomaGames.GameDoctor.Core
 
         protected override async Task InternalFix()
         {
-            var window = InteractiveStepWindow.Create(this);
-            
             if (_withInteractiveWindow)
-                window.ShowUtility();
+                InteractiveStepWindow.Begin(this);
+
             foreach (var step in stepsList)
             {
                 step.Done = false;
@@ -50,12 +50,12 @@ namespace HomaGames.GameDoctor.Core
 
             foreach (var step in stepsList)
             {
-                await step.Action();
-                step.Done = true;
+                while (!step.Done && InteractiveStepWindow.IsOpen)
+                    await Task.Delay(200);
             }
 
             if (_withInteractiveWindow)
-                window.Close();
+                InteractiveStepWindow.End();
         }
     }
 }

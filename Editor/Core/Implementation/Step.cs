@@ -5,14 +5,26 @@ namespace HomaGames.GameDoctor.Core
 {
     public class Step
     {
+        /// <summary>
+        /// Name of the Step
+        /// </summary>
         public readonly string Name;
+        /// <summary>
+        /// True if this Step is completed
+        /// </summary>
         public bool Done;
-        public readonly Func<Task> Action;
+        /// <summary>
+        /// True if we can go to the next step 
+        /// </summary>
+        public readonly Func<bool> Predicate;
+        /// <summary>
+        /// Provides a way to draw custom UI inside the step description
+        /// </summary>
         private readonly Action<StepBasedIssue, Step> _drawFunc;
 
-        public Step(Func<Task> action, string name, Action<StepBasedIssue, Step> draw = null)
+        public Step(Func<bool> predicate, string name, Action<StepBasedIssue, Step> draw = null)
         {
-            Action = action;
+            Predicate = predicate;
             Name = name;
             _drawFunc = draw;
         }
