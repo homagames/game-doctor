@@ -1,5 +1,3 @@
-using System;
-using HomaGames.GameDoctor.Core;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,20 +37,16 @@ namespace HomaGames.GameDoctor.Core
 
             EditorGUILayout.BeginHorizontal();
 
-            var nextButton = "Next Step";
+            var isLastStep = _issue.CurrentStepIndex + 1 == _issue.StepCount;
+            var nextButton = isLastStep ? "Finish" : "Next Step";
 
-            if (_issue.CurrentStep.Predicate())
-            {
-                if (GUILayout.Button(nextButton))
-                    _issue.CurrentStep.Done = true;
-            }
-            else
-            {
-                var previouslyEnabled = GUI.enabled;
-                GUI.enabled = false;
-                GUILayout.Button(nextButton);
-                GUI.enabled = previouslyEnabled;
-            }
+            var previouslyEnabled = GUI.enabled;
+            GUI.enabled = _issue.CurrentStep.Predicate();
+            
+            if (isLastStep && GUILayout.Button(nextButton))
+                _issue.CurrentStep.Done = true;
+            
+            GUI.enabled = previouslyEnabled;
 
             EditorGUILayout.EndHorizontal();
         }
