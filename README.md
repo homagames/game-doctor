@@ -100,15 +100,19 @@ That's when [StepBasedIssue](Editor/Core/Implementation/StepBasedIssue.cs) comes
 
 ##### Same check but with an interactive issue :
 ```csharp
-protected override Task<CheckResult> GenerateCheckResult()
+    protected override Task<CheckResult> GenerateCheckResult()
     {
         var result = new CheckResult();
         if (PlayerSettings.Android.targetSdkVersion != AndroidSdkVersions.AndroidApiLevelAuto)
             result.Issues.Add(
                 new StepBasedIssue(new List<Step>()
                     {
-                        new Step(()=>PlayerSettings.Android.targetSdkVersion == AndroidSdkVersions.AndroidApiLevelAuto,
-                            "Android API Level","Please, go in ProjectSettings>Player and change Android API Level to Auto")
+                        new Step(
+                            () => PlayerSettings.Android.targetSdkVersion == AndroidSdkVersions.AndroidApiLevelAuto,
+                            "Android API Level",
+                            "Please, go in ProjectSettings>Player and change Android API Level to Auto"),
+                        // We always have a nice day with Game Doctor
+                        new Step(() => true, "Have a nice day")
                     },
                     "Wrong Android Target SDK", "Android Target SDK Version not set to Automatic.")
             );
