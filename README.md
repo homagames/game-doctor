@@ -3,8 +3,17 @@ Game Doctor
 
 An all in one tool to scan a Unity project and fix things. Ranging from performance optimisations to missing analytics.
 
+  * [Installation](#installation)
+    + [Install via git URL](#install-via-git-url)
+    + [Install via OpenUPM](#install-via-openupm)
+  * [Basic usage of Game Doctor](#basic-usage-of-game-doctor)
+    + [Validation Profiles](#validation-profiles)
+  * [Creating your own checks](#creating-your-own-checks)
+  * [How to contribute](#how-to-contribute)
+  * [License](#license)
+
+
 ## Installation
----
 ### Install via git URL
 
 You can add `https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git` to Package Manager
