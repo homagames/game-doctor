@@ -2,32 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEngine;
 
 namespace HomaGames.GameDoctor.Core
 {
     public class StepBasedIssue : BaseIssue
     {
-        public class Step
-        {
-            public readonly string Name;
-            public bool Done;
-            public readonly Func<Task> Action;
-            public readonly Action<StepBasedIssue, Step> Draw;
-
-            public Step(Func<Task> action, string name, Action<StepBasedIssue, Step> draw = null)
-            {
-                Action = action;
-                Name = name;
-                Draw = draw;
-            }
-        }
-
         private readonly List<Step> stepsList;
+        private bool _withInteractiveWindow = true;
+
+        public int CurrentStepIndex => stepsList?.FindIndex(step => !step.Done) ?? 0;
+
+        public int StepCount => stepsList?.Count ?? 0;
+
+        public Step CurrentStep => stepsList?.Find(step => !step.Done);
 
         public StepBasedIssue(List<Step> steps, string name, string description,
-            AutomationType automationType = default,
-            Priority priority = default) : base(name, description, automationType, priority)
+            bool withInteractiveWindow = true, Priority priority = default) : base(name, description,
+            AutomationType.Interactive, priority)
         {
+            _withInteractiveWindow = withInteractiveWindow;
             stepsList = steps;
         }
 
@@ -36,16 +30,19 @@ namespace HomaGames.GameDoctor.Core
             base.Draw();
             foreach (var step in stepsList)
             {
-                if (step.Done)
+                if (step.Predicate())
                     EditorGUILayout.LabelField(step.Name, EditorStyles.boldLabel);
                 else
                     EditorGUILayout.LabelField(step.Name);
-                step.Draw?.Invoke(this, step);
+                step.Draw(this);
             }
         }
 
         protected override async Task InternalFix()
         {
+            if (_withInteractiveWindow)
+                InteractiveStepWindow.Begin(this);
+
             foreach (var step in stepsList)
             {
                 step.Done = false;
@@ -53,9 +50,12 @@ namespace HomaGames.GameDoctor.Core
 
             foreach (var step in stepsList)
             {
-                await step.Action();
-                step.Done = true;
+                while (!step.Done && InteractiveStepWindow.IsOpen)
+                    await Task.Delay(200);
             }
+
+            if (_withInteractiveWindow)
+                InteractiveStepWindow.End();
         }
     }
 }
