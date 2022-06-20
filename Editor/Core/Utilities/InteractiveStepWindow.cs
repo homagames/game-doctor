@@ -42,10 +42,10 @@ namespace HomaGames.GameDoctor.Core
 
             var previouslyEnabled = GUI.enabled;
             GUI.enabled = _issue.CurrentStep.Predicate();
-            
-            if (isLastStep && GUILayout.Button(nextButton))
+
+            if (GUILayout.Button(nextButton))
                 _issue.CurrentStep.Done = true;
-            
+
             GUI.enabled = previouslyEnabled;
 
             EditorGUILayout.EndHorizontal();
