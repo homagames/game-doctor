@@ -121,7 +121,9 @@ That's when [StepBasedIssue](Editor/Core/Implementation/StepBasedIssue.cs) comes
 ```
 
 The example above will give you this popup window in the fixing process :
-![](Documentation~/step-based-issue.mp4)
+
+https://user-images.githubusercontent.com/69792951/174646380-fb938daa-994e-4428-bbb3-1295e86ee390.mp4
+
 
 
 ## How to contribute
