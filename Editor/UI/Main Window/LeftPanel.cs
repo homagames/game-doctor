@@ -119,7 +119,23 @@ namespace HomaGames.GameDoctor.Ui
         {
             BeginNode(uiData, true);
             if (drawAsFoldout)
-                uiData.Expanded.target = EditorGUILayout.Foldout(uiData.Expanded.target, nodeContent, new GUIStyle(EditorStyles.foldout) { fontStyle = FontStyle.Bold});
+            {
+                var foldoutGuiStyle = new GUIStyle(EditorStyles.foldout)
+                {
+                    fontStyle = FontStyle.Bold,
+                    clipping = TextClipping.Clip,
+                    stretchWidth = true
+                };
+                
+                Rect foldoutRect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, GUILayout.ExpandWidth(true));
+                
+                uiData.Expanded.target = EditorGUIExtension.BetterFoldout(
+                    foldoutRect,
+                    uiData.Expanded.target,
+                    nodeContent,
+                    false,
+                    foldoutGuiStyle);
+            }
             else
                 EditorGUILayout.LabelField(nodeContent, EditorStyles.boldLabel);
             
@@ -144,6 +160,10 @@ namespace HomaGames.GameDoctor.Ui
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
             
+            GUILayoutUtility.GetRect(
+                priorityRect.width - EditorGUIUtility.standardVerticalSpacing, 1, 
+                new GUIStyle() { margin = new RectOffset(), padding = new RectOffset() }, 
+                GUILayout.ExpandWidth(false));
             DrawPriorities(priorityRect, priorityCount);
             
             EditorGUI.indentLevel = indent;
