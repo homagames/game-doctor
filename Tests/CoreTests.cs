@@ -41,6 +41,7 @@ namespace HomaGames.GameDoctor.Tests
                     {
                         await Task.Delay(1000);
                         EditorPrefs.SetBool("dummy_issue_fixed", true);
+                        return true;
                     }, "Dummy Issue", ""));
                 }
 
@@ -65,6 +66,7 @@ namespace HomaGames.GameDoctor.Tests
                     {
                         await Task.Delay(1000);
                         //EditorPrefs.SetBool("dummy_issue_fixed", true);
+                        return true;
                     }, "Dummy Issue", ""));
                 }
 
@@ -117,10 +119,11 @@ namespace HomaGames.GameDoctor.Tests
         {
         }
 
-        protected override async Task InternalFix()
+        protected override async Task<bool> InternalFix()
         {
             await Task.Delay(2000);
             EditorPrefs.SetBool("dummy_issue_fixed", true);
+            return true;
         }
     }
 

@@ -16,7 +16,7 @@ namespace HomaGames.GameDoctor.Core
             Description = description;
         }
 
-        public event Action<IIssue> OnFixExecuted;
+        public event Action<IIssue, bool> OnFixExecuted;
         public string Name { get; }
         public string Description { get; }
 
@@ -29,12 +29,13 @@ namespace HomaGames.GameDoctor.Core
         public AutomationType AutomationType { get; }
         public Priority Priority { get; }
 
-        public async Task Fix()
+        public async Task<bool> Fix()
         {
-            await InternalFix();
-            OnFixExecuted?.Invoke(this);
+            var result = await InternalFix();
+            OnFixExecuted?.Invoke(this, result);
+            return result;
         }
 
-        protected abstract Task InternalFix();
+        protected abstract Task<bool> InternalFix();
     }
 }

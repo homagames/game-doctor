@@ -4,18 +4,18 @@ namespace HomaGames.GameDoctor.Core
 {
     public class SimpleIssue : BaseIssue
     {
-        private readonly System.Func<Task> fixFunc;
+        private readonly System.Func<Task<bool>> fixFunc;
 
-        public SimpleIssue(System.Func<Task> fix, string name,
+        public SimpleIssue(System.Func<Task<bool>> fix, string name,
             string description, AutomationType automationType = default,
             Priority priority = default) : base(name, description, automationType, priority)
         {
             fixFunc = fix;
         }
 
-        protected override async Task InternalFix()
+        protected override async Task<bool> InternalFix()
         {
-            await fixFunc();
+            return await fixFunc();
         }
     }
 }
