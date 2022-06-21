@@ -7,7 +7,7 @@ namespace HomaGames.GameDoctor.Ui
     {
         /// <summary>
         /// <see cref="EditorGUI.Foldout(Rect, bool, GUIContent, bool, GUIStyle)">EditorGUI.Foldout</see> has a major flaw:
-        /// its width is fixed to <see cref="EditorGUIUtility.labelWidth"/>. To fix that, we decompiled and edited
+        /// its width is fixed to <see cref="EditorGUIUtility.labelWidth"/>. To fix that, we decompiled from Unity 2020.3 and edited
         /// the method, ot better fit our needs.
         /// </summary>
         /// <param name="position">Rectangle on the screen to use for the arrow and label.</param>
