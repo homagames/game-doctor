@@ -144,7 +144,7 @@ The easiest way to get started on your first Pull Request is doing the following
 
  1. Clone the content of this repository to your **Packages/** folder.
  2. Make changes to the cloned repository
- 3. Push your changes to a new branch a do a Pull Request
+ 3. Push your changes to a **new branch** a do a Pull Request
 
 
 ## License
