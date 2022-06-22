@@ -21,7 +21,7 @@ jobs:
     executor: unity
     steps:
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
-      - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$CIRCLE_PROJECT_REPONAME"
+      - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_BRANCH" "Packages/$CIRCLE_PROJECT_REPONAME"
       - run:
           name: 'Run Tests'
           command: |
