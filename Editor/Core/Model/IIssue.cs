@@ -12,8 +12,9 @@ namespace HomaGames.GameDoctor.Core
     {
         /// <summary>
         /// When the fix is executed.
+        /// Gives back the issue and a boolean value saying if the fix process worked as expected.
         /// </summary>
-        event System.Action<IIssue> OnFixExecuted;
+        event System.Action<IIssue,bool> OnFixExecuted;
         /// <summary>
         /// Unique name for the issue.
         /// </summary>
@@ -30,7 +31,8 @@ namespace HomaGames.GameDoctor.Core
         Priority Priority { get; }
         /// <summary>
         /// Launches the fixing process, either automatic or interactive.
+        /// Returns true if the Fix process worked as expected, false otherwise.
         /// </summary>
-        Task Fix();
+        Task<bool> Fix();
     }
 }

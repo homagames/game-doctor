@@ -38,7 +38,7 @@ namespace HomaGames.GameDoctor.Core
             }
         }
 
-        protected override async Task InternalFix()
+        protected override async Task<bool> InternalFix()
         {
             if (_withInteractiveWindow)
                 InteractiveStepWindow.Begin(this);
@@ -50,12 +50,18 @@ namespace HomaGames.GameDoctor.Core
 
             foreach (var step in stepsList)
             {
-                while (!step.Done && InteractiveStepWindow.IsOpen)
+                while (!step.Done)
+                {
                     await Task.Delay(200);
+                    if (!InteractiveStepWindow.IsOpen)
+                        return false;
+                }
             }
 
             if (_withInteractiveWindow)
                 InteractiveStepWindow.End();
+
+            return true;
         }
     }
 }
