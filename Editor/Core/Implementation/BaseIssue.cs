@@ -22,7 +22,6 @@ namespace HomaGames.GameDoctor.Core
 
         public virtual void Draw()
         {
-            EditorGUILayout.TextArea(Description);
         }
 
         public ICheck Check { get; }

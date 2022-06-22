@@ -51,7 +51,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.LabelField(profile.Name, TitleGuiStyle, GUILayout.Height(TitleGuiStyle.fontSize));
+            EditorGUILayout.LabelField(profile.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, profile.Name));
             
             EditorGUILayout.Space(20);
 
@@ -100,7 +100,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.LabelField(check.Name, TitleGuiStyle, GUILayout.Height(TitleGuiStyle.fontSize));
+            EditorGUILayout.LabelField(check.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, check.Name));
             if (check.CheckResult?.Passed == true)
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Passed", FixedWhiteTexture),
                     new Color(0.06f, 0.65f, 0.54f));
@@ -149,7 +149,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.LabelField(issue.Name, TitleGuiStyle, GUILayout.Height(TitleGuiStyle.fontSize));
+            EditorGUILayout.LabelField(issue.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, issue.Name));
 
             if (issueUiData.Fixed)
             {
@@ -172,8 +172,14 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(20);
             
             GUILayout.Label(issue.Description, new GUIStyle(GUI.skin.label) {wordWrap = true});
+            Rect labelRect = GUILayoutUtility.GetLastRect();
             
-            EditorGUILayout.Space(30);
+            EditorGUILayout.Space(10);
+            
+            issue.Draw();
+            
+            EditorGUILayout.Space(20);
+            
             
             GUILayout.BeginHorizontal();
 
@@ -195,6 +201,11 @@ namespace HomaGames.GameDoctor.Ui
             GUILayout.EndHorizontal();
             
             EditorGUILayout.EndScrollView();
+        }
+
+        private static GUILayoutOption GetHeightOptionFor(GUIStyle style, string content)
+        {
+            return GUILayout.Height(style.CalcSize(new GUIContent(content)).y);
         }
     }
 }
