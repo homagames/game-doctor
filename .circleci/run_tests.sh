@@ -1,5 +1,7 @@
 #!/bin/bash
 
+curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/licenses/activate_unity_license.sh" | bash
+
 set -e 
 
 TEST_RESULTS_FILE="Build/Game Doctor/tests.xml"
@@ -36,3 +38,5 @@ else
   cat "$TEST_RESULTS_FILE"
   exit 1
 fi
+
+curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/licenses/return_unity_license.sh" | bash
