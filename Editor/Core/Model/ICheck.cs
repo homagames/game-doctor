@@ -12,9 +12,10 @@ namespace HomaGames.GameDoctor.Core
     {
         /// <summary>
         /// Triggered when an issue is actually fixed.
+        /// Returns true if the issue process went through.
         /// </summary>
         [PublicAPI]
-        event System.Action<IIssue> OnIssueFixed;
+        event System.Action<ICheck,IIssue,bool> OnIssueFixExecuted;
         /// <summary>
         /// Called whenever the CheckResult is generated again.
         /// </summary>
