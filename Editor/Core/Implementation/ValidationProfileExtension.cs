@@ -14,8 +14,6 @@ namespace HomaGames.GameDoctor.Core
             {
                 await issue.Fix();
             }
-
-            await validationProfile.Check();
         }
         
         /// <summary>
