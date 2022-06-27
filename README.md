@@ -59,6 +59,10 @@ AvailableChecks.RegisterCheck(myCheck);
 AvailableProfiles.RegisterValidationProfile(myValidationProfile);
 ```
 
+Hyperlink are available for profile, check and issue descriptions. 2 types of links are supported:
+* The regular HTML hyperlink format `<a href="[URL]">content</a>`, which will open the given URL in the user's browser,
+* A special asset link `<a asset="[AssetPath]">content</a>`, which will ping the object at the given path.
+
 Here are examples of how to create a simple checks :
 ##### Creating a Check : 
 ```csharp
