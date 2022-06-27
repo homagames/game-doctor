@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnityEditor;
 
 namespace HomaGames.GameDoctor.Core
 {
@@ -24,7 +23,6 @@ namespace HomaGames.GameDoctor.Core
         {
         }
 
-        public ICheck Check { get; }
         public AutomationType AutomationType { get; }
         public Priority Priority { get; }
 

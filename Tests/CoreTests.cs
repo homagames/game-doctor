@@ -66,7 +66,7 @@ namespace HomaGames.GameDoctor.Tests
                     {
                         await Task.Delay(1000);
                         //EditorPrefs.SetBool("dummy_issue_fixed", true);
-                        return true;
+                        return false;
                     }, "Dummy Issue", ""));
                 }
 
@@ -79,8 +79,9 @@ namespace HomaGames.GameDoctor.Tests
 
         private IEnumerator AllTestPass(IValidationProfile profile, bool fixWorks = true)
         {
-            List<IIssue> fixedIssues = new List<IIssue>();
-            profile.OnAnyIssueFixed(i => fixedIssues.Add(i));
+            List<bool> fixedIssuesState = new List<bool>();
+
+            profile.OnAnyIssueFixed((c, i, actuallyFixed) => fixedIssuesState.Add(actuallyFixed));
 
             yield return TestUtils.AsIEnumerator(profile.Check());
             Assert.True(profile.CheckList.Count == 1);
@@ -89,14 +90,9 @@ namespace HomaGames.GameDoctor.Tests
             Assert.True(profile.CheckList.Count == 1);
             Assert.True(profile.CheckList.First().CheckResult.Issues.Count == (fixWorks ? 0 : 1));
 
-            if (fixWorks)
-                Assert.True(fixedIssues[0].Name == "Dummy Issue");
-            else
-                Assert.True(fixedIssues.Count == 0);
+            Assert.True(fixWorks == fixedIssuesState[0]);
 
-            fixedIssues.Clear();
             yield return TestUtils.AsIEnumerator(profile.Fix());
-            Assert.True(fixedIssues.Count == 0);
 
             yield return TestUtils.AsIEnumerator(profile.Check());
             Assert.True(profile.CheckList.Count == 1);

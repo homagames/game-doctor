@@ -14,8 +14,6 @@ namespace HomaGames.GameDoctor.Core
             {
                 await issue.Fix();
             }
-
-            await validationProfile.Check();
         }
         
         /// <summary>
@@ -32,12 +30,12 @@ namespace HomaGames.GameDoctor.Core
         /// </summary>
         /// <param name="validationProfile"></param>
         /// <param name="func">Callback function</param>
-        public static void OnAnyIssueFixed(this IValidationProfile validationProfile, System.Action<IIssue> func)
+        public static void OnAnyIssueFixed(this IValidationProfile validationProfile, System.Action<ICheck,IIssue,bool> func)
         {
             foreach (var check in validationProfile.CheckList)
             {
-                check.OnIssueFixed -= func;
-                check.OnIssueFixed += func;
+                check.OnIssueFixExecuted -= func;
+                check.OnIssueFixExecuted += func;
             }
         }
     }

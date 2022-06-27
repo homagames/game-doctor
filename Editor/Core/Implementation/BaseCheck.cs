@@ -9,7 +9,8 @@ namespace HomaGames.GameDoctor.Core
     public abstract class BaseCheck : ICheck
     {
         protected BaseCheck(string name, string description,
-            HashSet<string> tags, ImportanceType importance = ImportanceType.Advised, Priority priority = Priority.Medium)
+            HashSet<string> tags, ImportanceType importance = ImportanceType.Advised,
+            Priority priority = Priority.Medium)
         {
             Importance = importance;
             Priority = priority;
@@ -18,7 +19,7 @@ namespace HomaGames.GameDoctor.Core
             Tags = tags;
         }
 
-        public event Action<IIssue> OnIssueFixed;
+        public event Action<ICheck, IIssue, bool> OnIssueFixExecuted;
         public event Action<ICheck> OnResultGenerated;
         public string Name { get; }
         public string Description { get; }
@@ -29,15 +30,10 @@ namespace HomaGames.GameDoctor.Core
 
         public async Task Execute()
         {
-            List<IIssue> previousIssues = CheckResult?.Issues;
             CheckResult = await GenerateCheckResult();
-            if (previousIssues != null)
+            foreach (var issue in CheckResult.Issues)
             {
-                previousIssues.RemoveAll(i => CheckResult.Issues.Any(i.Same));
-                foreach (var fixedIssue in previousIssues)
-                {
-                    OnIssueFixed?.Invoke(fixedIssue);
-                }
+                issue.OnFixExecuted += (i, actuallyFixed) => OnIssueFixExecuted?.Invoke(this, i, actuallyFixed);
             }
 
             OnResultGenerated?.Invoke(this);
