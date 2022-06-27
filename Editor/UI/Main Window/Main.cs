@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
 using UnityEditor;
@@ -74,12 +75,37 @@ namespace HomaGames.GameDoctor.Ui
         
         private Texture2D FixedColoredTexture;
         private Texture2D FixedWhiteTexture;
+        
+// Unity 2021.2.0 introduces a way to get callbacks on hyperlink clicks (see https://docs.unity3d.com/2021.2/Documentation/ScriptReference/EditorGUI-hyperLinkClicked.html )
+// Before that, the behaviour was internal, so we have to do a little reflexion trickery for it to work.
+#if !UNITY_2021
+        private readonly EventInfo HyperLinkClickedEventInfo 
+            = typeof(EditorGUI).GetEvent("hyperLinkClicked", BindingFlags.Static | BindingFlags.NonPublic);
 
+        private EventHandler HyperLinkClickedGuiListenerReference;
+#endif
+        
         private void OnEnable()
         {
             IsProfileOpened = true;
             titleContent = new GUIContent("Game Doctor");
+
+#if UNITY_2021
             EditorGUI.hyperLinkClicked += OnHyperLinkClickedGuiListener;
+#else
+            HyperLinkClickedGuiListenerReference = OnHyperLinkClickedGuiListener;
+            
+            try
+            {
+                HyperLinkClickedEventInfo.AddMethod.Invoke(null,
+                    new object[] { HyperLinkClickedGuiListenerReference });
+                HyperLinkClickedEventInfo.RemoveMethod.Invoke(null,
+                    new object[] { HyperLinkClickedGuiListenerReference });
+            }
+            catch (Exception) { /* We need that to make sure the event works correctly */ }
+            
+            HyperLinkClickedEventInfo.AddMethod.Invoke(null, new object[] { HyperLinkClickedGuiListenerReference });
+#endif
         }
 
         private void OnGUI()
@@ -110,7 +136,11 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnDisable()
         {
+#if UNITY_2021
             EditorGUI.hyperLinkClicked -= OnHyperLinkClickedGuiListener;
+#else
+            HyperLinkClickedEventInfo.RemoveMethod.Invoke(null, new object[] { HyperLinkClickedGuiListenerReference });
+#endif
         }
 
         private void OnDestroy()
@@ -231,6 +261,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
 
+#if UNITY_2021
         private void OnHyperLinkClickedGuiListener(
             EditorWindow editorWindow,
             HyperLinkClickedEventArgs hyperLinkClickedEventArgs)
@@ -238,14 +269,33 @@ namespace HomaGames.GameDoctor.Ui
             if (editorWindow == this)
                 OnHyperLinkClicked(hyperLinkClickedEventArgs.hyperLinkData);
         }
-
-        private void OnHyperLinkClicked(Dictionary<string, string> linkData)
+#else
+        private void OnHyperLinkClickedGuiListener(object sender, EventArgs eventArgs)
         {
+            Type hyperLinkEventType =
+                typeof(EditorGUILayout).GetNestedType("HyperLinkClickedEventArgs", BindingFlags.NonPublic);
+            
+            if (eventArgs.GetType() == hyperLinkEventType)
+            {
+                Dictionary<string, string> infos = (Dictionary<string, string>) hyperLinkEventType.GetProperty("hyperlinkInfos")?.GetMethod.Invoke(eventArgs, new object[]{});
+
+                OnHyperLinkClicked(infos ?? new Dictionary<string, string>());
+            }
+        }
+#endif
+
+        private void OnHyperLinkClicked([NotNull] Dictionary<string, string> linkData)
+        {
+// This is handled automatically in 2021+
+#if !UNITY_2021
             if (linkData.TryGetValue("href", out var linkUri))
             {
-                //Application.OpenURL(linkUri);
+                Application.OpenURL(linkUri);
+                return;
             }
-            else if (linkData.TryGetValue("asset", out var assetPath))
+#endif
+            
+            if (linkData.TryGetValue("asset", out var assetPath))
             {
                 UnityEngine.Object asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(assetPath);
                 
@@ -254,6 +304,8 @@ namespace HomaGames.GameDoctor.Ui
                     Selection.activeObject = asset;
                     EditorGUIUtility.PingObject(asset);
                 }
+
+                return;
             }
         }
     }
