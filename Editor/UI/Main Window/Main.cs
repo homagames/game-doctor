@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
@@ -78,6 +79,7 @@ namespace HomaGames.GameDoctor.Ui
         {
             IsProfileOpened = true;
             titleContent = new GUIContent("Game Doctor");
+            EditorGUI.hyperLinkClicked += OnHyperLinkClickedGuiListener;
         }
 
         private void OnGUI()
@@ -104,6 +106,11 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayoutExtension.EndSeparatedView();
             EditorGUILayoutExtension.DrawHorizontalSeparator(1);
             DrawFooter(footerSize);
+        }
+
+        private void OnDisable()
+        {
+            EditorGUI.hyperLinkClicked -= OnHyperLinkClickedGuiListener;
         }
 
         private void OnDestroy()
@@ -221,6 +228,32 @@ namespace HomaGames.GameDoctor.Ui
                     return InteractiveTexture;
                 case AutomationType.Automatic:
                     return AutomaticTexture;
+            }
+        }
+
+        private void OnHyperLinkClickedGuiListener(
+            EditorWindow editorWindow,
+            HyperLinkClickedEventArgs hyperLinkClickedEventArgs)
+        {
+            if (editorWindow == this)
+                OnHyperLinkClicked(hyperLinkClickedEventArgs.hyperLinkData);
+        }
+
+        private void OnHyperLinkClicked(Dictionary<string, string> linkData)
+        {
+            if (linkData.TryGetValue("href", out var linkUri))
+            {
+                //Application.OpenURL(linkUri);
+            }
+            else if (linkData.TryGetValue("asset", out var assetPath))
+            {
+                UnityEngine.Object asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(assetPath);
+                
+                if (asset != null)
+                {
+                    Selection.activeObject = asset;
+                    EditorGUIUtility.PingObject(asset);
+                }
             }
         }
     }

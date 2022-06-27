@@ -290,6 +290,10 @@ namespace HomaGames.GameDoctor.Ui
             {
                 uiData.Selected = true;
                 GUI.changed = true;
+                
+                // Fix selectableField in right panel not being updated after node selection switch
+                GUIUtility.hotControl = 0;
+                GUIUtility.keyboardControl = 0;
             }
         }
         
