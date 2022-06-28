@@ -13,6 +13,9 @@ namespace HomaGames.GameDoctor.Ui
     public partial class GameDoctorWindow
     {
         private const string FIRST_FIXED_ISSUE_KEY = "game_doctor.first_issue_fixed";
+        private const string FIRST_ISSUE_FIX_FAILED_KEY = "game_doctor.first_issue_fix_failed";
+
+        private int IssuesFailedToFixCount;
         
         private void RunAllChecksAndFix()
         {
@@ -111,15 +114,28 @@ namespace HomaGames.GameDoctor.Ui
             }
             else
             {
-                Rect previousPosition = position;
-                if (!docked)
-                    position = new Rect(previousPosition) {width = 0, height = 0};
-                var synchronizationContext = SynchronizationContext.Current;
-                await issue.Fix().ContinueWith(task => OnInteractiveIssueFixed(task, issue, synchronizationContext, docked, previousPosition));
-                OnAfterIssueFixed();
+                await FixInteractiveIssueAsync(issue);
             }
         }
-        
+
+        private async Task FixInteractiveIssueAsync(IIssue issue)
+        {
+            Rect previousPosition = position;
+            if (!docked)
+                position = new Rect(previousPosition) { width = 0, height = 0 };
+            try
+            {
+                await issue.Fix().ContinueWith(task => OnInteractiveIssueFixed(task, issue, docked, previousPosition),
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Exception when fixing \"{issue.Name}\" issue:\n{e}");
+            }
+
+            CheckForIssuesFailedToFix();
+        }
+
         private async Task FixAutoIssuesAsync([NotNull] IReadOnlyList<IIssue> issues)
         {
             float maxI = issues.Count;
@@ -133,7 +149,7 @@ namespace HomaGames.GameDoctor.Ui
                     
                     try
                     {
-                        await issues[i].Fix().ContinueWith(task => OnIssueFixed(task, issues[i]));
+                        await issues[i].Fix().ContinueWith(task => OnIssueFixed(task, issues[i]), TaskScheduler.FromCurrentSynchronizationContext());
                     }
                     catch (Exception e)
                     {
@@ -144,32 +160,37 @@ namespace HomaGames.GameDoctor.Ui
             finally
             {
                 EditorUtility.ClearProgressBar();
-                OnAfterIssueFixed();
+                CheckForIssuesFailedToFix();
             }
         }
 
         private void OnInteractiveIssueFixed(
-            [NotNull] Task task, [NotNull] IIssue issue,
-            [NotNull] SynchronizationContext mainContext, bool wasDocked, Rect previousPosition)
+            [NotNull] Task<bool> task, [NotNull] IIssue issue,
+            bool wasDocked, Rect previousPosition)
         {
             if (! wasDocked)
             {
-                mainContext.Post(rect =>
-                {
-                    GetWindow<GameDoctorWindow>().Show();
-                    position = (Rect) rect;
-                }, previousPosition);
+                GetWindow<GameDoctorWindow>().Show();
+                position = previousPosition;
             }
             
             OnIssueFixed(task, issue);
         }
 
-        private void OnIssueFixed([NotNull] Task task, [NotNull] IIssue issue)
+        private void OnIssueFixed([NotNull] Task<bool> task, [NotNull] IIssue issue)
         {
-            if (task.IsCompleted && !task.IsFaulted)
+            if (task.IsCompleted 
+                && !task.IsFaulted
+                && task.Result)
             {
                 var issueUiData = GetUiData(issue);
                 issueUiData.Fixed = true;
+                
+                OnAfterIssueFixed();
+            }
+            else
+            {
+                IssuesFailedToFixCount += 1;
             }
         }
 
@@ -182,6 +203,27 @@ namespace HomaGames.GameDoctor.Ui
                 EditorUtility.DisplayDialog("Tip", "Once issues are supposedly fixed, they will appear " +
                                                    "as \"fixed\" in the navigation tree. To make sure they were fixed correctly, " +
                                                    "run the check again.", "Understood!");
+            }
+        }
+
+        private void CheckForIssuesFailedToFix()
+        {
+            if (IssuesFailedToFixCount > 0)
+            {
+                bool plural = IssuesFailedToFixCount > 1;
+
+                string message = $"{IssuesFailedToFixCount} issue fix{(plural ? "es" : "")} failed.";
+                
+                if (!EditorPrefs.HasKey(FIRST_ISSUE_FIX_FAILED_KEY))
+                {
+                    EditorPrefs.SetBool(FIRST_ISSUE_FIX_FAILED_KEY, true);
+                    message += $"\n\nThe issue{(plural ? "s" : "")} will stay in the list. Check the logs to " +
+                               $"see what went wrong, or re-run the associated checks.";
+                }
+                
+                EditorUtility.DisplayDialog("Issue Fix failed", message, "Ok");
+                
+                IssuesFailedToFixCount = 0;
             }
         }
         #endregion
