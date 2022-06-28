@@ -78,7 +78,7 @@ namespace HomaGames.GameDoctor.Ui
         
 // Unity 2021.2.0 introduces a way to get callbacks on hyperlink clicks (see https://docs.unity3d.com/2021.2/Documentation/ScriptReference/EditorGUI-hyperLinkClicked.html )
 // Before that, the behaviour was internal, so we have to do a little reflexion trickery for it to work.
-#if !UNITY_2021
+#if !UNITY_2021_2_OR_NEWER
         private readonly EventInfo HyperLinkClickedEventInfo 
             = typeof(EditorGUI).GetEvent("hyperLinkClicked", BindingFlags.Static | BindingFlags.NonPublic);
 
@@ -90,7 +90,7 @@ namespace HomaGames.GameDoctor.Ui
             IsProfileOpened = true;
             titleContent = new GUIContent("Game Doctor");
 
-#if UNITY_2021
+#if UNITY_2021_2_OR_NEWER
             EditorGUI.hyperLinkClicked += OnHyperLinkClickedGuiListener;
 #else
             HyperLinkClickedGuiListenerReference = OnHyperLinkClickedGuiListener;
@@ -136,7 +136,7 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnDisable()
         {
-#if UNITY_2021
+#if UNITY_2021_2_OR_NEWER
             EditorGUI.hyperLinkClicked -= OnHyperLinkClickedGuiListener;
 #else
             HyperLinkClickedEventInfo.RemoveMethod.Invoke(null, new object[] { HyperLinkClickedGuiListenerReference });
@@ -261,7 +261,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
 
-#if UNITY_2021
+#if UNITY_2021_2_OR_NEWER
         private void OnHyperLinkClickedGuiListener(
             EditorWindow editorWindow,
             HyperLinkClickedEventArgs hyperLinkClickedEventArgs)
@@ -287,7 +287,7 @@ namespace HomaGames.GameDoctor.Ui
         private void OnHyperLinkClicked([NotNull] Dictionary<string, string> linkData)
         {
 // This is handled automatically in 2021+
-#if !UNITY_2021
+#if !UNITY_2021_2_OR_NEWER
             if (linkData.TryGetValue("href", out var linkUri))
             {
                 Application.OpenURL(linkUri);
