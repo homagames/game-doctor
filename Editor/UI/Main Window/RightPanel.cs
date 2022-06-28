@@ -10,6 +10,8 @@ namespace HomaGames.GameDoctor.Ui
     {
         private Vector2 SecondViewScroll;
         
+        private GUIStyle DescriptionGUIStyle => new GUIStyle(GUI.skin.label) {wordWrap = true, richText = true};
+
         private void DrawRightPanel()
         {
             object selectedObject = GetSelectedElement();
@@ -62,7 +64,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            GUILayout.Label(profile.Description, new GUIStyle(GUI.skin.label) {wordWrap = true});
+            EditorGUILayout.SelectableLabel(profile.Description, DescriptionGUIStyle);
             
             EditorGUILayout.EndScrollView();
         }
@@ -121,7 +123,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            GUILayout.Label(check.Description, new GUIStyle(GUI.skin.label) {wordWrap = true});
+            EditorGUILayout.SelectableLabel(check.Description, DescriptionGUIStyle);
             
             EditorGUILayout.Space(30);
             
@@ -171,8 +173,7 @@ namespace HomaGames.GameDoctor.Ui
 
             EditorGUILayout.Space(20);
             
-            GUILayout.Label(issue.Description, new GUIStyle(GUI.skin.label) {wordWrap = true});
-            Rect labelRect = GUILayoutUtility.GetLastRect();
+            EditorGUILayout.SelectableLabel(issue.Description, DescriptionGUIStyle);
             
             EditorGUILayout.Space(10);
             
