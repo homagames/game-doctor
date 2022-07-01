@@ -1,0 +1,16 @@
+{
+    "name": "HomaGames.GameDoctor.Checks",
+    "rootNamespace": "",
+    "references": [
+        "GUID:74126d313ba554d2881b9f71572cb041"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
