@@ -152,4 +152,4 @@ The easiest way to get started on your first Pull Request is doing the following
 
 
 ## License
-[MIT](LICENCE.md)
+[GPLv3](COPYING.md)
