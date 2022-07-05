@@ -30,19 +30,6 @@ namespace HomaGames.GameDoctor.Core
             stepsList = steps;
         }
 
-        public override void Draw()
-        {
-            base.Draw();
-            foreach (var step in stepsList)
-            {
-                if (step.Predicate())
-                    EditorGUILayout.LabelField(step.Name, EditorStyles.boldLabel);
-                else
-                    EditorGUILayout.LabelField(step.Name);
-                step.Draw(this);
-            }
-        }
-
         protected override async Task<bool> InternalFix()
         {
             if (_withInteractiveWindow)

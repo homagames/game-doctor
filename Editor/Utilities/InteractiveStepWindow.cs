@@ -25,11 +25,9 @@ namespace HomaGames.GameDoctor.Core
         {
             if (_issue?.CurrentStep == null) return;
 
-            EditorGUILayout.LabelField($"Step {_issue.CurrentStepIndex + 1}/{_issue.StepCount}",
-                EditorStyles.boldLabel);
-
-            EditorGUILayout.LabelField(_issue.CurrentStep.Name, new GUIStyle(GUI.skin.label) {wordWrap = true});
-
+            EditorGUILayout.LabelField(
+                $"Step {_issue.CurrentStepIndex + 1}/{_issue.StepCount} : {_issue.CurrentStep.Name}",
+                new GUIStyle(EditorStyles.boldLabel) {wordWrap = true});
 
             _issue.CurrentStep.Draw(_issue);
 
