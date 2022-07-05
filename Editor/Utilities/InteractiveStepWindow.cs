@@ -41,7 +41,7 @@ namespace HomaGames.GameDoctor.Core
             var nextButton = isLastStep ? "Finish" : "Next Step";
 
             var previouslyEnabled = GUI.enabled;
-            GUI.enabled = _issue.CurrentStep.Predicate();
+            GUI.enabled = _issue.CurrentStep.Predicate;
 
             if (GUILayout.Button(nextButton))
                 _issue.CurrentStep.Done = true;
