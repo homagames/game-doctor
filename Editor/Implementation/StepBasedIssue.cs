@@ -8,14 +8,19 @@ namespace HomaGames.GameDoctor.Core
 {
     public class StepBasedIssue : BaseIssue
     {
-        private readonly List<Step> stepsList;
-        private bool _withInteractiveWindow = true;
+        protected List<Step> stepsList;
+        protected bool _withInteractiveWindow = true;
+        public Vector2 InteractiveWindowSize = default;
 
         public int CurrentStepIndex => stepsList?.FindIndex(step => !step.Done) ?? 0;
 
         public int StepCount => stepsList?.Count ?? 0;
 
         public Step CurrentStep => stepsList?.Find(step => !step.Done);
+
+        protected StepBasedIssue()
+        {
+        }
 
         public StepBasedIssue(List<Step> steps, string name, string description,
             bool withInteractiveWindow = true, Priority priority = default) : base(name, description,
@@ -25,23 +30,10 @@ namespace HomaGames.GameDoctor.Core
             stepsList = steps;
         }
 
-        public override void Draw()
-        {
-            base.Draw();
-            foreach (var step in stepsList)
-            {
-                if (step.Predicate())
-                    EditorGUILayout.LabelField(step.Name, EditorStyles.boldLabel);
-                else
-                    EditorGUILayout.LabelField(step.Name);
-                step.Draw(this);
-            }
-        }
-
         protected override async Task<bool> InternalFix()
         {
             if (_withInteractiveWindow)
-                InteractiveStepWindow.Begin(this);
+                InteractiveStepWindow.Begin(this,InteractiveWindowSize);
 
             foreach (var step in stepsList)
             {
@@ -53,7 +45,7 @@ namespace HomaGames.GameDoctor.Core
                 while (!step.Done)
                 {
                     await Task.Delay(200);
-                    if (!InteractiveStepWindow.IsOpen)
+                    if (!InteractiveStepWindow.IsOpen && _withInteractiveWindow)
                         return false;
                 }
             }

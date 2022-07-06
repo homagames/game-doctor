@@ -6,6 +6,10 @@ namespace HomaGames.GameDoctor.Core
 {
     public abstract class BaseIssue : IIssue
     {
+        protected BaseIssue()
+        {
+        }
+
         protected BaseIssue(string name, string description, AutomationType automationType = default,
             Priority priority = default)
         {
@@ -16,15 +20,15 @@ namespace HomaGames.GameDoctor.Core
         }
 
         public event Action<IIssue, bool> OnFixExecuted;
-        public string Name { get; }
-        public string Description { get; }
+        public string Name { get; protected set; }
+        public string Description { get; protected set; }
 
         public virtual void Draw()
         {
         }
 
-        public AutomationType AutomationType { get; }
-        public Priority Priority { get; }
+        public AutomationType AutomationType { get; protected set; }
+        public Priority Priority { get; protected set; }
 
         public async Task<bool> Fix()
         {
