@@ -128,7 +128,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
 
-        private async Task FixInteractiveIssueAsync(IIssue issue)
+        private async Task FixInteractiveIssueAsync([NotNull] IIssue issue)
         {
             Rect previousPosition = position;
             if (!docked)
