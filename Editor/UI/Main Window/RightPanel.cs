@@ -132,7 +132,10 @@ namespace HomaGames.GameDoctor.Ui
                                                check.CheckResult.Issues.All(issue =>
                                                    issue.AutomationType != AutomationType.Automatic)))
             {
-                GUILayout.Button("Fix all auto. issues", GUILayout.Width(130));
+                if (GUILayout.Button("Fix all auto. issues", GUILayout.Width(130)))
+                {
+                    FixAutoIssues(check.CheckResult!.Issues);
+                }
             }
 
             if (GUILayout.Button(check.CheckResult == null ? "Run check" : "Re-run check", GUILayout.Width(130)))

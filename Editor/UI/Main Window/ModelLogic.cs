@@ -91,6 +91,16 @@ namespace HomaGames.GameDoctor.Ui
             ListenForErrors(FixAllAutoIssuesAsync());
         }
 
+        private void FixAutoIssues([NotNull] IReadOnlyList<IIssue> issues)
+        {
+            ListenForErrors(FixAutoIssuesAsync(
+                issues
+                    .Where(issue => 
+                        issue.AutomationType == AutomationType.Automatic
+                        && ! GetUiData(issue).Fixed)
+                    .ToList()));
+        }
+        
         private async Task FixAllAutoIssuesAsync()
         {
             await FixAutoIssuesAsync(
