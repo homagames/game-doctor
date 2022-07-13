@@ -64,7 +64,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.SelectableLabel(profile.Description, DescriptionGUIStyle);
+            EditorGUILayout.SelectableLabel(profile.Description, DescriptionGUIStyle, GetHeightOptionFor(DescriptionGUIStyle, profile.Description));
             
             EditorGUILayout.EndScrollView();
         }
@@ -123,7 +123,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.SelectableLabel(check.Description, DescriptionGUIStyle);
+            EditorGUILayout.SelectableLabel(check.Description, DescriptionGUIStyle, GetHeightOptionFor(DescriptionGUIStyle, check.Description));
             
             EditorGUILayout.Space(30);
             
@@ -176,7 +176,7 @@ namespace HomaGames.GameDoctor.Ui
 
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.SelectableLabel(issue.Description, DescriptionGUIStyle);
+            EditorGUILayout.SelectableLabel(issue.Description, DescriptionGUIStyle, GetHeightOptionFor(DescriptionGUIStyle, issue.Description));
             
             EditorGUILayout.Space(10);
             
