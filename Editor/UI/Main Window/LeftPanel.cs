@@ -39,12 +39,6 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawLeftPanel()
         {
             EditorGUILayoutExtension.BeginToolBar();
-            SearchString = EditorGUILayoutExtension.ToolBarSearchBar(SearchString, GUILayout.ExpandWidth(true));
-            HideFixed = EditorGUILayoutExtension.ToolBarToggle(HideFixed, "Hide fixed");
-            EditorGUILayoutExtension.EndToolBar();
-
-            
-            EditorGUILayoutExtension.BeginToolBar();
             bool sortOrderSet = false;
             
             void SetSortOrder(LeftPanelSortBy newSortOrder)
