@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
 using UnityEditor;
@@ -16,6 +17,12 @@ namespace HomaGames.GameDoctor.Ui
         {
             EditorGUILayoutExtension.BeginToolBar();
 
+
+            var selectedProfileIndex = AllProfiles.IndexOf(Profile);
+            int newIndex = EditorGUILayoutExtension.ToolBarPopup(selectedProfileIndex, AllProfiles.Select(p => p.Name).ToArray());
+            if (newIndex != selectedProfileIndex)
+                Profile = AllProfiles[newIndex];
+            
             AutoFixToggle = EditorGUILayoutExtension.ToolBarToggle(AutoFixToggle, "Auto-Fix");
             if (EditorGUILayoutExtension.ToolBarButton("Run all Checks"))
             {

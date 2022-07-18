@@ -77,6 +77,11 @@ namespace HomaGames.GameDoctor.Ui
         {
             EditorGUILayout.LabelField(content, EditorStyles.toolbar, options.Length == 0 ? new []{GUILayout.ExpandWidth(false)} : options);
         }
+        
+        public static int ToolBarPopup(int selectedIndex, [NotNull] string[] displayedOptions, [NotNull] params GUILayoutOption[] options)
+        {
+            return EditorGUILayout.Popup(selectedIndex, displayedOptions, EditorStyles.toolbarPopup, options.Length == 0 ? new []{GUILayout.ExpandWidth(false)} : options);
+        }
     
         /// <summary>
         /// Draws a text field as a search bar, in a tool bar.

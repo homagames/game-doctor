@@ -27,16 +27,17 @@ namespace HomaGames.GameDoctor.Ui
         private string _validationProfileName;
         private IValidationProfile _profile;
 
+        private List<IValidationProfile> _allProfiles;
+
+        private List<IValidationProfile> AllProfiles => _allProfiles ?? (_allProfiles = AvailableProfiles.GetAllValidationProfiles());
+
         private IValidationProfile Profile
         {
             get
             {
                 if (_profile == null)
                 {
-                    AvailableProfiles.GetDefaultValidationProfile();
-                    
-                    _profile = AvailableProfiles
-                        .GetAllValidationProfiles()
+                    _profile = AllProfiles
                         .FirstOrDefault(p => p.Name == _validationProfileName);
 
                     if (_profile == null)
