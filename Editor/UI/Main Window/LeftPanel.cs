@@ -246,10 +246,8 @@ namespace HomaGames.GameDoctor.Ui
         [NotNull]
         private static GUIStyle SelectedNodeStyle => new GUIStyle("OL SelectedRow")
             {padding = new RectOffset(0, 0, UpperNodeMargin, LowerNodeMargin), margin = new RectOffset()};
-        
-        [NotNull]
-        private static GUIStyle SelectedTintedNodeStyle => new GUIStyle(SelectedNodeStyle)
-            {normal = {background = TintedBackgroundTexture}};
+
+        [NotNull] private static GUIStyle SelectedTintedNodeStyle => new GUIStyle(SelectedNodeStyle);
 
         [NotNull]
         private static GUIStyle RegularNodeStyle => new GUIStyle()
