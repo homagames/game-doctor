@@ -8,10 +8,8 @@ namespace HomaGames.GameDoctor.Ui
 {
     public partial class GameDoctorWindow
     {
-        private const int HeaderTextSize = 28;
-        
         private bool AutoFixToggle;
-        private float HeaderSize;
+        private float HeaderSize => EditorGUILayoutExtension.ToolBarHeight * 2;
 
         private void DrawHeader()
         {

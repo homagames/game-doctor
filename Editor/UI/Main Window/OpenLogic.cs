@@ -108,6 +108,11 @@ namespace HomaGames.GameDoctor.Ui
                     Name = "CheckIcon",
                     Setter = (window, texture) => window.CheckTexture = texture
                 },
+                new TextureToLoad
+                {
+                    Name = "GameDoctorLogoIcon",
+                    Setter = (window, texture) => window.GameDoctorLogoTexture = texture
+                },
             };
             
             var window = GetWindow<GameDoctorWindow>();
@@ -117,6 +122,8 @@ namespace HomaGames.GameDoctor.Ui
                 icon.Load(window, iconFolderPath);
             }
 
+
+            window.OnTexturesLoaded();
             window.Profile = AvailableProfiles.GetDefaultValidationProfile();
             
             

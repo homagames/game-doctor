@@ -36,7 +36,6 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawPlaceHolder()
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
-            GUILayout.Label("Description");
             EditorGUILayout.EndScrollView();
         }
 
@@ -124,10 +123,10 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(20);
             
             EditorGUILayout.SelectableLabel(check.Description, DescriptionGUIStyle);
+
+            EditorGUILayout.EndScrollView();
             
-            EditorGUILayout.Space(30);
-            
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal(new GUIStyle() { padding = new RectOffset(5, 5, 5, 5) });
             using (new EditorGUI.DisabledScope(check.CheckResult == null ||
                                                check.CheckResult.Issues.All(issue =>
                                                    issue.AutomationType != AutomationType.Automatic)))
@@ -140,8 +139,6 @@ namespace HomaGames.GameDoctor.Ui
                 RunCheck(check);
             }
             GUILayout.EndHorizontal();
-            
-            EditorGUILayout.EndScrollView();
         }
 
         private void Draw([NotNull] IIssue issue)
@@ -178,11 +175,11 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(10);
             
             issue.Draw();
+
+            EditorGUILayout.EndScrollView();
             
-            EditorGUILayout.Space(20);
             
-            
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal(new GUIStyle() { padding = new RectOffset(5, 5, 5, 5) });
 
             EditorGUI.BeginDisabledGroup(issueUiData.Fixed);
             if (GUILayout.Button("Fix", GUILayout.Width(130)))
@@ -200,8 +197,6 @@ namespace HomaGames.GameDoctor.Ui
                 RunCheck(parentCheck);
             }
             GUILayout.EndHorizontal();
-            
-            EditorGUILayout.EndScrollView();
         }
 
         private static GUILayoutOption GetHeightOptionFor(GUIStyle style, string content)

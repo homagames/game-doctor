@@ -6,6 +6,8 @@ namespace HomaGames.GameDoctor.Ui
 {
     public static partial class EditorGUILayoutExtension
     {
+        public static float ToolBarHeight => EditorStyles.toolbar.fixedHeight;
+        
         /// <summary>
         /// Starts the drawing of a toolbar.
         /// </summary>
