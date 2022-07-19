@@ -33,6 +33,7 @@ namespace HomaGames.GameDoctor.Ui
             {
                 IsFooterCollapsed = true;
                 FooterSize = EditorGUILayoutExtension.ToolBarHeight;
+                GUI.changed = true;
             }
 
             int passedCheckCount = 0, autoFixableCheckCount = 0, failedCheckCount = 0;
