@@ -10,8 +10,31 @@ namespace HomaGames.GameDoctor.Ui
     {
         private const int FooterPadding = 10;
 
-        private void DrawFooter(float footerSize)
+        private bool IsFooterCollapsed;
+        
+        private void DrawFooter()
         {
+            Rect separatorRect = EditorGUILayoutExtension.DrawHorizontalSeparator(1);
+            
+            if (IsFooterCollapsed)
+            {
+                EditorGUILayoutExtension.BeginToolBar();
+                if (EditorGUILayoutExtension.ToolBarButton("Show Charts", GUILayout.ExpandWidth(true)))
+                {
+                    IsFooterCollapsed = false;
+                    FooterSize = DefaultFooterSize;
+                }
+                EditorGUILayoutExtension.EndToolBar();
+                return;
+            }
+            
+            EditorGUIUtility.AddCursorRect(separatorRect, MouseCursor.ResizeVertical);
+            if (Event.current.type == EventType.MouseDown && separatorRect.Contains(Event.current.mousePosition))
+            {
+                IsFooterCollapsed = true;
+                FooterSize = EditorGUILayoutExtension.ToolBarHeight;
+            }
+
             int passedCheckCount = 0, autoFixableCheckCount = 0, failedCheckCount = 0;
             var checks = Profile.CheckList;
             passedCheckCount = ReadPassedCheckCount(checks, ref passedCheckCount, ref autoFixableCheckCount, ref failedCheckCount);
@@ -30,7 +53,7 @@ namespace HomaGames.GameDoctor.Ui
 
             Rect footerRect = EditorGUILayout.GetControlRect(
                 false, 
-                footerSize - FooterPadding*2, 
+                FooterSize - FooterPadding*2, 
                 new GUIStyle
                 {
                     margin = new RectOffset(FooterPadding, FooterPadding, FooterPadding, FooterPadding)

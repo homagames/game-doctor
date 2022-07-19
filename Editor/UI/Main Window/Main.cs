@@ -24,6 +24,9 @@ namespace HomaGames.GameDoctor.Ui
         
         public static bool IsProfileOpened { get; private set; }
 
+        private const float DefaultFooterSize = 150;
+        private float FooterSize = DefaultFooterSize;
+        
         private string _validationProfileName;
         private IValidationProfile _profile;
 
@@ -115,12 +118,11 @@ namespace HomaGames.GameDoctor.Ui
                 Debug.LogError($"To open the Game Doctor window, use {nameof(GameDoctorWindow)}.{nameof(Open)}({nameof(IValidationProfile)})");
                 Close();
             }
-            
-            float footerSize = 150;
+
             DrawHeader();
 
-            SeparatedViewData = EditorGUILayoutExtension.BeginSeparatedView(position.height - HeaderSize - footerSize,
-                SeparatedViewData, GUILayout.ExpandWidth(true), GUILayout.MaxHeight(position.height - HeaderSize - footerSize));
+            SeparatedViewData = EditorGUILayoutExtension.BeginSeparatedView(position.height - HeaderSize - FooterSize,
+                SeparatedViewData, GUILayout.ExpandWidth(true), GUILayout.MaxHeight(position.height - HeaderSize - FooterSize));
 
             DrawLeftPanel();
 
@@ -130,8 +132,7 @@ namespace HomaGames.GameDoctor.Ui
 
 
             EditorGUILayoutExtension.EndSeparatedView();
-            EditorGUILayoutExtension.DrawHorizontalSeparator(1);
-            DrawFooter(footerSize);
+            DrawFooter();
         }
 
         private void OnDisable()
