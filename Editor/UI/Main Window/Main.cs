@@ -14,10 +14,6 @@ namespace HomaGames.GameDoctor.Ui
         // Non-Breakable SPace, to prevent trimming 
         private const string NBSP = " ";
         
-        private const int UpperNodeMargin = 7;
-        private const int LowerNodeMargin = 7;
-        private static readonly float TotalNodeSize = UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
-        
         private static Color HighPriorityColor => Color.red;
         private static Color MediumPriorityColor => new Color(0.87f, 0.49f, 0.16f);
         private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(1f, 1f, 0f);

@@ -10,6 +10,17 @@ namespace HomaGames.GameDoctor.Ui
 {
     public partial class GameDoctorWindow
     {
+        private const int UpperNodeMargin = 7;
+        private const int LowerNodeMargin = 7;
+        
+        private const int UpperHeaderNodeMargin = 17;
+        private const int LowerHeaderNodeMargin = 17;
+        
+        private static readonly float TotalHeaderNodeSize = UpperHeaderNodeMargin + EditorGUIUtility.singleLineHeight + LowerHeaderNodeMargin;
+        private static readonly float TotalNodeSize = UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
+
+        private static readonly float PriorityColumnWidth = TotalNodeSize;
+        
         private Vector2 FirstViewScroll;
         private float ScrollbarSize;
         
@@ -19,6 +30,11 @@ namespace HomaGames.GameDoctor.Ui
         private string _searchString = string.Empty;
         [NotNull]
         private string[] SearchWords = Array.Empty<string>();
+
+        private enum NodeType
+        {
+            Regular, Tinted, Header
+        }
         
         private string SearchString
         {
@@ -51,11 +67,11 @@ namespace HomaGames.GameDoctor.Ui
                 SetSortOrder(LeftPanelSortBy.Mandatory);
             if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.Name, "Name", GUILayout.ExpandWidth(true)))
                 SetSortOrder(LeftPanelSortBy.Name);
-            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.HighPriority, new GUIContent(HighPriorityTexture), GUILayout.Width(TotalNodeSize)))
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.HighPriority, new GUIContent(HighPriorityTexture), GUILayout.Width(PriorityColumnWidth)))
                 SetSortOrder(LeftPanelSortBy.HighPriority);
-            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.MediumPriority, new GUIContent(MediumPriorityTexture), GUILayout.Width(TotalNodeSize)))
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.MediumPriority, new GUIContent(MediumPriorityTexture), GUILayout.Width(PriorityColumnWidth)))
                 SetSortOrder(LeftPanelSortBy.MediumPriority);
-            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.LowPriority, new GUIContent(LowPriorityTexture), GUILayout.Width(TotalNodeSize)))
+            if (EditorGUILayoutExtension.ToolBarToggle(SortOrder == LeftPanelSortBy.LowPriority, new GUIContent(LowPriorityTexture), GUILayout.Width(PriorityColumnWidth)))
                 SetSortOrder(LeftPanelSortBy.LowPriority);
 
             if (!sortOrderSet)
@@ -69,6 +85,12 @@ namespace HomaGames.GameDoctor.Ui
             FirstViewScroll = EditorGUILayout.BeginScrollView(FirstViewScroll);
             UpdateScrollViewWidth(scrollViewWidth);
             DrawNode(Profile);
+            
+            foreach (var check in Filter(SortForLeftPanel(Profile.CheckList)))
+            {
+                DrawNode(check);
+            }
+            
             EditorGUILayout.EndScrollView();
         }
 
@@ -76,13 +98,15 @@ namespace HomaGames.GameDoctor.Ui
         {
             ProfileUiData uiData = GetUiData(profile);
             GUIContent nodeContent = new GUIContent(NBSP + profile.Name, ProfileTexture);
-            DrawFoldoutTreeElement(uiData, nodeContent, profile.GetPriorityCount(), () =>
-            {
-                foreach (var check in Filter(SortForLeftPanel(profile.CheckList)))
-                {
-                    DrawNode(check);
-                }
-            });
+            
+            PriorityCount priorityCount = profile.GetPriorityCount();
+            BeginNode(uiData, NodeType.Header);
+            
+            EditorGUILayout.LabelField(nodeContent, EditorStyles.boldLabel);
+
+            DrawPriorityCount(priorityCount, NodeType.Header);
+
+            EndNode(uiData);
         }
 
         private void DrawNode([NotNull] ICheck check)
@@ -111,7 +135,7 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawFoldoutTreeElement([NotNull] BaseFoldoutUiData uiData, [NotNull] GUIContent nodeContent, PriorityCount priorityCount,
             [NotNull, InstantHandle] Action drawInside, bool drawAsFoldout = true, bool drawMandatory = false)
         {
-            BeginNode(uiData, true);
+            BeginNode(uiData, NodeType.Tinted);
             if (drawAsFoldout)
             {
                 var foldoutGuiStyle = new GUIStyle(EditorStyles.foldout)
@@ -139,28 +163,8 @@ namespace HomaGames.GameDoctor.Ui
                 Rect mandatoryIconRect = new Rect(lastRect) {width = 20, x = lastRect.x + 2};
                 GUI.DrawTexture(mandatoryIconRect, MandatoryTexture);
             }
-
             
-            Rect priorityRect =
-                EditorGUILayout.GetControlRect(
-                    GUILayout.Width(TotalNodeSize * 3 - EditorGUIUtility.standardVerticalSpacing));
-            priorityRect.width += EditorGUIUtility.standardVerticalSpacing;
-
-            // Adjusting to full node rect height
-            float heightDifference = TotalNodeSize - priorityRect.height;
-            priorityRect.height += heightDifference;
-            priorityRect.y -= heightDifference / 2;
-            
-            int indent = EditorGUI.indentLevel;
-            EditorGUI.indentLevel = 0;
-            
-            GUILayoutUtility.GetRect(
-                priorityRect.width - EditorGUIUtility.standardVerticalSpacing, 1, 
-                new GUIStyle() { margin = new RectOffset(), padding = new RectOffset() }, 
-                GUILayout.ExpandWidth(false));
-            DrawPriorities(priorityRect, priorityCount);
-            
-            EditorGUI.indentLevel = indent;
+            DrawPriorityCount(priorityCount);
             
             EndNode(uiData);
 
@@ -172,6 +176,30 @@ namespace HomaGames.GameDoctor.Ui
             }
 
             EditorGUILayout.EndFadeGroup();
+        }
+        
+        private void DrawPriorityCount(PriorityCount priorityCount, NodeType type = NodeType.Regular)
+        {
+            Rect priorityRect =
+                EditorGUILayout.GetControlRect(
+                    GUILayout.Width(PriorityColumnWidth * 3 - EditorGUIUtility.standardVerticalSpacing));
+            priorityRect.width += EditorGUIUtility.standardVerticalSpacing;
+
+            // Adjusting to full node rect height
+            float heightDifference = (type == NodeType.Header ? TotalHeaderNodeSize : TotalNodeSize) - priorityRect.height;
+            priorityRect.height += heightDifference;
+            priorityRect.y -= heightDifference / 2;
+
+            int indent = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+
+            GUILayoutUtility.GetRect(
+                priorityRect.width - EditorGUIUtility.standardVerticalSpacing, 1,
+                new GUIStyle() {margin = new RectOffset(), padding = new RectOffset()},
+                GUILayout.ExpandWidth(false));
+            DrawPriorities(priorityRect, priorityCount);
+
+            EditorGUI.indentLevel = indent;
         }
 
         private void DrawPriorities(Rect priorityRect, PriorityCount priorityCount)
@@ -259,13 +287,25 @@ namespace HomaGames.GameDoctor.Ui
         private static GUIStyle RegularTintedNodeStyle => new GUIStyle(RegularNodeStyle)
             {normal = {background = TintedBackgroundTexture}};
 
-        private static void BeginNode([NotNull] BaseUiData uiData, bool tinted = false)
+        private static void BeginNode([NotNull] BaseUiData uiData, NodeType type = NodeType.Regular)
         {
             GUIStyle horizontalGroupStyle;
-            if (tinted)
-                horizontalGroupStyle = uiData.Selected ? SelectedTintedNodeStyle : RegularTintedNodeStyle;
-            else
-                horizontalGroupStyle = uiData.Selected ? SelectedNodeStyle : RegularNodeStyle;
+            switch (type)
+            {
+                case NodeType.Tinted:
+                case NodeType.Header:
+                    horizontalGroupStyle = uiData.Selected ? SelectedTintedNodeStyle : RegularTintedNodeStyle;
+                    break;
+                case NodeType.Regular:
+                default:
+                    horizontalGroupStyle = uiData.Selected ? SelectedNodeStyle : RegularNodeStyle;
+                    break;
+            }
+
+            if (type == NodeType.Header)
+            {
+                horizontalGroupStyle.padding = new RectOffset(0, 0, UpperHeaderNodeMargin, LowerHeaderNodeMargin);
+            }
 
             EditorGUILayout.BeginHorizontal(horizontalGroupStyle,
                 GUILayout.ExpandWidth(true));
