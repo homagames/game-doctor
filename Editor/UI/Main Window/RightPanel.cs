@@ -36,7 +36,6 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawPlaceHolder()
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
-            GUILayout.Label("Description");
             EditorGUILayout.EndScrollView();
         }
 
