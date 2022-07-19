@@ -16,10 +16,10 @@ namespace HomaGames.GameDoctor.Ui
         private const int UpperHeaderNodeMargin = 17;
         private const int LowerHeaderNodeMargin = 17;
         
-        private static readonly float TotalHeaderNodeSize = UpperHeaderNodeMargin + EditorGUIUtility.singleLineHeight + LowerHeaderNodeMargin;
-        private static readonly float TotalNodeSize = UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
+        private static float TotalHeaderNodeSize => UpperHeaderNodeMargin + EditorGUIUtility.singleLineHeight + LowerHeaderNodeMargin;
+        private static float TotalNodeSize => UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
 
-        private static readonly float PriorityColumnWidth = TotalNodeSize;
+        private static float PriorityColumnWidth => TotalNodeSize;
         
         private Vector2 FirstViewScroll;
         private float ScrollbarSize;

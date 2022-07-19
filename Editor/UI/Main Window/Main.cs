@@ -20,9 +20,6 @@ namespace HomaGames.GameDoctor.Ui
         
         public static bool IsProfileOpened { get; private set; }
 
-        private const float DefaultFooterSize = 150;
-        private float FooterSize = DefaultFooterSize;
-        
         private string _validationProfileName;
         private IValidationProfile _profile;
 

@@ -11,123 +11,118 @@ namespace HomaGames.GameDoctor.Ui
         private const int FooterPadding = 10;
 
         private bool IsFooterCollapsed;
+
+        private const float FooterPieChartSectionSize = 150;
+        private float FooterSize =>  EditorGUILayoutExtension.ToolBarHeight + (IsFooterCollapsed ? 0 : FooterPieChartSectionSize);
         
         private void DrawFooter()
         {
-            Rect separatorRect = EditorGUILayoutExtension.DrawHorizontalSeparator(1);
+            EditorGUILayoutExtension.DrawHorizontalSeparator(1);
             
-            if (IsFooterCollapsed)
+            if (! IsFooterCollapsed)
             {
-                EditorGUILayoutExtension.BeginToolBar();
-                if (EditorGUILayoutExtension.ToolBarButton("Show Charts", GUILayout.ExpandWidth(true)))
-                {
-                    IsFooterCollapsed = false;
-                    FooterSize = DefaultFooterSize;
-                }
-                EditorGUILayoutExtension.EndToolBar();
-                return;
-            }
-            
-            EditorGUIUtility.AddCursorRect(separatorRect, MouseCursor.ResizeVertical);
-            if (Event.current.type == EventType.MouseDown && separatorRect.Contains(Event.current.mousePosition))
-            {
-                IsFooterCollapsed = true;
-                FooterSize = EditorGUILayoutExtension.ToolBarHeight;
-                GUI.changed = true;
-            }
-
-            int passedCheckCount = 0, autoFixableCheckCount = 0, failedCheckCount = 0;
-            var checks = Profile.CheckList;
-            passedCheckCount = ReadPassedCheckCount(checks, ref passedCheckCount, ref autoFixableCheckCount, ref failedCheckCount);
-            
-            var priorityCount = Profile.GetPriorityCount();
-            var highPriorityIssueCount = priorityCount.High;
-            var mediumPriorityIssueCount = priorityCount.Medium;
-            var lowPriorityIssueCount = priorityCount.Low;
-
-            if (passedCheckCount + autoFixableCheckCount + failedCheckCount == 0)
-            {
-                EditorGUILayout.LabelField("Run a scan to detect issues in the project...");
-                return;
-            }
-
-
-            Rect footerRect = EditorGUILayout.GetControlRect(
-                false, 
-                FooterSize - FooterPadding*2, 
-                new GUIStyle
-                {
-                    margin = new RectOffset(FooterPadding, FooterPadding, FooterPadding, FooterPadding)
-                });
-
-            Rect firstPieChartRect = new Rect(footerRect)
-            {
-                width = footerRect.width / 2,
-            };
-            Rect secondPieChartRect = new Rect(footerRect)
-            {
-                x = footerRect.width / 2,
-                width = footerRect.width / 2,
-            };
-        
-            EditorGUIExtension.DrawPieChart(firstPieChartRect, 
-            
-                new EditorGUIExtension.PieChartValue
-                {
-                    Value = passedCheckCount,
-                    Color = new Color(0.05f, 0.65f, 0.54f),
-                    Label = "Passed Checks",
-                    Thickness = 1
-                },
-                new EditorGUIExtension.PieChartValue
-                {
-                    Value = autoFixableCheckCount,
-                    Color = new Color(0.56f, 0.65f, 0.18f),
-                    Label = "Auto-fixable checks",
-                    Thickness = 0.5f
-                },
-                new EditorGUIExtension.PieChartValue
-                {
-                    Value = failedCheckCount,
-                    Color = new Color(0.71f, 0.48f, 0.14f),
-                    Label = "Failed checks",
-                    Thickness = 0.1f
-                });
-        
-            if (highPriorityIssueCount + mediumPriorityIssueCount + lowPriorityIssueCount > 0)
-            {
-                Color DimColor(Color color)
-                {
-                    return color * 
-                           (EditorGUIUtility.isProSkin ? 
-                               new Color(0.7f, 0.7f, 0.7f) : 
-                               new Color(0.85f, 0.85f, 0.85f));
-                }
+                int passedCheckCount = 0, autoFixableCheckCount = 0, failedCheckCount = 0;
+                var checks = Profile.CheckList;
+                passedCheckCount = ReadPassedCheckCount(checks, ref passedCheckCount, ref autoFixableCheckCount, ref failedCheckCount);
                 
-                EditorGUIExtension.DrawPieChart(secondPieChartRect,
-                    new EditorGUIExtension.PieChartValue
+                var priorityCount = Profile.GetPriorityCount();
+                var highPriorityIssueCount = priorityCount.High;
+                var mediumPriorityIssueCount = priorityCount.Medium;
+                var lowPriorityIssueCount = priorityCount.Low;
+
+                
+                Rect footerRect = EditorGUILayout.GetControlRect(
+                    false, 
+                    FooterPieChartSectionSize - FooterPadding*2, 
+                    new GUIStyle
                     {
-                        Value = highPriorityIssueCount,
-                        Color = DimColor(HighPriorityColor),
-                        Label = "High priority"
-                    },
-                    new EditorGUIExtension.PieChartValue
-                    {
-                        Value = mediumPriorityIssueCount,
-                        Color = DimColor(MediumPriorityColor),
-                        Label = "Medium priority"
-                    },
-                    new EditorGUIExtension.PieChartValue
-                    {
-                        Value = lowPriorityIssueCount,
-                        Color = DimColor(LowPriorityColor),
-                        Label = "Low priority"
+                        margin = new RectOffset(FooterPadding, FooterPadding, FooterPadding, FooterPadding)
                     });
+                
+                if (passedCheckCount + autoFixableCheckCount + failedCheckCount == 0)
+                {
+                    EditorGUI.LabelField(footerRect, "Run a scan to detect issues in the project", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });
+                }
+                else
+                {
+                    Rect firstPieChartRect = new Rect(footerRect)
+                    {
+                        width = footerRect.width / 2,
+                    };
+                    Rect secondPieChartRect = new Rect(footerRect)
+                    {
+                        x = footerRect.width / 2,
+                        width = footerRect.width / 2,
+                    };
+            
+                    EditorGUIExtension.DrawPieChart(firstPieChartRect, 
+                
+                        new EditorGUIExtension.PieChartValue
+                        {
+                            Value = passedCheckCount,
+                            Color = new Color(0.05f, 0.65f, 0.54f),
+                            Label = "Passed Checks",
+                            Thickness = 1
+                        },
+                        new EditorGUIExtension.PieChartValue
+                        {
+                            Value = autoFixableCheckCount,
+                            Color = new Color(0.56f, 0.65f, 0.18f),
+                            Label = "Auto-fixable checks",
+                            Thickness = 0.5f
+                        },
+                        new EditorGUIExtension.PieChartValue
+                        {
+                            Value = failedCheckCount,
+                            Color = new Color(0.71f, 0.48f, 0.14f),
+                            Label = "Failed checks",
+                            Thickness = 0.1f
+                        });
+            
+                    if (highPriorityIssueCount + mediumPriorityIssueCount + lowPriorityIssueCount > 0)
+                    {
+                        Color DimColor(Color color)
+                        {
+                            return color * 
+                                   (EditorGUIUtility.isProSkin ? 
+                                       new Color(0.7f, 0.7f, 0.7f) : 
+                                       new Color(0.85f, 0.85f, 0.85f));
+                        }
+                    
+                        EditorGUIExtension.DrawPieChart(secondPieChartRect,
+                            new EditorGUIExtension.PieChartValue
+                            {
+                                Value = highPriorityIssueCount,
+                                Color = DimColor(HighPriorityColor),
+                                Label = "High priority"
+                            },
+                            new EditorGUIExtension.PieChartValue
+                            {
+                                Value = mediumPriorityIssueCount,
+                                Color = DimColor(MediumPriorityColor),
+                                Label = "Medium priority"
+                            },
+                            new EditorGUIExtension.PieChartValue
+                            {
+                                Value = lowPriorityIssueCount,
+                                Color = DimColor(LowPriorityColor),
+                                Label = "Low priority"
+                            });   
+                    }
+                    else
+                    {
+                        GUI.Label(secondPieChartRect, "No issue found, well done!", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });
+                    }
+                }
             }
-            else
+            
+                
+            EditorGUILayoutExtension.BeginToolBar();
+            if (EditorGUILayoutExtension.ToolBarButton(IsFooterCollapsed ? "Show Charts" : "Hide Charts", GUILayout.ExpandWidth(true)))
             {
-                GUI.Label(secondPieChartRect, "No issue found, well done!");
+                IsFooterCollapsed = ! IsFooterCollapsed;
             }
+            EditorGUILayoutExtension.EndToolBar();
         }
 
         private static int ReadPassedCheckCount(IEnumerable<ICheck> checks, ref int passedCheckCount, ref int autoFixableCheckCount,
