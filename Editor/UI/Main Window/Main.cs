@@ -60,6 +60,8 @@ namespace HomaGames.GameDoctor.Ui
 
         private SeparatedViewData SeparatedViewData;
         
+        private Texture2D GameDoctorLogoTexture;
+        
         private Texture2D MandatoryTexture;
         
         private Texture2D HighPriorityTexture;
@@ -91,7 +93,6 @@ namespace HomaGames.GameDoctor.Ui
         private void OnEnable()
         {
             IsProfileOpened = true;
-            titleContent = new GUIContent("Game Doctor");
 
 #if UNITY_2021_2_OR_NEWER
             EditorGUI.hyperLinkClicked += OnHyperLinkClickedGuiListener;
@@ -109,6 +110,11 @@ namespace HomaGames.GameDoctor.Ui
             
             HyperLinkClickedEventInfo.AddMethod.Invoke(null, new object[] { HyperLinkClickedGuiListenerReference });
 #endif
+        }
+
+        private void OnTexturesLoaded()
+        {
+            titleContent = new GUIContent("Game Doctor", GameDoctorLogoTexture);
         }
 
         private void OnGUI()
