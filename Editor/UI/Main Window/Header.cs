@@ -17,9 +17,17 @@ namespace HomaGames.GameDoctor.Ui
 
 
             var selectedProfileIndex = AllProfiles.IndexOf(Profile);
-            int newIndex = EditorGUILayoutExtension.ToolBarPopup(selectedProfileIndex, AllProfiles.Select(p => p.Name).ToArray());
-            if (newIndex != selectedProfileIndex)
-                Profile = AllProfiles[newIndex];
+
+            EditorGUILayoutExtension.ToolBarPopupWithContent(
+                new GUIContent($"Selected: {Profile.Name}"), 
+                selectedProfileIndex, 
+                AllProfiles.Select(p => p.Name),
+                newIndex =>
+                {
+                    Profile = AllProfiles[newIndex];
+                });
+                
+
             
             AutoFixToggle = EditorGUILayoutExtension.ToolBarToggle(AutoFixToggle, "Auto-Fix");
             if (EditorGUILayoutExtension.ToolBarButton("Run all Checks"))

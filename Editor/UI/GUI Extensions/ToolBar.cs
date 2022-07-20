@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
@@ -83,6 +86,25 @@ namespace HomaGames.GameDoctor.Ui
         public static int ToolBarPopup(int selectedIndex, [NotNull] string[] displayedOptions, [NotNull] params GUILayoutOption[] options)
         {
             return EditorGUILayout.Popup(selectedIndex, displayedOptions, EditorStyles.toolbarPopup, options.Length == 0 ? new []{GUILayout.ExpandWidth(false)} : options);
+        }
+
+        public static void ToolBarPopupWithContent(GUIContent content, int selectedIndex,
+            [NotNull] IEnumerable<string> displayedOptions, Action<int> onSelection, [NotNull] params GUILayoutOption[] options)
+        {
+            if (ToolBarDropdownButton(content, FocusType.Keyboard, options))
+            {
+                EditorUtility.DisplayCustomMenu(GUILayoutUtility.GetLastRect(),
+                    displayedOptions.Select(o => new GUIContent(o)).ToArray(), selectedIndex,
+                    (_, __, newSelected) =>
+                    {
+                        onSelection.Invoke(newSelected);
+                    }, null);
+            }
+        }
+        
+        public static bool ToolBarDropdownButton([NotNull] GUIContent content, FocusType focusType, [NotNull] params GUILayoutOption[] options)
+        {
+            return EditorGUILayout.DropdownButton(content, focusType, EditorStyles.toolbarPopup, options.Length == 0 ? new []{GUILayout.ExpandWidth(false)} : options);
         }
     
         /// <summary>
