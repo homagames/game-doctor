@@ -94,6 +94,8 @@ namespace HomaGames.GameDoctor.Ui
         
         private Texture2D FixedColoredTexture;
         private Texture2D FixedWhiteTexture;
+
+        private Texture2D DismissedTexture;
         
 // Unity 2021.2.0 introduces a way to get callbacks on hyperlink clicks (see https://docs.unity3d.com/2021.2/Documentation/ScriptReference/EditorGUI-hyperLinkClicked.html )
 // Before that, the behaviour was internal, so we have to do a little reflexion trickery for it to work.

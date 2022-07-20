@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
-using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -159,6 +157,10 @@ namespace HomaGames.GameDoctor.Ui
             if (issueUiData.Fixed)
             {
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Fixed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
+            }
+            if (issue.HasBeenDismissed())
+            {
+                EditorGUILayout.LabelField(new GUIContent(NBSP + "Dismissed", DismissedTexture));
             }
             
             EditorGUILayout.Space(10);

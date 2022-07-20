@@ -235,10 +235,19 @@ namespace HomaGames.GameDoctor.Ui
             if (!HideFixed || !uiData.Fixed)
             {
                 BeginNode(uiData);
+
+                Texture labelTexture;
+
+                if (uiData.Fixed)
+                    labelTexture = FixedColoredTexture;
+                else if (issue.HasBeenDismissed())
+                    labelTexture = DismissedTexture;
+                else
+                    labelTexture = GetTextureFor(issue.AutomationType);
                 
                 GUIContent issueContent = new GUIContent(
                     NBSP + issue.Name, 
-                    uiData.Fixed ? FixedColoredTexture : GetTextureFor(issue.AutomationType));
+                    labelTexture);
 
                 EditorGUILayout.LabelField(issueContent);
 
