@@ -1,19 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace HomaGames.GameDoctor.Core
 {
     [InitializeOnLoad]
     public static class DismissedIssues
     {
-        private const string SettingsFilePath = "";
+        private const string SettingsFilePath = "ProjectSettings/GameDoctorDismissed.txt";
         
-        private static readonly List<int> DismissedHash = new List<int>();
+        private static readonly HashSet<int> DismissedHash = new HashSet<int>();
 
         static DismissedIssues()
         {
@@ -34,7 +32,15 @@ namespace HomaGames.GameDoctor.Core
 
         public static void SetDismissed(this IIssue issue, bool val = true)
         {
-            DismissedHash.Add(issue.GetHash());
+            if (val)
+            {
+                DismissedHash.Add(issue.GetHash());
+            }
+            else
+            {
+                DismissedHash.Remove(issue.GetHash());
+            }
+            
             UpdateSettingsFile();
         }
 
