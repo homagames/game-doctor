@@ -144,7 +144,7 @@ namespace HomaGames.GameDoctor.Ui
                 drawRect.height,
                 SeparatedViewSeparatorWidth);
 
-            EditorGUIUtility.AddCursorRect(separatorRect, MouseCursor.ResizeHorizontal);
+            EditorGUIUtility.AddCursorRect(separatorRect, MouseCursor.SplitResizeLeftRight);
             return separatorRect;
         }
     }

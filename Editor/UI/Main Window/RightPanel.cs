@@ -38,14 +38,13 @@ namespace HomaGames.GameDoctor.Ui
         private void DrawPlaceHolder()
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
-            GUILayout.Label("Description");
             EditorGUILayout.EndScrollView();
         }
 
         [NotNull]
         private static GUIStyle TitleGuiStyle => new GUIStyle(GUI.skin.label)
         {
-            fontSize = 37,
+            fontSize = 20,
             fontStyle = FontStyle.Bold
         };
 
@@ -53,11 +52,11 @@ namespace HomaGames.GameDoctor.Ui
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
             
             EditorGUI.LabelField(GetRectFor(TitleGuiStyle, profile.Name), profile.Name, TitleGuiStyle);
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             DrawSummaryTable(profile.GetPriorityCount(), profile.GetAutomationCount());
             
@@ -102,14 +101,14 @@ namespace HomaGames.GameDoctor.Ui
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
             
             EditorGUI.LabelField(GetRectFor(TitleGuiStyle, check.Name), check.Name, TitleGuiStyle);
             if (check.CheckResult?.Passed == true)
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Passed", FixedWhiteTexture),
                     new Color(0.06f, 0.65f, 0.54f));
 
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             DrawSummaryTable(check.GetPriorityCount(), check.GetAutomationCount());
             
@@ -126,10 +125,11 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(20);
             
             EditorGUI.SelectableLabel(GetRectFor(DescriptionGUIStyle, check.Description), check.Description, DescriptionGUIStyle);
+
+            EditorGUILayout.EndScrollView();
             
-            EditorGUILayout.Space(30);
             
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal(new GUIStyle() { padding = new RectOffset(5, 5, 5, 5) });
             using (new EditorGUI.DisabledScope(check.CheckResult == null ||
                                                check.CheckResult.Issues.All(issue =>
                                                    issue.AutomationType != AutomationType.Automatic)))
@@ -145,8 +145,6 @@ namespace HomaGames.GameDoctor.Ui
                 RunCheck(check);
             }
             GUILayout.EndHorizontal();
-            
-            EditorGUILayout.EndScrollView();
         }
 
         private void Draw([NotNull] IIssue issue)
@@ -154,7 +152,7 @@ namespace HomaGames.GameDoctor.Ui
             var issueUiData = GetUiData(issue);
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
             
             EditorGUI.LabelField(GetRectFor(TitleGuiStyle, issue.Name), issue.Name, TitleGuiStyle);
 
@@ -163,7 +161,7 @@ namespace HomaGames.GameDoctor.Ui
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Fixed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
             }
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Priority:", GUILayout.Width(45));
@@ -183,11 +181,11 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayout.Space(10);
             
             issue.Draw();
+
+            EditorGUILayout.EndScrollView();
             
-            EditorGUILayout.Space(20);
             
-            
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal(new GUIStyle() { padding = new RectOffset(5, 5, 5, 5) });
 
             EditorGUI.BeginDisabledGroup(issueUiData.Fixed);
             if (GUILayout.Button("Fix", GUILayout.Width(130)))
@@ -226,8 +224,6 @@ namespace HomaGames.GameDoctor.Ui
                 
             }
             GUILayout.EndHorizontal();
-            
-            EditorGUILayout.EndScrollView();
         }
 
         private ICheck GetParentCheck(IIssue issue)

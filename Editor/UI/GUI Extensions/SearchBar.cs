@@ -7,11 +7,11 @@ namespace HomaGames.GameDoctor.Ui
     public static partial class EditorGUILayoutExtension
     {
         [NotNull]
-        private static readonly GUIStyle SearchBarToolbarGUIStyle = EditorStyles.toolbar;
+        private static GUIStyle SearchBarToolbarGUIStyle => EditorStyles.toolbar;
         [NotNull]
-        private static readonly GUIStyle SearchBarTextGUIStyle = EditorStyles.toolbarSearchField;
+        private static GUIStyle SearchBarTextGUIStyle => EditorStyles.toolbarSearchField;
         [CanBeNull]
-        private static readonly GUIStyle SearchBarCancelGUIStyle = new GUIStyle(GUI.skin.FindStyle("ToolbarSeachCancelButton"));
+        private static GUIStyle SearchBarCancelGUIStyle => new GUIStyle(GUI.skin.FindStyle("ToolbarSeachCancelButton"));
 
         /// <summary>
         /// Draws a text field as a search bar, in a tool bar.
