@@ -34,7 +34,7 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
         
-        public static void Open()
+        public static void Open(IValidationProfile validationProfile = null)
         {
             string iconFolderPath = FolderLocator.GetFolder(IconFolderId);
             if (iconFolderPath == null)
@@ -124,7 +124,7 @@ namespace HomaGames.GameDoctor.Ui
 
 
             window.OnTexturesLoaded();
-            window.Profile = AvailableProfiles.GetDefaultValidationProfile();
+            window.Profile = validationProfile ?? AvailableProfiles.GetDefaultValidationProfile();
             
             
             window.Show();
