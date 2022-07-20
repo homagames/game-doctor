@@ -208,16 +208,6 @@ namespace HomaGames.GameDoctor.Ui
                 {
                     var parentCheck = GetParentCheck(issue);
 
-                    List<IIssue> parentIssueList = parentCheck.CheckResult.Issues; 
-                    int indexOf = parentIssueList.IndexOf(issue);
-
-                    if (indexOf < parentIssueList.Count - 1)
-                        GetUiData(parentIssueList[indexOf + 1]).Selected = true;
-                    else if (indexOf > 0)
-                        GetUiData(parentIssueList[indexOf - 1]).Selected = true;
-                    else
-                        GetUiData(parentCheck).Selected = true;
-                    
                     RemoveDismissedIssue(parentCheck, issue);
                 }
                 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
@@ -298,6 +297,19 @@ namespace HomaGames.GameDoctor.Ui
             
             if (! DismissedIssuesStorage.ContainsKey(issue))
                 DismissedIssuesStorage.Add(issue, check);
+            
+            if (GetUiData(issue).Selected)
+            {
+                List<IIssue> parentIssueList = check.CheckResult.Issues;
+                int indexOf = parentIssueList.IndexOf(issue);
+
+                if (indexOf < parentIssueList.Count - 1)
+                    GetUiData(parentIssueList[indexOf + 1]).Selected = true;
+                else if (indexOf > 0)
+                    GetUiData(parentIssueList[indexOf - 1]).Selected = true;
+                else
+                    GetUiData(check).Selected = true;
+            }
             
             check.CheckResult.Issues.Remove(issue);
         } 
