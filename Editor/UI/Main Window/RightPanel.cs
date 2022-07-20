@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -196,15 +198,42 @@ namespace HomaGames.GameDoctor.Ui
 
             if (GUILayout.Button("Re-run check", GUILayout.Width(130)))
             {
-                ICheck parentCheck =
-                    Profile.CheckList.First(c =>
-                        c.CheckResult != null && c.CheckResult.Issues.Contains(issue));
+                RunCheck(GetParentCheck(issue));
+            }
+            
+            if (GUILayout.Button("Dismiss", GUILayout.Width(130)))
+            {
+                issue.SetDismissed();
 
-                RunCheck(parentCheck);
+                
+                if (DismissedIssuesHidden)
+                {
+                    var parentCheck = GetParentCheck(issue);
+
+                    List<IIssue> parentIssueList = parentCheck.CheckResult.Issues; 
+                    int indexOf = parentIssueList.IndexOf(issue);
+
+                    if (indexOf < parentIssueList.Count - 1)
+                        GetUiData(parentIssueList[indexOf + 1]).Selected = true;
+                    else if (indexOf > 0)
+                        GetUiData(parentIssueList[indexOf - 1]).Selected = true;
+                    else
+                        GetUiData(parentCheck).Selected = true;
+                    
+                    RemoveDismissedIssue(parentCheck, issue);
+                }
+                
+                
             }
             GUILayout.EndHorizontal();
             
             EditorGUILayout.EndScrollView();
+        }
+
+        private ICheck GetParentCheck(IIssue issue)
+        {
+            return Profile.CheckList.First(c =>
+                    c.CheckResult != null && c.CheckResult.Issues.Contains(issue));
         }
 
         private static Rect GetRectFor(GUIStyle style, string content)
