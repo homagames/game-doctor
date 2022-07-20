@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
 using UnityEditor;
@@ -52,6 +51,7 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayoutExtension.BeginToolBar();
             SearchString = EditorGUILayoutExtension.ToolBarSearchBar(SearchString, GUILayout.ExpandWidth(true));
             HideFixed = EditorGUILayoutExtension.ToolBarToggle(HideFixed, "Hide fixed");
+            DismissedIssuesHidden = !EditorGUILayoutExtension.ToolBarToggle(!DismissedIssuesHidden, "Show dismissed");
             EditorGUILayoutExtension.EndToolBar();
 
         }
