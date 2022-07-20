@@ -14,10 +14,6 @@ namespace HomaGames.GameDoctor.Ui
         // Non-Breakable SPace, to prevent trimming 
         private const string NBSP = " ";
         
-        private const int UpperNodeMargin = 7;
-        private const int LowerNodeMargin = 7;
-        private static readonly float TotalNodeSize = UpperNodeMargin + EditorGUIUtility.singleLineHeight + LowerNodeMargin;
-        
         private static Color HighPriorityColor => Color.red;
         private static Color MediumPriorityColor => new Color(0.87f, 0.49f, 0.16f);
         private static Color LowPriorityColor => EditorGUIUtility.isProSkin ? Color.yellow : new Color(1f, 1f, 0f);
@@ -27,16 +23,37 @@ namespace HomaGames.GameDoctor.Ui
         private string _validationProfileName;
         private IValidationProfile _profile;
 
+        private List<IValidationProfile> _allProfiles;
+
+        private List<IValidationProfile> AllProfiles
+        {
+            get
+            {
+                if (_allProfiles != null)
+                    return _allProfiles;
+                
+                _allProfiles = AvailableProfiles.GetAllValidationProfiles();
+                var defaultProfile = AvailableProfiles.GetDefaultValidationProfile();
+                
+                _allProfiles.Sort((p1, p2) =>
+                {
+                    if (p1 == defaultProfile)
+                        return -1;
+                    if (p2 == defaultProfile)
+                        return 1;
+                    return string.Compare(p1.Name, p2.Name, StringComparison.Ordinal);
+                });
+                return _allProfiles;
+            }
+        }
+
         private IValidationProfile Profile
         {
             get
             {
                 if (_profile == null)
                 {
-                    AvailableProfiles.GetDefaultValidationProfile();
-                    
-                    _profile = AvailableProfiles
-                        .GetAllValidationProfiles()
+                    _profile = AllProfiles
                         .FirstOrDefault(p => p.Name == _validationProfileName);
 
                     if (_profile == null)
@@ -56,6 +73,8 @@ namespace HomaGames.GameDoctor.Ui
         }
 
         private SeparatedViewData SeparatedViewData;
+        
+        private Texture2D GameDoctorLogoTexture;
         
         private Texture2D MandatoryTexture;
         
@@ -88,7 +107,6 @@ namespace HomaGames.GameDoctor.Ui
         private void OnEnable()
         {
             IsProfileOpened = true;
-            titleContent = new GUIContent("Game Doctor");
 
 #if UNITY_2021_2_OR_NEWER
             EditorGUI.hyperLinkClicked += OnHyperLinkClickedGuiListener;
@@ -108,6 +126,11 @@ namespace HomaGames.GameDoctor.Ui
 #endif
         }
 
+        private void OnTexturesLoaded()
+        {
+            titleContent = new GUIContent("Game Doctor", GameDoctorLogoTexture);
+        }
+
         private void OnGUI()
         {
             if (Profile == null)
@@ -115,12 +138,11 @@ namespace HomaGames.GameDoctor.Ui
                 Debug.LogError($"To open the Game Doctor window, use {nameof(GameDoctorWindow)}.{nameof(Open)}({nameof(IValidationProfile)})");
                 Close();
             }
-            
-            float footerSize = 150;
+
             DrawHeader();
 
-            SeparatedViewData = EditorGUILayoutExtension.BeginSeparatedView(position.height - HeaderSize - footerSize,
-                SeparatedViewData, GUILayout.ExpandWidth(true), GUILayout.MaxHeight(position.height - HeaderSize - footerSize));
+            SeparatedViewData = EditorGUILayoutExtension.BeginSeparatedView(position.height - HeaderSize - FooterSize,
+                SeparatedViewData, GUILayout.ExpandWidth(true), GUILayout.MaxHeight(position.height - HeaderSize - FooterSize));
 
             DrawLeftPanel();
 
@@ -130,8 +152,7 @@ namespace HomaGames.GameDoctor.Ui
 
 
             EditorGUILayoutExtension.EndSeparatedView();
-            EditorGUILayoutExtension.DrawHorizontalSeparator(1);
-            DrawFooter(footerSize);
+            DrawFooter();
         }
 
         private void OnDisable()
