@@ -42,7 +42,7 @@ namespace HomaGames.GameDoctor.Ui
         [NotNull]
         private static GUIStyle TitleGuiStyle => new GUIStyle(GUI.skin.label)
         {
-            fontSize = 37,
+            fontSize = 20,
             fontStyle = FontStyle.Bold
         };
 
@@ -50,11 +50,11 @@ namespace HomaGames.GameDoctor.Ui
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
             
             EditorGUILayout.LabelField(profile.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, profile.Name));
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             DrawSummaryTable(profile.GetPriorityCount(), profile.GetAutomationCount());
             
@@ -99,14 +99,14 @@ namespace HomaGames.GameDoctor.Ui
         {
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
             
             EditorGUILayout.LabelField(check.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, check.Name));
             if (check.CheckResult?.Passed == true)
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Passed", FixedWhiteTexture),
                     new Color(0.06f, 0.65f, 0.54f));
 
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             DrawSummaryTable(check.GetPriorityCount(), check.GetAutomationCount());
             
@@ -146,7 +146,7 @@ namespace HomaGames.GameDoctor.Ui
             var issueUiData = GetUiData(issue);
             SecondViewScroll = EditorGUILayout.BeginScrollView(SecondViewScroll);
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
             
             EditorGUILayout.LabelField(issue.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, issue.Name));
 
@@ -155,7 +155,7 @@ namespace HomaGames.GameDoctor.Ui
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Fixed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
             }
             
-            EditorGUILayout.Space(20);
+            EditorGUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Priority:", GUILayout.Width(45));
