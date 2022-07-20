@@ -52,7 +52,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(10);
             
-            EditorGUILayout.LabelField(profile.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, profile.Name));
+            EditorGUI.LabelField(GetRectFor(TitleGuiStyle, profile.Name), profile.Name, TitleGuiStyle);
             
             EditorGUILayout.Space(10);
 
@@ -63,7 +63,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.SelectableLabel(profile.Description, DescriptionGUIStyle);
+            EditorGUI.SelectableLabel(GetRectFor(DescriptionGUIStyle, profile.Description), profile.Description, DescriptionGUIStyle);
             
             EditorGUILayout.EndScrollView();
         }
@@ -101,7 +101,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(10);
             
-            EditorGUILayout.LabelField(check.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, check.Name));
+            EditorGUI.LabelField(GetRectFor(TitleGuiStyle, check.Name), check.Name, TitleGuiStyle);
             if (check.CheckResult?.Passed == true)
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Passed", FixedWhiteTexture),
                     new Color(0.06f, 0.65f, 0.54f));
@@ -122,16 +122,20 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.SelectableLabel(check.Description, DescriptionGUIStyle);
+            EditorGUI.SelectableLabel(GetRectFor(DescriptionGUIStyle, check.Description), check.Description, DescriptionGUIStyle);
 
             EditorGUILayout.EndScrollView();
+            
             
             GUILayout.BeginHorizontal(new GUIStyle() { padding = new RectOffset(5, 5, 5, 5) });
             using (new EditorGUI.DisabledScope(check.CheckResult == null ||
                                                check.CheckResult.Issues.All(issue =>
                                                    issue.AutomationType != AutomationType.Automatic)))
             {
-                GUILayout.Button("Fix all auto. issues", GUILayout.Width(130));
+                if (GUILayout.Button("Fix all auto. issues", GUILayout.Width(130)))
+                {
+                    FixAutoIssues(check.CheckResult!.Issues);
+                }
             }
 
             if (GUILayout.Button(check.CheckResult == null ? "Run check" : "Re-run check", GUILayout.Width(130)))
@@ -148,7 +152,7 @@ namespace HomaGames.GameDoctor.Ui
             
             EditorGUILayout.Space(10);
             
-            EditorGUILayout.LabelField(issue.Name, TitleGuiStyle, GetHeightOptionFor(TitleGuiStyle, issue.Name));
+            EditorGUI.LabelField(GetRectFor(TitleGuiStyle, issue.Name), issue.Name, TitleGuiStyle);
 
             if (issueUiData.Fixed)
             {
@@ -170,7 +174,7 @@ namespace HomaGames.GameDoctor.Ui
 
             EditorGUILayout.Space(20);
             
-            EditorGUILayout.SelectableLabel(issue.Description, DescriptionGUIStyle);
+            EditorGUI.SelectableLabel(GetRectFor(DescriptionGUIStyle, issue.Description), issue.Description, DescriptionGUIStyle);
             
             EditorGUILayout.Space(10);
             
@@ -199,9 +203,9 @@ namespace HomaGames.GameDoctor.Ui
             GUILayout.EndHorizontal();
         }
 
-        private static GUILayoutOption GetHeightOptionFor(GUIStyle style, string content)
+        private static Rect GetRectFor(GUIStyle style, string content)
         {
-            return GUILayout.Height(style.CalcSize(new GUIContent(content)).y);
+            return GUILayoutUtility.GetRect(new GUIContent(content), style);
         }
     }
 }
