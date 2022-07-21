@@ -203,6 +203,8 @@ namespace HomaGames.GameDoctor.Ui
             
             if (GUILayout.Button("Dismiss", GUILayout.Width(130)))
             {
+                ShowTip(TipName.IssueDismissed);
+                
                 issue.SetDismissed();
 
                 

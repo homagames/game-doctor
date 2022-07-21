@@ -11,7 +11,6 @@ namespace HomaGames.GameDoctor.Ui
 {
     public partial class GameDoctorWindow
     {
-        private const string FIRST_FIXED_ISSUE_KEY = "game_doctor.first_issue_fixed";
         private const string FIRST_ISSUE_FIX_FAILED_KEY = "game_doctor.first_issue_fix_failed";
 
         private int IssuesFailedToFixCount;
@@ -227,14 +226,7 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnAfterIssueFixed()
         {
-            if (!EditorPrefs.HasKey(FIRST_FIXED_ISSUE_KEY))
-            {
-                EditorPrefs.SetBool(FIRST_FIXED_ISSUE_KEY, true);
-
-                EditorUtility.DisplayDialog("Tip", "Once issues are supposedly fixed, they will appear " +
-                                                   "as \"fixed\" in the navigation tree. To make sure they were fixed correctly, " +
-                                                   "run the check again.", "Understood!");
-            }
+            ShowTip(TipName.IssueFixed);
         }
 
         private void CheckForIssuesFailedToFix()
