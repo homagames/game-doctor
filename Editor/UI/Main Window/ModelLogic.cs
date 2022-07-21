@@ -25,11 +25,14 @@ namespace HomaGames.GameDoctor.Ui
                 if (_dismissedIssuesHidden != value)
                 {
                     _dismissedIssuesHidden = value;
-                    
-                    if (_dismissedIssuesHidden)
-                        RemoveAllDismissedIssues();
-                    else
-                        AddBackAllDismissedIssues();
+
+                    if (_dismissedIssuesHidden && GetSelectedElement() is IIssue issue)
+                    {
+                        if (issue.HasBeenDismissed())
+                        {
+                            ChangeSelectionOfDismissedIssue(issue);
+                        }
+                    }
                 }
             }
         }
@@ -86,9 +89,6 @@ namespace HomaGames.GameDoctor.Ui
                             {
                                 GetUiData(issue).Fixed = false;
                             }
-                            
-                            if (DismissedIssuesHidden)
-                                RemoveDismissedIssues(checks[i]);
                         }
                     }
                     catch (Exception e)
@@ -249,62 +249,6 @@ namespace HomaGames.GameDoctor.Ui
                 IssuesFailedToFixCount = 0;
             }
         }
-        #endregion
-
-        #region Dismissed issues
-        private readonly Dictionary<IIssue, ICheck> DismissedIssuesStorage = new Dictionary<IIssue, ICheck>();
-
-        private void RemoveAllDismissedIssues()
-        {
-            foreach (var check in Profile.CheckList)
-            {
-                RemoveDismissedIssues(check);
-            }
-        }
-
-        private void AddBackAllDismissedIssues()
-        {
-            foreach (var dismissedIssuePair in DismissedIssuesStorage)
-            {
-                dismissedIssuePair.Value.CheckResult?.Issues.Add(dismissedIssuePair.Key);
-            }
-            
-            DismissedIssuesStorage.Clear();
-        }
-
-        private void RemoveDismissedIssues(ICheck check)
-        {
-            if (check.CheckResult == null) return;
-            var dismissedIssues = check.CheckResult.Issues.Where(issue => issue.HasBeenDismissed()).ToArray();
-
-            foreach (var dismissedIssue in dismissedIssues)
-            {
-                RemoveDismissedIssue(check, dismissedIssue);
-            }
-        }
-
-        private void RemoveDismissedIssue(ICheck check, IIssue issue)
-        {
-            if (check.CheckResult?.Issues.Contains(issue) != true || !issue.HasBeenDismissed()) return;
-            
-            if (! DismissedIssuesStorage.ContainsKey(issue))
-                DismissedIssuesStorage.Add(issue, check);
-            
-            if (GetUiData(issue).Selected)
-            {
-                List<IIssue> parentIssueList = check.CheckResult.Issues;
-                int indexOf = parentIssueList.IndexOf(issue);
-
-                if (indexOf < parentIssueList.Count - 1)
-                    GetUiData(parentIssueList[indexOf + 1]).Selected = true;
-                else if (indexOf > 0)
-                    GetUiData(parentIssueList[indexOf - 1]).Selected = true;
-                else
-                    GetUiData(check).Selected = true;
-            }
-            
-            check.CheckResult.Issues.Remove(issue);
-        } 
         #endregion
 
         private static void ListenForErrors([NotNull] Task task)

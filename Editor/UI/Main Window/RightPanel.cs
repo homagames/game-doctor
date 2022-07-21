@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
@@ -207,16 +208,11 @@ namespace HomaGames.GameDoctor.Ui
                 ShowTip(TipName.IssueDismissed);
                 
                 issue.SetDismissed(! isDismissed);
-
                 
                 if (DismissedIssuesHidden && issue.HasBeenDismissed())
                 {
-                    var parentCheck = GetParentCheck(issue);
-
-                    RemoveDismissedIssue(parentCheck, issue);
+                    ChangeSelectionOfDismissedIssue(issue);
                 }
-                
-                
             }
             GUILayout.EndHorizontal();
         }

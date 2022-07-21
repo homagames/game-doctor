@@ -114,7 +114,7 @@ namespace HomaGames.GameDoctor.Ui
             CheckUiData uiData = GetUiData(check);
 
             var checkPassed = check.CheckResult != null && check.CheckResult.Passed;
-            var containsIssues = check.CheckResult != null && check.CheckResult.Issues.Count > 0;
+            var containsIssues = check.CheckResult != null && Filter(check.CheckResult.Issues).Any();
 
             GUIContent nodeContent = new GUIContent(
                 NBSP + check.Name, 
@@ -507,8 +507,8 @@ namespace HomaGames.GameDoctor.Ui
                         return false;
                     }
                 }
-                
-                return true;
+
+                return !DismissedIssuesHidden || ! issue.HasBeenDismissed();
             });
         }
 
@@ -526,18 +526,18 @@ namespace HomaGames.GameDoctor.Ui
             int relevance = 0;
 
             foreach (string searchWord in searchWords)
-                relevance += computeRelevanceForWord(searchWord, dishNameWords);
+                relevance += ComputeRelevanceForWord(searchWord, dishNameWords);
 
             return relevance;
         }
 
         [Pure]
-        private int computeRelevanceForWord([NotNull] string wordToSearch, [NotNull] IEnumerable<string> dishNameWords)
+        private int ComputeRelevanceForWord([NotNull] string wordToSearch, [NotNull] IEnumerable<string> dishNameWords)
         {
             int finalScore = 0;
 
             foreach (string dishNameWord in dishNameWords) {
-                int currentScore = maxOccurrence(wordToSearch, dishNameWord);
+                int currentScore = MaxOccurrence(wordToSearch, dishNameWord);
 
                 if (currentScore > finalScore)
                     finalScore = currentScore;
@@ -548,7 +548,7 @@ namespace HomaGames.GameDoctor.Ui
         }
 
         [Pure]
-        private int maxOccurrence([NotNull] string contained, [NotNull] string container) 
+        private int MaxOccurrence([NotNull] string contained, [NotNull] string container) 
         {
             int longestOccurrence = 0;
 
