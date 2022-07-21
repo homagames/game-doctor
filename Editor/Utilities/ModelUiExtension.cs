@@ -47,6 +47,9 @@ namespace HomaGames.GameDoctor.Ui
             {
                 foreach (var issue in check.CheckResult.Issues)
                 {
+                    if (issue.HasBeenDismissed())
+                        continue;
+                    
                     switch (issue.Priority)
                     {
                         default:

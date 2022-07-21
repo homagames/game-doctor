@@ -37,7 +37,7 @@ namespace HomaGames.GameDoctor.Ui
                     RunAllChecks();
             }
 
-            EditorGUI.BeginDisabledGroup(!GetAllIssues().Any(issue =>
+            EditorGUI.BeginDisabledGroup(!GetAllNonDismissedIssues().Any(issue =>
                 issue.AutomationType == AutomationType.Automatic && !GetUiData(issue).Fixed));
             if (EditorGUILayoutExtension.ToolBarButton("Fix Auto. issues"))
             {

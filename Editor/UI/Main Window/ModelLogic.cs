@@ -45,7 +45,7 @@ namespace HomaGames.GameDoctor.Ui
         private async Task RunAllChecksAndFixAsync()
         {
             await RunAllChecksAsync();
-            await FixAutoIssuesAsync(GetAllIssues().Where(issue => issue.AutomationType == AutomationType.Automatic).ToList());
+            await FixAutoIssuesAsync(GetAllNonDismissedIssues().Where(issue => issue.AutomationType == AutomationType.Automatic).ToList());
         }
 
         #region Checks
@@ -124,7 +124,7 @@ namespace HomaGames.GameDoctor.Ui
         private async Task FixAllAutoIssuesAsync()
         {
             await FixAutoIssuesAsync(
-                GetAllIssues()
+                GetAllNonDismissedIssues()
                     .Where(issue => 
                         issue.AutomationType == AutomationType.Automatic
                         && ! GetUiData(issue).Fixed)

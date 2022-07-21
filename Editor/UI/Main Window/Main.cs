@@ -183,6 +183,13 @@ namespace HomaGames.GameDoctor.Ui
         {
             return Profile.CheckList.SelectMany(check => check.CheckResult?.Issues ?? Enumerable.Empty<IIssue>());
         }
+        
+        [Pure]
+        [NotNull]
+        private IEnumerable<IIssue> GetAllNonDismissedIssues()
+        {
+            return GetAllIssues().Where(issue => !issue.HasBeenDismissed());
+        }
 
         [Pure]
         [CanBeNull]
