@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
@@ -158,6 +159,10 @@ namespace HomaGames.GameDoctor.Ui
             {
                 EditorGUILayoutExtension.ColorLabel(new GUIContent(NBSP + "Fixed", FixedWhiteTexture), new Color(0.06f, 0.65f, 0.54f));
             }
+            if (issue.HasBeenDismissed())
+            {
+                EditorGUILayout.LabelField(new GUIContent(NBSP + "Dismissed", DismissedTexture));
+            }
             
             EditorGUILayout.Space(10);
 
@@ -194,16 +199,32 @@ namespace HomaGames.GameDoctor.Ui
 
             if (GUILayout.Button("Re-run check", GUILayout.Width(130)))
             {
-                ICheck parentCheck =
-                    Profile.CheckList.First(c =>
-                        c.CheckResult != null && c.CheckResult.Issues.Contains(issue));
+                RunCheck(GetParentCheck(issue));
+            }
 
-                RunCheck(parentCheck);
+            bool isDismissed = issue.HasBeenDismissed();
+            if (GUILayout.Button(isDismissed ? "Un-dismiss" : "Dismiss", GUILayout.Width(130)))
+            {
+                ShowTip(TipName.IssueDismissed);
+                
+                issue.SetDismissed(! isDismissed);
+                
+                if (DismissedIssuesHidden && issue.HasBeenDismissed())
+                {
+                    ChangeSelectionOfDismissedIssue(issue);
+                }
             }
             GUILayout.EndHorizontal();
         }
 
-        private static Rect GetRectFor(GUIStyle style, string content)
+        [NotNull]
+        private ICheck GetParentCheck([NotNull] IIssue issue)
+        {
+            return Profile.CheckList.First(c =>
+                    c.CheckResult != null && c.CheckResult.Issues.Contains(issue));
+        }
+
+        private static Rect GetRectFor([NotNull] GUIStyle style, string content)
         {
             return GUILayoutUtility.GetRect(new GUIContent(content), style);
         }

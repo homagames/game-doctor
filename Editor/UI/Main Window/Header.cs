@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using HomaGames.GameDoctor.Core;
 using UnityEditor;
@@ -38,7 +37,7 @@ namespace HomaGames.GameDoctor.Ui
                     RunAllChecks();
             }
 
-            EditorGUI.BeginDisabledGroup(!GetAllIssues().Any(issue =>
+            EditorGUI.BeginDisabledGroup(!GetAllNonDismissedIssues().Any(issue =>
                 issue.AutomationType == AutomationType.Automatic && !GetUiData(issue).Fixed));
             if (EditorGUILayoutExtension.ToolBarButton("Fix Auto. issues"))
             {
@@ -52,6 +51,7 @@ namespace HomaGames.GameDoctor.Ui
             EditorGUILayoutExtension.BeginToolBar();
             SearchString = EditorGUILayoutExtension.ToolBarSearchBar(SearchString, GUILayout.ExpandWidth(true));
             HideFixed = EditorGUILayoutExtension.ToolBarToggle(HideFixed, "Hide fixed");
+            DismissedIssuesHidden = !EditorGUILayoutExtension.ToolBarToggle(!DismissedIssuesHidden, "Show dismissed");
             EditorGUILayoutExtension.EndToolBar();
 
         }

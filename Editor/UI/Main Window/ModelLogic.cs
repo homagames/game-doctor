@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
 using JetBrains.Annotations;
@@ -12,10 +11,31 @@ namespace HomaGames.GameDoctor.Ui
 {
     public partial class GameDoctorWindow
     {
-        private const string FIRST_FIXED_ISSUE_KEY = "game_doctor.first_issue_fixed";
         private const string FIRST_ISSUE_FIX_FAILED_KEY = "game_doctor.first_issue_fix_failed";
 
         private int IssuesFailedToFixCount;
+
+        private bool _dismissedIssuesHidden = true;
+
+        private bool DismissedIssuesHidden
+        {
+            get => _dismissedIssuesHidden;
+            set
+            {
+                if (_dismissedIssuesHidden != value)
+                {
+                    _dismissedIssuesHidden = value;
+
+                    if (_dismissedIssuesHidden && GetSelectedElement() is IIssue issue)
+                    {
+                        if (issue.HasBeenDismissed())
+                        {
+                            ChangeSelectionOfDismissedIssue(issue);
+                        }
+                    }
+                }
+            }
+        }
         
         private void RunAllChecksAndFix()
         {
@@ -25,7 +45,7 @@ namespace HomaGames.GameDoctor.Ui
         private async Task RunAllChecksAndFixAsync()
         {
             await RunAllChecksAsync();
-            await FixAutoIssuesAsync(GetAllIssues().Where(issue => issue.AutomationType == AutomationType.Automatic).ToList());
+            await FixAutoIssuesAsync(GetAllNonDismissedIssues().Where(issue => issue.AutomationType == AutomationType.Automatic).ToList());
         }
 
         #region Checks
@@ -104,7 +124,7 @@ namespace HomaGames.GameDoctor.Ui
         private async Task FixAllAutoIssuesAsync()
         {
             await FixAutoIssuesAsync(
-                GetAllIssues()
+                GetAllNonDismissedIssues()
                     .Where(issue => 
                         issue.AutomationType == AutomationType.Automatic
                         && ! GetUiData(issue).Fixed)
@@ -206,14 +226,7 @@ namespace HomaGames.GameDoctor.Ui
 
         private void OnAfterIssueFixed()
         {
-            if (!EditorPrefs.HasKey(FIRST_FIXED_ISSUE_KEY))
-            {
-                EditorPrefs.SetBool(FIRST_FIXED_ISSUE_KEY, true);
-
-                EditorUtility.DisplayDialog("Tip", "Once issues are supposedly fixed, they will appear " +
-                                                   "as \"fixed\" in the navigation tree. To make sure they were fixed correctly, " +
-                                                   "run the check again.", "Understood!");
-            }
+            ShowTip(TipName.IssueFixed);
         }
 
         private void CheckForIssuesFailedToFix()
@@ -237,7 +250,6 @@ namespace HomaGames.GameDoctor.Ui
             }
         }
         #endregion
-
 
         private static void ListenForErrors([NotNull] Task task)
         {

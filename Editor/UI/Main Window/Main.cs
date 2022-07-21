@@ -94,6 +94,8 @@ namespace HomaGames.GameDoctor.Ui
         
         private Texture2D FixedColoredTexture;
         private Texture2D FixedWhiteTexture;
+
+        private Texture2D DismissedTexture;
         
 // Unity 2021.2.0 introduces a way to get callbacks on hyperlink clicks (see https://docs.unity3d.com/2021.2/Documentation/ScriptReference/EditorGUI-hyperLinkClicked.html )
 // Before that, the behaviour was internal, so we have to do a little reflexion trickery for it to work.
@@ -181,6 +183,13 @@ namespace HomaGames.GameDoctor.Ui
         {
             return Profile.CheckList.SelectMany(check => check.CheckResult?.Issues ?? Enumerable.Empty<IIssue>());
         }
+        
+        [Pure]
+        [NotNull]
+        private IEnumerable<IIssue> GetAllNonDismissedIssues()
+        {
+            return GetAllIssues().Where(issue => !issue.HasBeenDismissed());
+        }
 
         [Pure]
         [CanBeNull]
@@ -205,6 +214,24 @@ namespace HomaGames.GameDoctor.Ui
             }
 
             return null;
+        }
+        
+        private void ChangeSelectionOfDismissedIssue([NotNull] IIssue issue)
+        {
+            var parentCheck = GetParentCheck(issue);
+
+            if (DismissedIssuesHidden)
+            {
+                List<IIssue> parentIssueList = Filter(parentCheck.CheckResult.Issues).ToList();
+                int indexOf = parentIssueList.IndexOf(issue);
+
+                if (indexOf < parentIssueList.Count - 1)
+                    GetUiData(parentIssueList[indexOf + 1]).Selected = true;
+                else if (indexOf > 0)
+                    GetUiData(parentIssueList[indexOf - 1]).Selected = true;
+                else
+                    GetUiData(parentCheck).Selected = true;
+            }
         }
          
         [NotNull]

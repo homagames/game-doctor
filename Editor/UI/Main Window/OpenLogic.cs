@@ -113,6 +113,11 @@ namespace HomaGames.GameDoctor.Ui
                     Name = "GameDoctorLogoIcon",
                     Setter = (window, texture) => window.GameDoctorLogoTexture = texture
                 },
+                new TextureToLoad
+                {
+                    Name = "HiddenIcon",
+                    Setter = (window, texture) => window.DismissedTexture = texture
+                },
             };
             
             var window = GetWindow<GameDoctorWindow>();

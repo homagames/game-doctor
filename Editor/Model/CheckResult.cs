@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace HomaGames.GameDoctor.Core
 {
@@ -10,7 +8,7 @@ namespace HomaGames.GameDoctor.Core
     /// </summary>
     public class CheckResult
     {
-        public bool Passed => Issues.Count == 0;
+        public bool Passed => Issues.All(issue => issue.HasBeenDismissed());
         public List<IIssue> Issues = new List<IIssue>();
     }
 }
