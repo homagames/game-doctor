@@ -22,6 +22,14 @@ namespace HomaGames.GameDoctor.Utilities
             add => _onPostFixAction.Add(value);
             remove => _onPostFixAction.Remove(value);
         }
+        /// <summary>
+        /// Register an asset importer to reimport after all fixes are executed on it
+        /// </summary>
+        /// <param name="assetImporter"></param>
+        public static void RegisterForReimport(AssetImporter assetImporter)
+        {
+            OnPostFixAction += assetImporter.SaveAndReimport;
+        }
 
         public static int PostFixActionCount => _onPostFixAction.Count;
 
