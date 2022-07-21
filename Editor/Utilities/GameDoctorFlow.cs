@@ -15,7 +15,7 @@ namespace HomaGames.GameDoctor.Utilities
         private static readonly HashSet<Action> _onPostFixAction = new HashSet<Action>();
         
         /// <summary>
-        /// Register to this event to execute an action after a series of fixes are executed
+        /// Register to this event to execute an action after a series of Automated fixes are executed
         /// </summary>
         public static event Action OnPostFixAction
         {
