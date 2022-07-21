@@ -200,15 +200,16 @@ namespace HomaGames.GameDoctor.Ui
             {
                 RunCheck(GetParentCheck(issue));
             }
-            
-            if (GUILayout.Button("Dismiss", GUILayout.Width(130)))
+
+            bool isDismissed = issue.HasBeenDismissed();
+            if (GUILayout.Button(isDismissed ? "Un-dismiss" : "Dismiss", GUILayout.Width(130)))
             {
                 ShowTip(TipName.IssueDismissed);
                 
-                issue.SetDismissed();
+                issue.SetDismissed(! isDismissed);
 
                 
-                if (DismissedIssuesHidden)
+                if (DismissedIssuesHidden && issue.HasBeenDismissed())
                 {
                     var parentCheck = GetParentCheck(issue);
 
