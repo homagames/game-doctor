@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HomaGames.GameDoctor.Core;
+using HomaGames.GameDoctor.Utilities;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
@@ -156,15 +157,24 @@ namespace HomaGames.GameDoctor.Ui
                 for (int i = 0; i < maxI; i++)
                 {
                     EditorUtility.DisplayProgressBar(scanWindowTitle, $"Fixing \"{issues[i].Name}", i / maxI);
-                    
+
                     try
                     {
-                        await issues[i].Fix().ContinueWith(task => OnIssueFixed(task, issues[i]), TaskScheduler.FromCurrentSynchronizationContext());
+                        await issues[i].Fix().ContinueWith(task => OnIssueFixed(task, issues[i]),
+                            TaskScheduler.FromCurrentSynchronizationContext());
                     }
                     catch (Exception e)
                     {
                         Debug.LogError($"Exception when fixing \"{issues[i].Name}\" issue:\n{e}");
                     }
+                }
+
+                var totalPostActions = GameDoctorFlow.PostFixActionCount;
+                while (GameDoctorFlow.ExecuteNextPostFixAction())
+                {
+                    EditorUtility.DisplayProgressBar(scanWindowTitle,
+                        $"Executing Post Action {GameDoctorFlow.PostFixActionCount}/{totalPostActions}",
+                        (float) GameDoctorFlow.PostFixActionCount / totalPostActions);
                 }
             }
             finally
