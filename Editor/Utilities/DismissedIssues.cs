@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEditor;
 
 namespace HomaGames.GameDoctor.Core
@@ -25,12 +26,12 @@ namespace HomaGames.GameDoctor.Core
             }
         }
         
-        public static bool HasBeenDismissed(this IIssue issue)
+        public static bool HasBeenDismissed([NotNull] this IIssue issue)
         {
             return DismissedHash.Contains(issue.GetHash());
         }
 
-        public static void SetDismissed(this IIssue issue, bool val = true)
+        public static void SetDismissed([NotNull] this IIssue issue, bool val = true)
         {
             if (val)
             {

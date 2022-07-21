@@ -217,13 +217,14 @@ namespace HomaGames.GameDoctor.Ui
             GUILayout.EndHorizontal();
         }
 
-        private ICheck GetParentCheck(IIssue issue)
+        [NotNull]
+        private ICheck GetParentCheck([NotNull] IIssue issue)
         {
             return Profile.CheckList.First(c =>
                     c.CheckResult != null && c.CheckResult.Issues.Contains(issue));
         }
 
-        private static Rect GetRectFor(GUIStyle style, string content)
+        private static Rect GetRectFor([NotNull] GUIStyle style, string content)
         {
             return GUILayoutUtility.GetRect(new GUIContent(content), style);
         }

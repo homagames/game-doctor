@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
 
 namespace HomaGames.GameDoctor.Ui
 {
@@ -16,7 +14,7 @@ namespace HomaGames.GameDoctor.Ui
         private static void ShowTip(TipName tipName)
         {
             Tip tip = GetTipByName[tipName];
-            editorPrefKey = $"game_doctor.{tip.EditorPrefKeySuffix}";
+            string editorPrefKey = $"game_doctor.{tip.EditorPrefKeySuffix}";
             
             if (!EditorPrefs.HasKey(editorPrefKey))
             {
@@ -42,8 +40,6 @@ namespace HomaGames.GameDoctor.Ui
                              "You can make it appear again by toggling \"Show dismissed\" on."
             },
         };
-
-        private static string editorPrefKey;
 
         private struct Tip
         {

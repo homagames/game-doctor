@@ -209,7 +209,7 @@ namespace HomaGames.GameDoctor.Ui
             return null;
         }
         
-        private void ChangeSelectionOfDismissedIssue(IIssue issue)
+        private void ChangeSelectionOfDismissedIssue([NotNull] IIssue issue)
         {
             var parentCheck = GetParentCheck(issue);
 
