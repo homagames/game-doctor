@@ -111,6 +111,7 @@ workflows:
           - hg-common
           - hg-mobile
           - hg-damysus
+          - hg-unity
           requires:
             - run_tests
           filters:
