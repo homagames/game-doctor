@@ -24,9 +24,9 @@ jobs:
           name: 'Find clone name'
           command: |
              if [[ "$CIRCLE_BRANCH" == "" ]]; then
-               export CLONED=$CIRCLE_TAG
+                echo 'export CLONED=$CIRCLE_TAG' >> $BASH_ENV
              else
-               export CLONED=$CIRCLE_BRANCH
+                echo 'export CLONED=$CIRCLE_BRANCH' >> $BASH_ENV
               fi
               echo "Cloning ${CLONED} branch/tag."
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
