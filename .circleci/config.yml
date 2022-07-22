@@ -50,9 +50,10 @@ jobs:
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
       - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$CIRCLE_PROJECT_REPONAME"
       - run:
-          name: "Build .unitypackage"
+          name: 'Build Homa Belly Packages'
           command: |
-            curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/homa_belly/export_packages.sh" | bash
+            echo "Building Packages..."
+            unity-editor -batchmode -nographics -quit -projectpath . -executeMethod Build.CreateAllEmbeddedUnityPackages -buildTarget Android
       - run:
           name: "Upload Game Doctor to S3"
           command: |
