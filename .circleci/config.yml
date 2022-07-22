@@ -20,8 +20,17 @@ jobs:
   run_tests:
     executor: unity
     steps:
+      - run: 
+          name: 'Find clone name'
+          command: |
+             if [[ "$CIRCLE_BRANCH" == "" ]]; then
+               export CLONED=$CIRCLE_TAG
+             else
+               export CLONED=$CIRCLE_BRANCH
+              fi
+              echo "Cloning ${CLONED} branch/tag."
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
-      - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_BRANCH" "Packages/$CIRCLE_PROJECT_REPONAME"
+      - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CLONED" "Packages/$CIRCLE_PROJECT_REPONAME"
       - run:
           name: 'Run Tests'
           command: |
