@@ -50,18 +50,18 @@ jobs:
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
       - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$CIRCLE_PROJECT_REPONAME"
       - run: 
-        name: 'Activate Unity License'
-        command: |
-          curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/licenses/activate_unity_license.sh" | bash
+          name: "Activate Unity License"
+          command: |
+            curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/licenses/activate_unity_license.sh" | bash
       - run:
-          name: 'Build Homa Belly Packages'
+          name: "Build Homa Belly Packages"
           command: |
             echo "Building Packages..."
             unity-editor -batchmode -nographics -quit -projectpath . -executeMethod Build.CreateAllEmbeddedUnityPackages -buildTarget Android
       - run: 
-        name: 'Return Unity License'
-        command: |
-          curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/licenses/return_unity_license.sh" | bash
+          name: "Return Unity License"
+          command: |
+            curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/licenses/return_unity_license.sh" | bash
       - run:
           name: "Upload Game Doctor to S3"
           command: |
