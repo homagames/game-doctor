@@ -135,7 +135,8 @@ That's when [StepBasedIssue](Editor/Core/Implementation/StepBasedIssue.cs) comes
 
 The example above will give you this popup window in the fixing process :
 
-https://user-images.githubusercontent.com/69792951/174646380-fb938daa-994e-4428-bbb3-1295e86ee390.mp4
+
+https://user-images.githubusercontent.com/69792951/180445274-c1cdf04c-69cf-4a06-8b51-04b6dbc8fff5.mov
 
 
 
