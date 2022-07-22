@@ -50,40 +50,21 @@ jobs:
       - run: git clone https://${GITHUB_TOKEN}@github.com/homagames/hg-mobile-unitypackage-ci-environment.git .
       - run: git clone --depth 5 https://${GITHUB_TOKEN}@github.com/homagames/${CIRCLE_PROJECT_REPONAME}.git --branch "$CIRCLE_TAG" "Packages/$CIRCLE_PROJECT_REPONAME"
       - run:
-          name: 'Build Homa Belly Packages'
+          name: "Build .unitypackage"
           command: |
-            echo "Building Packages..."
-            /opt/Unity/Editor/Unity -batchmode -nographics -quit -projectpath . -executeMethod Build.CreateAllEmbeddedUnityPackages -buildTarget Android
-      - run: apt-get update
-      - run: apt-get -y install awscli
+            curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/homa_belly/export_packages.sh" | bash
       - run:
-          name: 'Upload Unity Packages to S3'
+          name: "Upload Game Doctor to S3"
           command: |
-            UNITY_PACKAGES_LIST=$(find Build -name '*.unitypackage')
-            for filename in $UNITY_PACKAGES_LIST; do
-                # Replace "Build" for "packages" in file path to match S3 structure
-                FILEPATH=$(echo $filename | sed 's/Build/packages/g')
-                # Determine if file already exists in S3
-                if [[ $(aws s3 ls s3://$S3_BUCKET_NAME/$FILEPATH) ]] && [[ -z "${FORCE_AWS_UPLOAD}" ]]; then
-                  echo "File $FILEPATH already present. Skipping..."
-                else
-                  echo "Uploading $FILEPATH"
-                  aws s3 cp $filename s3://$S3_BUCKET_NAME/$FILEPATH
-                fi
-            done
+            curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/homa_belly/upload_packages.sh" | bash
   merge_into_master:
-    executor: npm
+    executor: unity
     steps:
-      - checkout
+      - attach_workspace: {at: /tmp/workspace}
       - run:
-          name: 'Merging develop into master'
+          name: "Merging develop into master"
           command: |
-            git checkout master
-            git pull
-            git merge develop
-            git config --global user.name "$GITHUB_USER"
-            git config --global user.email "admin@homagames.com"
-            git push origin master 
+            curl -H "Authorization: token $GITHUB_TOKEN" "https://raw.githubusercontent.com/homagames/hg-cicd-common/master/mobile/homa_belly/merge_into_master.sh" | bash
 
 orbs:
   slack: circleci/slack@1.0.0
