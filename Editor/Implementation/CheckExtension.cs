@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace HomaGames.GameDoctor.Core
 {
@@ -27,6 +28,18 @@ namespace HomaGames.GameDoctor.Core
             {
                 if (issue.AutomationType == automationType)
                     await issue.Fix();
+            }
+        }
+        
+        public static int GetHash([NotNull] this ICheck check)
+        {
+            unchecked
+            {
+                var hashCode = (check.Name != null ? check.Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (check.Description != null ? check.Description.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int) check.Importance;
+                hashCode = (hashCode * 397) ^ (int) check.Priority;
+                return hashCode;
             }
         }
     }
