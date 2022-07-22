@@ -1,4 +1,4 @@
-Game Doctor
+💊 Game Doctor
 ==================================
 
 An all in one tool to scan a Unity project and fix things. Ranging from performance optimisations to missing analytics.
@@ -97,7 +97,7 @@ public class AndroidSettingsCheck : BaseCheck
                 new SimpleIssue(() =>
                     {
                         PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
-                        return Task.CompletedTask;
+                        return Task.FromResult(true);
                     },
                     "Wrong Android Target SDK", "Android Target SDK Version not set to Automatic."
                     , AutomationType.Automatic)

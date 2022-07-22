@@ -1,7 +1,7 @@
 {
   "name": "com.homagames.game-doctor",
   "displayName": "[Homa Games] Game Doctor",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "unity": "2019.4",
   "keywords": [
     "debug",
@@ -11,9 +11,6 @@
     "hacks"
   ],
   "type": "tool",
-  "dependencies": {
-  
-  },
   "author": {
     "name": "Homa Games",
     "url": "https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git"
