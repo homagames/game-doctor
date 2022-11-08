@@ -11,6 +11,8 @@ namespace HomaGames.GameDoctor.Core
         private static readonly Dictionary<string, IValidationProfile> _registeredValidationProfiles =
             new Dictionary<string, IValidationProfile>();
 
+        private static string _defaultValidationProfileName = DefaultValidationProfile.DefaultValidationProfileName;
+
         /// <summary>
         /// Register a Validation Profile to make it publicly available in the Game Doctor UI.
         /// </summary>
@@ -20,6 +22,17 @@ namespace HomaGames.GameDoctor.Core
         {
             if (_registeredValidationProfiles.ContainsKey(validationProfile.Name)) return;
             _registeredValidationProfiles.Add(validationProfile.Name,validationProfile);
+        }
+        
+        /// <summary>
+        /// Set a Validation Profile as default, and registers it if not already registered.
+        /// </summary>
+        /// <param name="validationProfile">The Validation Profile to be set as default</param>
+        [PublicAPI]
+        public static void SetDefaultValidationProfile(IValidationProfile validationProfile)
+        {
+            RegisterValidationProfile(validationProfile);
+            _defaultValidationProfileName = validationProfile.Name;
         }
 
         /// <summary>
@@ -51,7 +64,7 @@ namespace HomaGames.GameDoctor.Core
         [PublicAPI]
         public static IValidationProfile GetDefaultValidationProfile()
         {
-            if (TryGetValidationProfileByName(DefaultValidationProfile.DefaultValidationProfileName, out IValidationProfile validationProfile))
+            if (TryGetValidationProfileByName(_defaultValidationProfileName, out IValidationProfile validationProfile))
                 return validationProfile;
             DefaultValidationProfile defaultValidationProfile = new DefaultValidationProfile();
             RegisterValidationProfile(defaultValidationProfile);
