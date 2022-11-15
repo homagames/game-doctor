@@ -105,7 +105,6 @@ namespace HomaGames.GameDoctor.Tests
         public void DefaultValidationProfile()
         {
             Assert.True(AvailableProfiles.GetDefaultValidationProfile() != null);
-            Assert.True(AvailableProfiles.GetDefaultValidationProfile().GetType().Name == "HomaValidationProfile");
         }
     }
 
