@@ -1,0 +1,28 @@
+name: Release package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  tests:
+    uses: homagames/unity-ci-environment/.github/workflows/run-tests.yml@master
+    secrets: inherit
+  build-package:
+    uses: homagames/unity-ci-environment/.github/workflows/build-package.yml@master
+    secrets: inherit
+    needs: tests
+  github-release:
+    uses: homagames/unity-ci-environment/.github/workflows/github-release.yml@master
+    secrets: inherit
+    needs: build-package
+  upm-release:
+    uses: homagames/unity-ci-environment/.github/workflows/upm-release.yml@master
+    secrets: inherit
+    needs: build-package
+  aws-release:
+    uses: homagames/unity-ci-environment/.github/workflows/aws-release.yml@master
+    secrets: inherit
+    needs: build-package
+    with:
+      aws-bucket-uri: ${{ secrets.DAMYSUS_AWS_BUCKET_URI }}

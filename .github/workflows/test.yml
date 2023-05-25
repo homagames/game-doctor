@@ -1,0 +1,8 @@
+name: Test package
+
+on: [pull_request]
+
+jobs:
+  tests:
+    uses: homagames/unity-ci-environment/.github/workflows/run-tests.yml@master
+    secrets: inherit
