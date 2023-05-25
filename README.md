@@ -3,37 +3,28 @@
 
 An all in one tool to scan a Unity project and fix things. Ranging from performance optimisations to missing analytics.
 
-  * [Installation](#installation)
-    + [Install via git URL](#install-via-git-url)
-    + [Install via OpenUPM](#install-via-openupm)
-  * [Basic usage of Game Doctor](#basic-usage-of-game-doctor)
+* [Installation](#installation)
+* [Basic usage of Game Doctor](#basic-usage-of-game-doctor)
     + [Validation Profiles](#validation-profiles)
-  * [Creating your own checks](#creating-your-own-checks)
-  * [How to contribute](#how-to-contribute)
-  * [License](#license)
+* [Creating your own checks](#creating-your-own-checks)
+* [How to contribute](#how-to-contribute)
+* [License](#license)
 
 
 ## Installation
-### Install via git URL
-
 You can add `https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git` to Package Manager
 
 ![image](Documentation~/install.png)
 
 
-If you want to set a target version, Game Doctor uses the `v*.*.*` release tag so you can specify a version like `#v2.1.0`. For example `https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git#v2.1.0`.
+If you want to set a target version, Game Doctor uses the `v*.*.*` release tag so you can specify a version like `#v1.0.1`.
 
-### Install via OpenUPM
+For example `https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git#v1.0.1`.
 
-The package is available on the [openupm registry](https://openupm.com). It's recommended to install it via [openupm-cli](https://github.com/openupm/openupm-cli).
-
-```
-openupm add com.homagames.gamedoctor
-```
 
 ## Basic usage of Game Doctor
 Go to **Window > Homa Games > Game Doctor > Open Default Profile**.
-##### Game Doctor main window : 
+##### Game Doctor main window :
 ![](Documentation~/main-window.png)
 
 TODO : add a video of an actual fixing process with real checks
@@ -41,7 +32,7 @@ TODO : add a video of an actual fixing process with real checks
 ### Validation Profiles
 Game Doctor groups checks using Validation Profiles, they are a way to regroup checks and executing them together.
 
-The Default Validation Profile contains all checks registered in the project. 
+The Default Validation Profile contains all checks registered in the project.
 
 Game Doctor also comes with a [Tag based Validation Profile](Editor/Core/Implementation/TagBasedValidationProfile.cs).
 
@@ -64,7 +55,7 @@ Hyperlink are available for profile, check and issue descriptions. 2 types of li
 * A special asset link `<a asset="[AssetPath]">content</a>`, which will ping the object at the given path.
 
 Here are examples of how to create a simple checks :
-##### Creating a Check : 
+##### Creating a Check :
 ```csharp
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -147,9 +138,9 @@ You're more than welcome to help us tackle existing issues !
 
 The easiest way to get started on your first Pull Request is doing the following :
 
- 1. Clone the content of this repository to your **Packages/** folder.
- 2. Make changes to the cloned repository
- 3. Push your changes to a **new branch** and do a Pull Request
+1. Clone the content of this repository to your **Packages/** folder.
+2. Make changes to the cloned repository
+3. Push your changes to a **new branch** and do a Pull Request
 
 
 ## License
