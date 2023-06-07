@@ -12,14 +12,14 @@ An all in one tool to scan a Unity project and fix things. Ranging from performa
 
 
 ## Installation
-You can add `https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git` to Package Manager
+You can add `https://github.com/homagames/game-doctor.git` to Package Manager
 
 ![image](Documentation~/install.png)
 
 
 If you want to set a target version, Game Doctor uses the `v*.*.*` release tag so you can specify a version like `#v1.0.1`.
 
-For example `https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git#v1.0.1`.
+For example `https://github.com/homagames/game-doctor.git#v1.0.1`.
 
 
 ## Basic usage of Game Doctor
@@ -132,7 +132,7 @@ https://user-images.githubusercontent.com/69792951/180445274-c1cdf04c-69cf-4a06-
 
 
 ## How to contribute
-If you want a new feature, or noticed a bug in Game Doctor, you can create a new issue [here](https://github.com/homagames/hg-mobile-unitypackage-game-doctor/issues).
+If you want a new feature, or noticed a bug in Game Doctor, you can create a new issue [here](https://github.com/homagames/game-doctor/issues).
 
 You're more than welcome to help us tackle existing issues !
 

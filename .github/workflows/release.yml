@@ -20,9 +20,3 @@ jobs:
     uses: homagames/unity-ci-environment/.github/workflows/upm-release.yml@master
     secrets: inherit
     needs: build-package
-  aws-release:
-    uses: homagames/unity-ci-environment/.github/workflows/aws-release.yml@master
-    secrets: inherit
-    needs: build-package
-    with:
-      aws-bucket-uri: ${{ secrets.DAMYSUS_AWS_BUCKET_URI }}
