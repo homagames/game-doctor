@@ -1,0 +1,14 @@
+name: ❓ Question
+description: You are not 100% sure if something is a bug or asking a question that leads to improving the documentation
+title: "[Question]: "
+labels: ["question", "triage"]
+assignees:
+  - homapf
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      placeholder: I'd like to know how to ...
+    validations:
+      required: true

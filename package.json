@@ -1,0 +1,19 @@
+{
+  "name": "com.homagames.game-doctor-core",
+  "displayName": "[Homa Games] Game Doctor",
+  "version": "1.0.1",
+  "unity": "2019.4",
+  "keywords": [
+    "debug",
+    "runtime",
+    "console",
+    "tweak",
+    "hacks"
+  ],
+  "type": "tool",
+  "author": {
+    "name": "Homa Games",
+    "url": "https://github.com/homagames/hg-mobile-unitypackage-game-doctor.git"
+  },
+  "description": "An all in one tool to scan a Unity project and fix things. Ranging from performance optimisations to missing analytics.."
+}
