@@ -27,8 +27,6 @@ Go to **Window > Homa Games > Game Doctor > Open Default Profile**.
 ##### Game Doctor main window :
 ![](Documentation~/main-window.png)
 
-TODO : add a video of an actual fixing process with real checks
-
 ### Validation Profiles
 Game Doctor groups checks using Validation Profiles, they are a way to regroup checks and executing them together.
 
